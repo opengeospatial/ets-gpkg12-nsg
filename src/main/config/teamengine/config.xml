@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Unpack the *-ctl-scripts.zip archive in the TE_BASE/scripts directory -->
+<organization>
+  <name>nsg</name>
+  <standard>
+    <name>GeoPackage</name>
+    <version>
+      <name>${spec-version}</name>
+      <suite>
+        <namespace-uri>http://www.opengis.net/cite/gpkg12</namespace-uri>
+        <prefix>tns</prefix>
+        <local-name>ets-gpkg12-nsg${version}</local-name>
+        <title>NSG GeoPackage 1.1 Conformance Test Suite</title>
+        <description>GeoPackage 1.1 data container in acoordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1.</description>
+        <BasicConformanceClasses>
+          <conformanceClass>Core</conformanceClass>
+          <conformanceClass>Tiles</conformanceClass>
+          <conformanceClass>Features</conformanceClass>
+          <conformanceClass>Attributes</conformanceClass>
+          <conformanceClass>Extensions</conformanceClass>
+          <conformanceClass>Non-linear Geometries</conformanceClass>
+          <conformanceClass>RTree Index</conformanceClass>
+          <conformanceClass>Webp</conformanceClass>
+          <conformanceClass>Metadata</conformanceClass>
+          <conformanceClass>Schema</conformanceClass>
+          <conformanceClass>CRS WKT</conformanceClass>
+          <conformanceClass>Tiled Gridded Elevation Data</conformanceClass>
+          <conformanceClass>NSG</conformanceClass>
+        </BasicConformanceClasses>
+      </suite>
+      <revision>
+        <name>${version}</name>
+        <status>Final</status>
+        <sources>
+          <source>gpkg12-nsg/${spec-version}/ctl</source>
+        </sources>
+        <webdir>gpkg12-nsg/${spec-version}/site</webdir>
+      </revision>
+    </version>
+  </standard>
+</organization>
