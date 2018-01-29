@@ -17,7 +17,7 @@
     </ctl:code>
 	</ctl:function>
 
-   <ctl:suite name="tns:ets-gpkg12-${version}">
+   <ctl:suite name="tns:ets-gpkg12-nsg-${version}">
      <ctl:title>NSG GeoPackage 1.1 Conformance Test Suite</ctl:title>
      <ctl:description>Verifies the structure and content of an NSG GeoPackage 1.1 data container.</ctl:description>
      <ctl:starting-test>tns:Main</ctl:starting-test>
