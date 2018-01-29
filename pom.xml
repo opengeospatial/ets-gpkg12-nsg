@@ -1,5 +1,4 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <parent>
     <groupId>org.opengis.cite</groupId>
     <artifactId>ets-common</artifactId>
@@ -7,12 +6,12 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-gpkg12-nsg</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>NSG GeoPackage 1.1 Conformance Test Suite</name>
-  <description> GeoPackage 1.1 data container in acoordance with the NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1</description>
-  <url>tbd</url>
+  <description>GeoPackage 1.1 data container in accordance with the NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1</description>
+  <url>https://github.com/opengeospatial/ets-gpkg12-nsg</url>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -44,7 +43,7 @@
 
   <properties>
     <ets-code>gpkg12-nsg</ets-code>
-    <spec-version>NSG2.1</spec-version>
+    <spec-version>2.1</spec-version>
   </properties>
 
   <dependencies>
