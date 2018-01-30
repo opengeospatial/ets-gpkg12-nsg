@@ -4,7 +4,7 @@
   xmlns:tns="http://www.opengis.net/cite/gpkg12"
   xmlns:saxon="http://saxon.sf.net/"
   xmlns:tec="java:com.occamlab.te.TECore"
-  xmlns:tng="java:org.opengis.cite.gpkg12.TestNGController">
+  xmlns:tng="java:org.opengis.cite.gpkg12.nsg.TestNGController">
 
   <ctl:function name="tns:run-ets-gpkg12">
 		<ctl:param name="testRunArgs">A Document node containing test run arguments (as XML properties).</ctl:param>
