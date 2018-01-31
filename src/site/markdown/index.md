@@ -4,13 +4,13 @@
 ## Scope
 
 
-This test suite verifies the structure and content of a NSG GeoPackage 1.1 data container in accordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1](https://nsgreg.nga.mil/doc/view?i=4379&month=1&day=24&year=2018).
+This test suite verifies the structure and content of a NSG GeoPackage 1.1 data container in accordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1](https://nsgreg.nga.mil/doc/view?i=4379&amp;month=1&amp;day=24&amp;year=2018).
  
 The test suite includes the test from [GeoPackage 1.2 Conformance Test Suite](https://github.com/opengeospatial/ets-gpkg12) (which also supports GeoPackage 1.1 and 1.0), and adds the NSG conformance classes. In addition to the GeoPackage specification, the NSG Conformance classes cover:
 
 * NSG tile matrix sets
 * NSG adopted GeoPackage extensions
-* Metadata compliant with the [NSG Metadata Foundation (NMF) Version 2.2](https://nsgreg.nga.mil/doc/view?i=4123&month=1&day=24&year=2018)
+* Metadata compliant with the [NSG Metadata Foundation (NMF) Version 2.2](https://nsgreg.nga.mil/doc/view?i=4123&amp;month=1&amp;day=24&amp;year=2018)
 
 The basic structure of a GeoPackage database is shown in Figure 1.
 
