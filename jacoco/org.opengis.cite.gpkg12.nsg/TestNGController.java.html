@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TestNGController.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg</a> &gt; <span class="el_source">TestNGController.java</span></div><h1>TestNGController.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+
+import org.opengis.cite.gpkg12.TestRunArg;
+import org.opengis.cite.gpkg12.TestRunArguments;
+import org.opengis.cite.gpkg12.util.TestSuiteLogger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import com.occamlab.te.spi.executors.TestRunExecutor;
+import com.occamlab.te.spi.executors.testng.TestNGExecutor;
+import com.occamlab.te.spi.jaxrs.TestSuiteController;
+
+/**
+ * Main test run controller oversees execution of TestNG test suites.
+ */
+public class TestNGController implements TestSuiteController {
+
+    private TestRunExecutor executor;
+<span class="fc" id="L36">    private Properties etsProperties = new Properties();</span>
+
+    /**
+     * A convenience method for running the test suite using a command-line
+     * interface. The default values of the test run arguments are as follows:
+     * &lt;ul&gt;
+     * &lt;li&gt;XML properties file: ${user.home}/test-run-props.xml&lt;/li&gt;
+     * &lt;li&gt;outputDir: ${user.home}&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * &lt;strong&gt;Synopsis&lt;/strong&gt;
+     * &lt;/p&gt;
+     * 
+     * &lt;pre&gt;
+     * ets-*-aio.jar [-o|--outputDir $TMPDIR] [test-run-props.xml]
+     * &lt;/pre&gt;
+     *
+     * @param args
+     *            Test run arguments (optional).
+     * @throws Exception
+     *             If the test run cannot be executed (usually due to
+     *             unsatisfied pre-conditions).
+     */
+    public static void main(String[] args) throws Exception {
+<span class="nc" id="L60">        TestRunArguments testRunArgs = new TestRunArguments();</span>
+<span class="nc" id="L61">        JCommander cmd = new JCommander(testRunArgs);</span>
+        try {
+<span class="nc" id="L63">            cmd.parse(args);</span>
+<span class="nc" id="L64">        } catch (ParameterException px) {</span>
+<span class="nc" id="L65">            System.out.println(px.getMessage());</span>
+<span class="nc" id="L66">            cmd.usage();</span>
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
+<span class="nc" id="L69">        DocumentBuilder db = dbf.newDocumentBuilder();</span>
+<span class="nc" id="L70">        File xmlArgs = testRunArgs.getPropertiesFile();</span>
+<span class="nc" id="L71">        Document testRunProps = db.parse(xmlArgs);</span>
+<span class="nc" id="L72">        TestNGController controller = new TestNGController(testRunArgs.getOutputDir());</span>
+<span class="nc" id="L73">        Source testResults = controller.doTestRun(testRunProps);</span>
+<span class="nc" id="L74">        System.out.println(&quot;Test results: &quot; + testResults.getSystemId());</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Default constructor uses the location given by the &quot;user.home&quot; system
+     * property as the root output directory.
+     */
+    public TestNGController() {
+<span class="fc" id="L82">        this(new File(System.getProperty(&quot;user.home&quot;)).toURI().toString());</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Construct a controller that writes results to the given output directory.
+     * 
+     * @param outputDir
+     *            The location of the directory in which test results will be
+     *            written; it will be created if it does not exist.
+     */
+<span class="fc" id="L92">    public TestNGController(String outputDir) {</span>
+<span class="pc" id="L93">        try (InputStream is = getClass().getResourceAsStream(&quot;ets.properties&quot;)) {</span>
+<span class="fc" id="L94">                this.etsProperties.load(is);</span>
+<span class="pc bpc" id="L95" title="6 of 8 branches missed.">        }</span>
+<span class="nc" id="L96">        catch (IOException ex) {</span>
+<span class="nc" id="L97">        	TestSuiteLogger.log(Level.WARNING, &quot;Unable to load ets.properties. &quot; + ex.getMessage());</span>
+<span class="fc" id="L98">        } </span>
+<span class="fc" id="L99">        URL tngSuite = TestNGController.class.getResource(&quot;testng.xml&quot;);</span>
+        File resultsDir;
+<span class="pc bpc" id="L101" title="2 of 4 branches missed.">        if (null == outputDir || outputDir.isEmpty()) {</span>
+<span class="nc" id="L102">            resultsDir = new File(System.getProperty(&quot;user.home&quot;));</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        } else if (outputDir.startsWith(&quot;file:&quot;)) {</span>
+<span class="fc" id="L104">            resultsDir = new File(URI.create(outputDir));</span>
+        } else {
+<span class="nc" id="L106">            resultsDir = new File(outputDir);</span>
+        }
+<span class="fc" id="L108">        TestSuiteLogger.log(Level.CONFIG, &quot;Using TestNG config: &quot; + tngSuite);</span>
+<span class="fc" id="L109">        TestSuiteLogger.log(Level.CONFIG, &quot;Using outputDirPath: &quot; + resultsDir.getAbsolutePath());</span>
+        // NOTE: setting third argument to 'true' enables the default listeners
+<span class="fc" id="L111">        this.executor = new TestNGExecutor(tngSuite.toString(), resultsDir.getAbsolutePath(), false);</span>
+<span class="fc" id="L112">    }</span>
+
+    @Override
+    public String getCode() {
+<span class="nc" id="L116">        return etsProperties.getProperty(&quot;ets-code&quot;);</span>
+    }
+
+    @Override
+    public String getVersion() {
+<span class="nc" id="L121">        return etsProperties.getProperty(&quot;ets-version&quot;);</span>
+    }
+
+    @Override
+    public String getTitle() {
+<span class="nc" id="L126">        return etsProperties.getProperty(&quot;ets-title&quot;);</span>
+    }
+
+    @Override
+    public Source doTestRun(Document testRunArgs) throws Exception {
+<span class="fc" id="L131">        validateTestRunArgs(testRunArgs);</span>
+<span class="fc" id="L132">        return executor.execute(testRunArgs);</span>
+    }
+
+    /**
+     * Validates the test run arguments. The test run is aborted if any of these
+     * checks fail.
+     *
+     * @param testRunArgs
+     *            A DOM Document containing a set of XML properties (key-value
+     *            pairs).
+     * @throws IllegalArgumentException
+     *             If any arguments are missing or invalid for some reason.
+     */
+    void validateTestRunArgs(Document testRunArgs) {
+<span class="pc bpc" id="L146" title="2 of 4 branches missed.">        if (null == testRunArgs || !testRunArgs.getDocumentElement().getNodeName().equals(&quot;properties&quot;)) {</span>
+<span class="nc" id="L147">            throw new IllegalArgumentException(&quot;Input is not an XML properties document.&quot;);</span>
+        }
+<span class="fc" id="L149">        NodeList entries = testRunArgs.getDocumentElement().getElementsByTagName(&quot;entry&quot;);</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (entries.getLength() == 0) {</span>
+<span class="nc" id="L151">            throw new IllegalArgumentException(&quot;No test run arguments found.&quot;);</span>
+        }
+<span class="fc" id="L153">        Map&lt;String, String&gt; args = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        for (int i = 0; i &lt; entries.getLength(); i++) {</span>
+<span class="fc" id="L155">            Element entry = (Element) entries.item(i);</span>
+<span class="fc" id="L156">            args.put(entry.getAttribute(&quot;key&quot;), entry.getTextContent());</span>
+        }
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (!args.containsKey( TestRunArg.IUT.toString())) {</span>
+<span class="nc" id="L159">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L160">                    String.format(&quot;Missing argument: '%s' must be present.&quot;, TestRunArg.IUT));</span>
+        }
+<span class="fc" id="L162">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

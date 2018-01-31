@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_SQLiteContainerTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.core</a> &gt; <span class="el_source">NSG_SQLiteContainerTests.java</span></div><h1>NSG_SQLiteContainerTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.core;
+
+import org.opengis.cite.gpkg12.ErrorMessage;
+import org.opengis.cite.gpkg12.ErrorMessageKeys;
+import org.opengis.cite.gpkg12.GPKG12;
+import org.opengis.cite.gpkg12.core.SQLiteContainerTests;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+
+<span class="fc" id="L11">public class NSG_SQLiteContainerTests extends SQLiteContainerTests </span>
+{
+	// ----------------------------------------------------	
+	/*
+	 * --- NSG Req 1: GeoPackages that contains NSG data SHALL use the “gpkg” file
+	 *                extension. They SHALL NOT use the “gpkx” file extension to indicate that they are
+	 *                Extended GeoPackages.
+	 */
+	
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 1 (Geopackage name extension)&quot;)
+	public void NSG_filenameExtension() 
+	{
+<span class="nc" id="L23">		String fileName = this.gpkgFile.getName();</span>
+<span class="nc" id="L24">		String suffix = fileName.substring(fileName.lastIndexOf('.'));</span>
+<span class="nc" id="L25">		Assert.assertEquals( suffix, GPKG12.GPKG_FILENAME_SUFFIX, ErrorMessage.format(ErrorMessageKeys.INVALID_SUFFIX, suffix ));</span>
+<span class="nc" id="L26">		Assert.assertNotEquals(suffix, &quot;.gpkx&quot;, ErrorMessage.format(ErrorMessageKeys.INVALID_SUFFIX, suffix ));</span>
+<span class="nc" id="L27">	}</span>
+	
+	// ----------------------------------------------------
+	
+	// ----------------------------------------------------
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

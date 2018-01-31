@@ -1,0 +1,5 @@
+org.opengis.cite.gpkg12.nsg
+org.opengis.cite.gpkg12.nsg.core
+org.opengis.cite.gpkg12.nsg.metadata
+org.opengis.cite.gpkg12.nsg.tiles
+org.opengis.cite.gpkg12.nsg.util
