@@ -30,7 +30,7 @@ public class MetadataTests extends CommonFixture
 		
         try 
         { 
-        	URL resource = getClass().getClassLoader().getResource("org/opengis/cite/gpkg12/nsg/metadata/NMIS v2.X Schema/nas/nmis.xsd");        	
+        	URL resource = getClass().getClassLoader().getResource("org/opengis/cite/gpkg12/nsg/metadata/NMIS_v2.X_Schema/nas/nmis.xsd");
 			Schema schema = schemaFactory.newSchema(resource);
 	
 			try (final Statement statement = this.databaseConnection.createStatement();
