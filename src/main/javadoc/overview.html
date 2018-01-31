@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
-    <title>GeoPackage 1.2 Conformance Test Suite</title>
+    <title>NSG GeoPackage 1.1 Conformance Test Suite</title>
     <meta charset="UTF-8" />
     <style type="text/css">
 body {
@@ -54,20 +54,19 @@ dt {
     </style>
   </head>
   <body>
-  <h1>GeoPackage 1.2 Conformance Test Suite</h1>
+  <h1>NSG GeoPackage 1.1 Conformance Test Suite</h1>
+  <p>This test suite verifies the structure and content of a NSG GeoPackage 1.1 data container in accordance with the <a href="https://nsgreg.nga.mil/doc/view?i=4379&month=1&day=24&year=2018)" target="_blank">NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1</a>.</p>
 
-	<p>This executable test suite (ETS) verifies the structure and content of a GeoPackage 
-  1.2 data container. The <a href="http://www.geopackage.org/spec/" target="_blank">GeoPackage
-  specification</a> describes how a platform-independent <a href="https://www.sqlite.org/fileformat2.html" 
-  target="_blank">SQLite database file</a> may contain various types of content:</p>
+  <p>The test suite includes the test from <a href="https://github.com/opengeospatial/ets-gpkg12" target="_blank">GeoPackage 1.2 Conformance Test Suite</a>, and adds the NSG conformance classes. In addition to the GeoPackage specification, the NSG Conformance classes cover:</p>
 
   <ul>
-    <li>vector geospatial features</li>
-    <li>tile matrix sets of imagery and raster maps at various scales</li>
-    <li>metadata</li>
+    <li>NSG tile matrix sets</li>
+    <li>NSG adopted GeoPackage extensions</li>
+    <li>Metadata compliant with the  <a href="https://nsgreg.nga.mil/doc/view?i=4123&month=1&day=24&year=2018)" target="_blank">NSG Metadata Foundation (NMF) Version 2.2</a></li>
   </ul>
 
-	<p>The test run arguments are summarized in the following table. The <em>Obligation</em> 
+
+  <p>The test run arguments are summarized in the following table. The <em>Obligation</em>
 	descriptor can have the following values: M (mandatory), O (optional), or C 
 	(conditional).</p>
 

@@ -3,7 +3,7 @@
 <organization>
   <name>OGC</name>
   <standard>
-    <name>GeoPackage</name>
+    <name>NSG GeoPackage</name>
     <version>
       <name>${spec-version}</name>
       <suite>

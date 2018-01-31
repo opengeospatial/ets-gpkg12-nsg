@@ -2,15 +2,15 @@
 
 ### Scope
 
-This test suite verifies the structure and content of a GeoPackage 1.1 data container in acoordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1](https://nsgreg.nga.mil/doc/view?i=4379&month=1&day=24&year=2018).
+This test suite verifies the structure and content of a NSG GeoPackage 1.1 data container in accordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1](https://nsgreg.nga.mil/doc/view?i=4379&month=1&day=24&year=2018).
 
-The suite is a copy of the [GeoPackage 1.2 Conformance Test Suite](https://github.com/opengeospatial/ets-gpkg12), with the added conformance NSG conformance classes. In addition to the GeoPackage specification, the NSG Conformance classes cover:
+The test suite includes the test from [GeoPackage 1.2 Conformance Test Suite](https://github.com/opengeospatial/ets-gpkg12), and adds the NSG conformance classes. In addition to the GeoPackage specification, the NSG Conformance classes cover:
 
-* NSG tile matrix sets.
+* NSG tile matrix sets
 * NSG adopted GeoPackage extensions
 * Metadata compliant with the [NSG Metadata Foundation (NMF) Version 2.2](https://nsgreg.nga.mil/doc/view?i=4123&month=1&day=24&year=2018)
 
-Visit the [project documentation website](http://opengeospatial.github.io/ets-gpkg12/)
+Visit the [project documentation website](http://opengeospatial.github.io/ets-gpkg12-nsg/)
 for more information, including the API documentation.
 
 ### How to run the tests
@@ -21,7 +21,7 @@ for running the suite are summarized below.
 
 Use a Java IDE such as Eclipse, NetBeans, or IntelliJ. Clone the repository and build the project.
 
-Set the main class to run: `org.opengis.cite.gpkg12.TestNGController`
+Set the main class to run: `org.opengis.cite.gpkg12.nsg.TestNGController`
 
 Arguments: The first argument must refer to an XML properties file containing the
 required test run arguments. If not specified, the default location at `$
@@ -47,7 +47,7 @@ One of the build artifacts is an "all-in-one" JAR file that includes the test
 suite and all of its dependencies; this makes it very easy to execute the test
 suite in a command shell:
 
-`java -jar target/ets-gpkg12-0.1-SNAPSHOT-aio.jar [-o|--outputDir $TMPDIR] [xml-file]`
+`java -jar target/ets-gpkg12-nsg-<VERSION>-aio.jar [-o|--outputDir $TMPDIR] [xml-file]`
 
 Where `xml-file` is the path to the properties XML file, e.g., `src/main/config/test-run-props.xml`.
 
@@ -63,9 +63,9 @@ harness yourself and use a local installation.
 
 If you would like to get involved, you can:
 
-* [Report an issue](https://github.com/opengeospatial/ets-gpkg12/issues) such as a defect or
+* [Report an issue](https://github.com/opengeospatial/ets-gpkg12-nsg/issues) such as a defect or
 an enhancement request
-* Help to resolve an [open issue](https://github.com/opengeospatial/ets-gpkg12/issues?q=is%3Aopen)
+* Help to resolve an [open issue](https://github.com/opengeospatial/ets-gpkg12-nsg/issues?q=is%3Aopen)
 * Fix a bug: Fork the repository, apply the fix, and create a pull request
 * Add new tests: Fork the repository, implement and verify the tests on a new topic branch,
 and create a pull request (don't forget to periodically rebase long-lived branches so

@@ -1,4 +1,4 @@
-package org.opengis.cite.gpkg12;
+package org.opengis.cite.gpkg12.nsg;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 
+import org.opengis.cite.gpkg12.TestRunArg;
+import org.opengis.cite.gpkg12.TestRunArguments;
 import org.opengis.cite.gpkg12.util.TestSuiteLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -153,7 +155,7 @@ public class TestNGController implements TestSuiteController {
             Element entry = (Element) entries.item(i);
             args.put(entry.getAttribute("key"), entry.getTextContent());
         }
-        if (!args.containsKey(TestRunArg.IUT.toString())) {
+        if (!args.containsKey( TestRunArg.IUT.toString())) {
             throw new IllegalArgumentException(
                     String.format("Missing argument: '%s' must be present.", TestRunArg.IUT));
         }

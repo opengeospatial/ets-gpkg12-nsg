@@ -1,17 +1,16 @@
 
-# GeoPackage 1.2 Conformance Test Suite
+# NSG GeoPackage 1.1 Conformance Test Suite
 
 ## Scope
 
-This conformance test suite verifies the structure and content of a GeoPackage 1.2 
-data container. The [GeoPackage 1.2 encoding standard](http://www.geopackage.org/spec/) describes 
-how a platform-independent [SQLite database file](https://www.sqlite.org/fileformat2.html) 
-may contain various types of content, including:
 
-* vector features
-* tile matrix sets of imagery and raster maps at various scales
-* attributes
-* extensions
+This test suite verifies the structure and content of a NSG GeoPackage 1.1 data container in accordance with the [NSG GeoPackage Encoding Standard 1.1 Interoperability Standard version 2.1](https://nsgreg.nga.mil/doc/view?i=4379&month=1&day=24&year=2018).
+ 
+The test suite includes the test from [GeoPackage 1.2 Conformance Test Suite](https://github.com/opengeospatial/ets-gpkg12) (which also supports GeoPackage 1.1 and 1.0), and adds the NSG conformance classes. In addition to the GeoPackage specification, the NSG Conformance classes cover:
+
+* NSG tile matrix sets
+* NSG adopted GeoPackage extensions
+* Metadata compliant with the [NSG Metadata Foundation (NMF) Version 2.2](https://nsgreg.nga.mil/doc/view?i=4123&month=1&day=24&year=2018)
 
 The basic structure of a GeoPackage database is shown in Figure 1.
 
@@ -37,9 +36,7 @@ The following conformance classes have being defined (In bold the classes that h
     - **Schema**
     - **WKT for Coordinate Reference Systems**
     - **Tiled Gridded Elevation Data**
-    - **NSG**
-    
-Note: This test also supports GeoPackage 1.1 and 1.0. 
+    - **NSG** 
 
 ## Test requirements
 
@@ -61,7 +58,7 @@ suite will be marked as skipped.
 ## Test suite structure
 
 The test suite definition file (testng.xml) is located in the root package, 
-`org.opengis.cite.gpkg12`. A conformance class corresponds to a &lt;test&gt; element, each 
+`org.opengis.cite.gpkg12.nsg`. A conformance class corresponds to a &lt;test&gt; element, each 
 of which includes a set of test classes that contain the actual test methods. 
 The general structure of the test suite is shown in Table 1.
 
