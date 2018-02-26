@@ -18,25 +18,25 @@ The basic structure of a GeoPackage database is shown in Figure 1.
 
 ![GeoPackage tables](./img/geopackage-tables.png)
 
-The following conformance classes have being defined (In bold the classes that have been implemented):
+The following conformance classes have being defined:
 
-* **Core (Required)**
-    - **SQLite Container**
-    - **Spatial Reference Systems**
-    - **Contents**
-* **Features**
-* **Tiles**
+* Core (Required)
+    - SQLite Container
+    - Spatial Reference Systems
+    - Contents
+* Features
+* Tiles
 * Attributes
-* **Registered Extensions**
-    - **Non-Linear Geometry Types**
-    - **RTree Spatial Indexes**
-    - Zoom Other Intervals
-    - **Tiles Encoding WebP**
-    - **Metadata**
-    - **Schema**
-    - **WKT for Coordinate Reference Systems**
-    - **Tiled Gridded Elevation Data**
-    - **NSG** 
+* Extension Mechanism
+    - Non-Linear Geometry Types
+    - RTree Spatial Indexes
+    - Zoom Other Intervals (Not implemented yet)
+    - Tiles Encoding WebP
+    - Metadata
+    - Schema
+    - WKT for Coordinate Reference Systems
+    - Tiled Gridded Elevation Data
+    - NSG
 
 ## Test requirements
 
@@ -84,7 +84,11 @@ The general structure of the test suite is shown in Table 1.
       <td>org.opengis.cite.gpkg12.tiles.*</td>
     </tr>
     <tr>
-      <td>Registered Extensions</td>
+      <td>Attributes</td>
+      <td>org.opengis.cite.gpkg12.attributes.*</td>
+    </tr>
+    <tr>
+      <td>Extension Mechanism</td>
       <td>org.opengis.cite.gpkg12.extensions.*</td>
     </tr>
     <tr>
