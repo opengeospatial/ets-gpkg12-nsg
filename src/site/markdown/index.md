@@ -43,12 +43,9 @@ The following conformance classes have being defined:
 The documents listed below stipulate requirements that must be satisfied by a 
 conforming implementation.
 
-1. [OGC GeoPackage Encoding Standard 1.2.0](http://www.geopackage.org/spec/)
+1. [National System for Geospatial-Intelligence (NSG) GeoPackage Encoding Standard 2.1 Interoperability Standard](https://nsgreg.nga.mil/doc/view?i=4379)
 2. [OGC GeoPackage Encoding Standard 1.1.0](https://portal.opengeospatial.org/files/?artifact_id=64506)
-3. [OGC GeoPackage Encoding Standard 1.0.1](https://portal.opengeospatial.org/files/?artifact_id=63378)
-4. [OGC GeoPackage Encoding Standard 1.0.0](https://portal.opengeospatial.org/files/?artifact_id=56357)
-5. [SQLite Database File Format](http://sqlite.org/fileformat2.html)
-6. [National System for Geospatial-Intelligence (NSG) GeoPackage Encoding Standard 2.1 Interoperability Standard](https://nsgreg.nga.mil/doc/view?i=4379)
+3. [SQLite Database File Format](http://sqlite.org/fileformat2.html)
 
 If any of the following preconditions are not satisfied then all tests in the 
 suite will be marked as skipped.
