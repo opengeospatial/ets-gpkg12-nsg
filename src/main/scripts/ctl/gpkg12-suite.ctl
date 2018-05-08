@@ -30,16 +30,12 @@
            <ctl:form method="POST" width="800" height="600" xmlns="http://www.w3.org/1999/xhtml">
              <h2>NSG GeoPackage 1.1 Conformance Test Suite</h2>
              <div style="background:#F0F8FF" bgcolor="#F0F8FF">
-               <p>The test suite is forwards and backwards compatible and also considers GeoPackage versions 1.2.0, 1.1.0 (NSG Version), 1.0.1 and 1.0.0.</p>
-               <p>A GeoPackage file is checked against the following specifications:</p>
+               <p>A NSG GeoPackage file is checked against the following specifications:</p>
                <ul>
-                 <li><a href="http://www.geopackage.org/spec/">OGC GeoPackage Encoding Standard 1.2.0</a></li>
-                 <li><a href="https://portal.opengeospatial.org/files/?artifact_id=64506">OGC GeoPackage Encoding Standard 1.1.0</a></li>
-                 <li><a href="https://portal.opengeospatial.org/files/?artifact_id=63378">OGC GeoPackage Encoding Standard 1.0.1</a></li>
-                 <li><a href="https://portal.opengeospatial.org/files/?artifact_id=56357">OGC GeoPackage Encoding Standard 1.0.0</a></li>
-                 <li><a href="http://sqlite.org/fileformat2.html">SQLite Database File Format</a></li>
                  <li><a href="https://nsgreg.nga.mil/doc/view?i=4379https://nsgreg.nga.mil/doc/view?i=4379">National System for Geospatial-Intelligence (NSG) GeoPackage Encoding Standard 1.1
-Interoperability Standard</a></li>
+                   Interoperability Standard</a></li>
+                 <li><a href="https://portal.opengeospatial.org/files/?artifact_id=64506">OGC GeoPackage Encoding Standard 1.1.0</a></li>
+                 <li><a href="http://sqlite.org/fileformat2.html">SQLite Database File Format</a></li>
                </ul>
              </div>
              <fieldset style="background:#ccffff">
