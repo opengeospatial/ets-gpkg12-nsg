@@ -19,8 +19,6 @@ import org.opengis.cite.gpkg12.tiles.TileTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-//import java.util.function.Function;
-
 public class NSG_TileTests extends TileTests {
     final private int minZoom = 0;
 
@@ -28,7 +26,6 @@ public class NSG_TileTests extends TileTests {
 
     final private double tolerance = 1.0e-10;
 
-    // ----------------------------------------------------
     /*
      * --- NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using
      * a test suite. Data validity MAY be enforced by SQL triggers.
@@ -158,7 +155,6 @@ public class NSG_TileTests extends TileTests {
         }
     }
 
-    // ----------------------------------------------------
     /*
      * --- NSG Req 20: The gpkg_tile_matrix table SHALL contain tile_width and tile_height column values of 256 for
      * every table_name tile pyramid data table.
@@ -240,7 +236,6 @@ public class NSG_TileTests extends TileTests {
         }
     }
 
-    // ----------------------------------------------------
     /*
      * --- NSG Req 22: The gpkg_tile_matrix table SHALL contain pixel_x_size and pixel_y_size column values that differ
      * by a factor of 2 between all adjacent zoom levels for each tile pyramid data table per OGC GeoPackage Clause
@@ -296,7 +291,6 @@ public class NSG_TileTests extends TileTests {
         }
     }
 
-    // ----------------------------------------------------
     /*
      * --- NSG Req 23: The (min_x, min_y, max_x, max_y) values in the gpkg_tile_matrix_set table SHALL be the maximum
      * bounds of the CRS specified for the tile pyramid data table and SHALL be used to determine the geographic
@@ -352,9 +346,5 @@ public class NSG_TileTests extends TileTests {
             statement.close();
         }
     }
-
-    // ----------------------------------------------------
-
-    // ----------------------------------------------------
 
 }

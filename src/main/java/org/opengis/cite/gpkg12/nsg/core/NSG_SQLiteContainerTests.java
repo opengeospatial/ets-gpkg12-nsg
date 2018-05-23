@@ -8,7 +8,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class NSG_SQLiteContainerTests extends SQLiteContainerTests {
-    // ----------------------------------------------------
     /*
      * --- NSG Req 1: GeoPackages that contains NSG data SHALL use the “gpkg” file extension. They SHALL NOT use the
      * “gpkx” file extension to indicate that they are Extended GeoPackages.
@@ -22,9 +21,5 @@ public class NSG_SQLiteContainerTests extends SQLiteContainerTests {
                              ErrorMessage.format( ErrorMessageKeys.INVALID_SUFFIX, suffix ) );
         Assert.assertNotEquals( suffix, ".gpkx", ErrorMessage.format( ErrorMessageKeys.INVALID_SUFFIX, suffix ) );
     }
-
-    // ----------------------------------------------------
-
-    // ----------------------------------------------------
 
 }

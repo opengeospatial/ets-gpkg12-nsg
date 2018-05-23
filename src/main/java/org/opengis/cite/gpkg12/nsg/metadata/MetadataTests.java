@@ -40,11 +40,9 @@ public class MetadataTests extends CommonFixture {
                     validator.validate( new StreamSource( is ) );
                 }
             } catch ( SQLException e ) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        } catch ( Exception e )// (SAXException | IOException e)
-        {
+        } catch ( Exception e ) {
             e.printStackTrace();
         }
     }

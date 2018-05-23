@@ -27,8 +27,6 @@ public class NSG_XMLUtils extends XMLUtils {
         return textVal;
     }
 
-    // ----------------------------------------------------
-
     public static Element getElement( NodeList nodes, String tagName, String value ) {
         Element ele = null;
         for ( int ni = 0; ni < nodes.getLength(); ni++ ) {
@@ -40,8 +38,6 @@ public class NSG_XMLUtils extends XMLUtils {
         }
         return ele;
     }
-
-    // ----------------------------------------------------
 
     public static NodeList openXMLDocString( String _xmlStr, String rootName ) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -66,8 +62,6 @@ public class NSG_XMLUtils extends XMLUtils {
         return null;
     }
 
-    // ----------------------------------------------------
-
     public static NodeList openXMLDocument( String xmlName, String rootName ) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -91,8 +85,6 @@ public class NSG_XMLUtils extends XMLUtils {
         return null;
     }
 
-    // ----------------------------------------------------
-
     public static NodeList openXMLDocument( InputStream xml_IS, String rootName ) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -115,6 +107,4 @@ public class NSG_XMLUtils extends XMLUtils {
 
         return null;
     }
-
-    // ----------------------------------------------------
 }

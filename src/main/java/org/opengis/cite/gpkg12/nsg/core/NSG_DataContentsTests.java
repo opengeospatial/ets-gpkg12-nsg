@@ -14,12 +14,8 @@ import org.opengis.cite.gpkg12.core.DataContentsTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-//import java.util.function.Function;
-
 public class NSG_DataContentsTests extends DataContentsTests {
     final private double tolerance = 1.0e-10;
-
-    // ----------------------------------------------------
 
     private double checkFeatureBounds( String _tableName, String _boundsColumn )
                             throws SQLException {
@@ -67,8 +63,6 @@ public class NSG_DataContentsTests extends DataContentsTests {
         return _result;
     }
 
-    // ----------------------------------------------------
-
     private double checkTileBounds( String _tableName, String _boundsColumn )
                             throws SQLException {
         // --- convenience routine to consistently return specific bounds column as double
@@ -92,7 +86,6 @@ public class NSG_DataContentsTests extends DataContentsTests {
         return _result;
     }
 
-    // ----------------------------------------------------
     /*
      * --- NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using
      * a test suite. Data validity MAY be enforced by SQL triggers.
@@ -220,9 +213,5 @@ public class NSG_DataContentsTests extends DataContentsTests {
                                                      invalidMaxY.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
         }
     }
-
-    // ----------------------------------------------------
-
-    // ----------------------------------------------------
 
 }
