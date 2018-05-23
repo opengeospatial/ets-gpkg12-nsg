@@ -2,7 +2,6 @@ package org.opengis.cite.gpkg12.nsg.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,10 +11,10 @@ import org.opengis.cite.gpkg12.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class NSG_XMLUtils extends XMLUtils {
+
     public static String getXMLElementTextValue( Element ele, String tagName ) {
         String textVal = null;
         NodeList nl = ele.getElementsByTagName( tagName );
@@ -37,52 +36,6 @@ public class NSG_XMLUtils extends XMLUtils {
             }
         }
         return ele;
-    }
-
-    public static NodeList openXMLDocString( String _xmlStr, String rootName ) {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            DocumentBuilder docBld = dbf.newDocumentBuilder();
-            Document doc = docBld.parse( new InputSource( new StringReader( _xmlStr ) ) );
-            if ( doc != null ) {
-                Element docElems = doc.getDocumentElement();
-                if ( docElems != null ) {
-                    return docElems.getElementsByTagName( rootName );
-                }
-            }
-        } catch ( ParserConfigurationException pcEx ) {
-            pcEx.printStackTrace();
-        } catch ( SAXException saxEx ) {
-            saxEx.printStackTrace();
-        } catch ( IOException ioEx ) {
-            ioEx.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static NodeList openXMLDocument( String xmlName, String rootName ) {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            DocumentBuilder ioe = dbf.newDocumentBuilder();
-            Document dom = ioe.parse( xmlName );
-            if ( dom != null ) {
-                Element docElems = dom.getDocumentElement();
-                if ( docElems != null ) {
-                    return docElems.getElementsByTagName( rootName );
-                }
-            }
-        } catch ( ParserConfigurationException pcEx ) {
-            pcEx.printStackTrace();
-        } catch ( SAXException saxEx ) {
-            saxEx.printStackTrace();
-        } catch ( IOException ioEx ) {
-            ioEx.printStackTrace();
-        }
-
-        return null;
     }
 
     public static NodeList openXMLDocument( InputStream xml_IS, String rootName ) {
