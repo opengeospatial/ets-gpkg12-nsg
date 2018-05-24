@@ -1,63 +1,48 @@
 package org.opengis.cite.gpkg12.nsg.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.opengis.cite.gpkg12.util.XMLUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class NSG_XMLUtils extends XMLUtils {
 
-    public static String getXMLElementTextValue( Element ele, String tagName ) {
-        String textVal = null;
-        NodeList nl = ele.getElementsByTagName( tagName );
+    /**
+     * @param element
+     *            never <code>null</code>
+     * @param tagName
+     *            never <code>null</code>
+     * @return The text value of the tag with the passed name which is a descendant of the passed element,
+     *         <code>null</code> if the element does not contain the passed tag
+     */
+    public static String getXMLElementTextValue( Element element, String tagName ) {
+        NodeList nl = element.getElementsByTagName( tagName );
         if ( nl != null && nl.getLength() > 0 ) {
             Element el = (Element) nl.item( 0 );
-            textVal = el.getFirstChild().getNodeValue();
-        }
-
-        return textVal;
-    }
-
-    public static Element getElement( NodeList nodes, String tagName, String value ) {
-        Element ele = null;
-        for ( int ni = 0; ni < nodes.getLength(); ni++ ) {
-            Element e = (Element) nodes.item( ni );
-            if ( getXMLElementTextValue( e, tagName ).equalsIgnoreCase( value ) ) {
-                ele = e;
-                break;
-            }
-        }
-        return ele;
-    }
-
-    public static NodeList openXMLDocument( InputStream xml_IS, String rootName ) {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            DocumentBuilder ioe = dbf.newDocumentBuilder();
-            Document dom = ioe.parse( xml_IS );
-            if ( dom != null ) {
-                Element docElems = dom.getDocumentElement();
-                if ( docElems != null ) {
-                    return docElems.getElementsByTagName( rootName );
-                }
-            }
-        } catch ( ParserConfigurationException pcEx ) {
-            pcEx.printStackTrace();
-        } catch ( SAXException saxEx ) {
-            saxEx.printStackTrace();
-        } catch ( IOException ioEx ) {
-            ioEx.printStackTrace();
+            return el.getFirstChild().getNodeValue();
         }
 
         return null;
     }
+
+    /**
+     *
+     * @param nodes
+     *            a list of nodes to search in, never <code>null</code>
+     * @param tagName
+     *            the name of tag, never <code>null</code>
+     * @param value
+     *            the text value
+     * @return the first element with the passed tag name and value (case insensitive), may be <code>null</code> if no
+     *         such element could be found
+     */
+    public static Element getElementByTextValue( NodeList nodes, String tagName, String value ) {
+        for ( int ni = 0; ni < nodes.getLength(); ni++ ) {
+            Element e = (Element) nodes.item( ni );
+            if ( getXMLElementTextValue( e, tagName ).equalsIgnoreCase( value ) ) {
+                return e;
+            }
+        }
+        return null;
+    }
+
 }
