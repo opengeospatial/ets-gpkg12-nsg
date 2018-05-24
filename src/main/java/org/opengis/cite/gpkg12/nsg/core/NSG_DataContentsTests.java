@@ -24,6 +24,7 @@ public class NSG_DataContentsTests extends DataContentsTests {
      * --- 19-B: Addresses Table 26 Rows 3-7 (regarding table "gpkg_contents")
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 19-B (Data Validity: gpkg_contents)")
     public void dataValidity_gpkg_contents()
@@ -101,9 +102,8 @@ public class NSG_DataContentsTests extends DataContentsTests {
         }
     }
 
-    private void collectInvalidMinValues( ResultSet resultSet, Collection<String> invalidValue,
-                                          String srsTabNam, boolean dtFeat, boolean dtTile,
-                                          String testBoundsColumn )
+    private void collectInvalidMinValues( ResultSet resultSet, Collection<String> invalidValue, String srsTabNam,
+                                          boolean dtFeat, boolean dtTile, String testBoundsColumn )
                             throws SQLException {
         if ( resultSet.getString( testBoundsColumn ) != null ) {
             double val = resultSet.getDouble( testBoundsColumn );

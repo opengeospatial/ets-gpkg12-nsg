@@ -27,6 +27,9 @@ public class MetadataTests extends CommonFixture {
 
     /**
      * Validate metadata against NMIS xsd https://nsgreg.nga.mil/doc/view?i=2491
+     *
+     * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(description = "Validate against NMIS schema")
     public void metadataSchemaValidation()

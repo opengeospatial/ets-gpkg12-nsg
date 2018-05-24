@@ -54,8 +54,9 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
     /**
      * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs used by raster tile pyramid
      * and vector feature data tables in a GeoPackage.
-     * 
+     *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 3 (identified CRSs)")
     public void crsTest()
@@ -106,6 +107,10 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
         }
     }
 
+    /**
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
     @Test(groups = { "NSG" }, description = "NSG Req 4 & 5 (match Annex table)")
     public void matchAnnexTableTest()
                             throws SQLException {
@@ -179,6 +184,7 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
      * NSG Req 9: Other CRS definitions SHALL NOT be specified for GeoPackage SQL tables containing NSG data.
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 8 & 9 (CRS definitions)")
     public void crsDefinitionsTest()
@@ -239,6 +245,7 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
      * 19-A: Addresses Table 26 Rows 1-2 (regarding table "gpkg_spatial_ref_sys")
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)")
     public void dataValidity_gpkg_spatial_ref_sys()

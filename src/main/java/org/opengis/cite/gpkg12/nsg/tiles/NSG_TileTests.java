@@ -35,6 +35,7 @@ public class NSG_TileTests extends TileTests {
      * 19-D: Addresses Table 26 Rows 12-17 (regarding table "gpkg_tile_matrix")
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 19-D (Data Validity: gpkg_tile_matrix)")
     public void dataValidity_gpkg_tile_matrix()
@@ -148,7 +149,9 @@ public class NSG_TileTests extends TileTests {
      * pixels.
      *
      * @throws SQLException
+     *             if access to gpkg failed
      * @throws IOException
+     *             if tile data coul not be read
      */
     @Test(groups = { "NSG" }, description = "NSG Req 20 & 21 (Tile widths and heights)")
     public void tileSizeTests()
@@ -209,6 +212,7 @@ public class NSG_TileTests extends TileTests {
      * between adjacent zoom levels per OGC GeoPackage Clause 3.2.1.
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 22 (pixels sizes factor of 2)")
     public void pixelsSizeTests()
@@ -258,6 +262,7 @@ public class NSG_TileTests extends TileTests {
      * each tile in the tile pyramid data table.
      *
      * @throws SQLException
+     *             if access to gpkg failed
      */
     @Test(groups = { "NSG" }, description = "NSG Req 23 (bounding box in gpkg_tile_matrix_set)")
     public void boundingBoxTests()
