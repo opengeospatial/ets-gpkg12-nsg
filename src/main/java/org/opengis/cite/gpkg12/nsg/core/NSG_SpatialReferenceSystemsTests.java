@@ -47,10 +47,6 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
 
     private static final double TOLERANCE = 1.0e-10;
 
-    private final List<Object[]> annexC_3395 = new ArrayList<Object[]>();
-
-    private final List<Object[]> annexE_4326 = new ArrayList<Object[]>();
-
     /**
      * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs used by raster tile pyramid
      * and vector feature data tables in a GeoPackage.
@@ -111,63 +107,56 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
                             throws SQLException {
         // --- original intent was to implement here; but may make more sense to
         // implement in NSG_TileTests
-try {
-    final Collection<String> invalidMatrixEntries = new LinkedList<>();
+        final Collection<String> invalidMatrixEntries = new LinkedList<>();
 
-    String queryStr = "SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY "
-                      + "FROM gpkg_tile_matrix tm "
-                      +
-                      "INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel "
-                      + "ON tm.table_name=sel.table_name " + "WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;";
+        String queryStr = "SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY "
+                          + "FROM gpkg_tile_matrix tm "
+                          + "INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel "
+                          + "ON tm.table_name=sel.table_name " + "WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;";
 
-    try (final Statement statement = this.databaseConnection.createStatement();
-         final ResultSet resultSet = statement.executeQuery( queryStr )) {
-        populateAnnexC();
-        populateAnnexE();
+        try (final Statement statement = this.databaseConnection.createStatement();
+                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
+            List<Object[]> annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, "Annex C (EPSG:3395)" );
+            List<Object[]> annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, "Annex E (EPSG:4326)" );
 
-        while ( resultSet.next() ) {
-            String tabNam = resultSet.getString( "tabName" ).trim();
-            String srsID = resultSet.getString( "crsID" ).trim();
-            int zoomLvl = resultSet.getInt( "zoomLvl" );
+            while ( resultSet.next() ) {
+                String tabNam = resultSet.getString( "tabName" ).trim();
+                String srsID = resultSet.getString( "crsID" ).trim();
+                int zoomLvl = resultSet.getInt( "zoomLvl" );
 
-            long matrixW = resultSet.getLong( "matrixW" );
-            long matrixH = resultSet.getLong( "matrixH" );
-            double pixelSzX = resultSet.getDouble( "pixelSzX" );
-            double pixelSzY = resultSet.getDouble( "pixelSzY" );
+                long matrixW = resultSet.getLong( "matrixW" );
+                long matrixH = resultSet.getLong( "matrixH" );
+                double pixelSzX = resultSet.getDouble( "pixelSzX" );
+                double pixelSzY = resultSet.getDouble( "pixelSzY" );
 
-            List<Object[]> annexTable = findAnnexBySrsId( srsID );
-            for ( Object[] obj : annexTable ) {
-                if ( zoomLvl == (int) obj[0] ) {
-                    long imW = (long) obj[3];
-                    long imH = (long) obj[4];
-                    double pX = (double) obj[2];
-                    double pY = (double) obj[2];
+                List<Object[]> annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );
+                for ( Object[] obj : annexTable ) {
+                    if ( zoomLvl == (int) obj[0] ) {
+                        long imW = (long) obj[3];
+                        long imH = (long) obj[4];
+                        double pX = (double) obj[2];
+                        double pY = (double) obj[2];
 
-                    if ( Math.abs( pX - pixelSzX ) > this.TOLERANCE ) {
-                        invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-                                                  + "Pixel Size X: " + pixelSzX + "; but expected " + pX );
-                    } else if ( Math.abs( pY - pixelSzY ) > this.TOLERANCE ) {
-                        invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-                                                  + "Pixel Size Y: " + pixelSzY + "; but expected " + pY );
-                    } else if ( imW != matrixW ) {
-                        invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-                                                  + "Matrix Width: " + matrixW + "; but expected " + imW );
-                    } else if ( imH != matrixH ) {
-                        invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-                                                  + "Matrix Height: " + matrixH + "; but expected " + imH );
+                        if ( Math.abs( pX - pixelSzX ) > this.TOLERANCE ) {
+                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                      + "Pixel Size X: " + pixelSzX + "; but expected " + pX );
+                        } else if ( Math.abs( pY - pixelSzY ) > this.TOLERANCE ) {
+                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                      + "Pixel Size Y: " + pixelSzY + "; but expected " + pY );
+                        } else if ( imW != matrixW ) {
+                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                      + "Matrix Width: " + matrixW + "; but expected " + imW );
+                        } else if ( imH != matrixH ) {
+                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                      + "Matrix Height: " + matrixH + "; but expected " + imH );
+                        }
                     }
                 }
             }
+            assertTrue( invalidMatrixEntries.isEmpty(),
+                        MessageFormat.format( "The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}",
+                                              invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
         }
-        assertTrue( invalidMatrixEntries.isEmpty(),
-                    MessageFormat.format( "The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}",
-                                          invalidMatrixEntries.stream().map( Object::toString ).collect(
-                                                                  Collectors.joining( ", " ) ) ) );
-    }
-} catch ( Exception e ) {
-    System.out.println( "JETZT" );
-    e.printStackTrace();
-}
     }
 
     /*
@@ -320,7 +309,7 @@ try {
         }
     }
 
-    private List<Object[]> findAnnexBySrsId( String srsID ) {
+    private List<Object[]> selectAnnexBySrsId( String srsID, List<Object[]> annexC_3395, List<Object[]> annexE_4326 ) {
         if ( srsID.equals( "3395" ) ) {
             return annexC_3395;
         } else if ( srsID.equals( "4326" ) ) {
@@ -331,63 +320,35 @@ try {
         return Collections.emptyList();
     }
 
-    private void add2List( List<Object[]> table, int zoom, double scale, double pixelSz, long matrixWidth,
-                           long matrixHeight ) {
-        if ( table != null ) {
-            Object[] row = { zoom, scale, pixelSz, matrixWidth, matrixHeight };
-            table.add( row );
-        }
-    }
-
-    private void add2List( List<Object[]> table, String zoom, String scale, String pixelSz, String matrixWidth,
-                           String matrixHeight ) {
-        add2List( table, Integer.parseInt( zoom ), Double.parseDouble( scale ), Double.parseDouble( pixelSz ),
-                  Long.parseLong( matrixWidth ), Long.parseLong( matrixHeight ) );
-    }
-
-    private void populateAnnexC() {
-        annexC_3395.clear();
-
-        try (BufferedReader br = new BufferedReader(
-                                                     new InputStreamReader(
-                                                                            this.getClass().getResourceAsStream( ANNEX_C_3395_TABLE ),
-                                                                            "UTF-8" ) )) {
+    private List<Object[]> populateAnnex( String annexTableName, String annexName ) {
+        InputStream resourceToRead = this.getClass().getResourceAsStream( annexTableName );
+        try (BufferedReader br = new BufferedReader( new InputStreamReader( resourceToRead, "UTF-8" ) )) {
+            List<Object[]> annexEntries = new ArrayList<>();
             String line;
             while ( ( line = br.readLine() ) != null ) {
                 List<String> items = Arrays.asList( line.split( "\\s*,\\s*" ) );
                 if ( !items.isEmpty() && ( items.size() == 5 ) ) {
-                    add2List( annexC_3395, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),
-                              items.get( 4 ) );
+                    addNewEntry( annexEntries, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),
+                                 items.get( 4 ) );
                 } else {
-                    throw new SkipException( "Annex C (EPSG:3395) Table is corrupt " );
+                    throw new SkipException( annexName + " Table is corrupt " );
                 }
             }
+            return annexEntries;
         } catch ( IOException e ) {
-            throw new SkipException( "Annex C (EPSG:3395) Table not available" );
+            throw new SkipException( annexName + " Table not available" );
         }
-
     }
 
-    private void populateAnnexE() {
-        annexE_4326.clear();
-
-        try (BufferedReader br = new BufferedReader(
-                                                     new InputStreamReader(
-                                                                            this.getClass().getResourceAsStream( ANNEX_E_4326_TABLE ),
-                                                                            "UTF-8" ) )) {
-            String line;
-            while ( ( line = br.readLine() ) != null ) {
-                List<String> items = Arrays.asList( line.split( "\\s*,\\s*" ) );
-                if ( !items.isEmpty() && ( items.size() == 5 ) ) {
-                    add2List( annexE_4326, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),
-                              items.get( 4 ) );
-                } else {
-                    throw new SkipException( "Annex E (EPSG:4326) Table is corrupt " );
-                }
-            }
-        } catch ( IOException e ) {
-            throw new SkipException( "Annex E (EPSG:4326) Table not available" );
-        }
+    private void addNewEntry( List<Object[]> table, String zoom, String scale, String pixelSz, String matrixWidth,
+                              String matrixHeight ) {
+        int zoomAsInt = Integer.parseInt( zoom );
+        double scaleAsDouble = Double.parseDouble( scale );
+        double pixelSizeAsDouble = Double.parseDouble( pixelSz );
+        long matrixWidthAsLong = Long.parseLong( matrixWidth );
+        long matrixHeightAsLong = Long.parseLong( matrixHeight );
+        Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };
+        table.add( row );
     }
 
     private NodeList openCrsListing() {
