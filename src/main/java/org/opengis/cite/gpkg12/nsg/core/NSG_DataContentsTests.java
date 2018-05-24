@@ -170,10 +170,10 @@ public class NSG_DataContentsTests extends DataContentsTests {
             return "ST_MinX";
         } else if ( boundsColumn.equals( "min_y" ) ) {
             return "ST_MinY";
-        } else if ( boundsColumn.equals( "min_x" ) ) {
-            return "ST_MinX";
-        } else if ( boundsColumn.equals( "min_y" ) ) {
-            return "ST_MinY";
+        } else if ( boundsColumn.equals( "max_x" ) ) {
+            return "ST_MaxX";
+        } else if ( boundsColumn.equals( "max_y" ) ) {
+            return "ST_MaxY";
         }
         return boundsColumn;
     }
