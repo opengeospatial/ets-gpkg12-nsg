@@ -49,80 +49,17 @@ public class NSG_DataContentsTests extends DataContentsTests {
                     invalidDataTypes.add( srsTabNam + ":" + srsDataTyp );
                 }
 
-                double val;
-                double bnd;
+                // test for: Table 26; Row 4
+                collectInvalidMinValues( resultSet, invalidMinX, srsTabNam, dtFeat, dtTile, "min_x" );
 
-                // --- test for: Table 26; Row 4
+                // test for: Table 26; Row 5
+                collectInvalidMinValues( resultSet, invalidMinY, srsTabNam, dtFeat, dtTile, "min_y" );
 
-                String testBoundsColumn = "min_x";
-                if ( resultSet.getString( testBoundsColumn ) != null ) {
-                    val = resultSet.getDouble( testBoundsColumn );
-                    if ( dtFeat ) {
-                        bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
-                        if ( val < bnd ) {
-                            invalidMinX.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    } else if ( dtTile ) {
-                        bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
-                        if ( val < bnd ) {
-                            invalidMinX.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    }
-                }
+                // test for: Table 26; Row 6
+                collectInvalidMaxValues( resultSet, invalidMaxX, srsTabNam, dtFeat, dtTile, "max_x" );
 
-                // --- test for: Table 26; Row 5
-
-                testBoundsColumn = "min_y";
-                if ( resultSet.getString( testBoundsColumn ) != null ) {
-                    val = resultSet.getDouble( testBoundsColumn );
-                    if ( dtFeat ) {
-                        bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
-                        if ( val < bnd ) {
-                            invalidMinY.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    } else if ( dtTile ) {
-                        bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
-                        if ( val < bnd ) {
-                            invalidMinY.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    }
-                }
-
-                // --- test for: Table 26; Row 6
-
-                testBoundsColumn = "max_x";
-                if ( resultSet.getString( testBoundsColumn ) != null ) {
-                    val = resultSet.getDouble( testBoundsColumn );
-                    if ( dtFeat ) {
-                        bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
-                        if ( val > bnd ) {
-                            invalidMaxX.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    } else if ( dtTile ) {
-                        bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
-                        if ( val > bnd ) {
-                            invalidMaxX.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    }
-                }
-
-                // --- test for: Table 26; Row 7
-
-                testBoundsColumn = "max_y";
-                if ( resultSet.getString( testBoundsColumn ) != null ) {
-                    val = resultSet.getDouble( testBoundsColumn );
-                    if ( dtFeat ) {
-                        bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
-                        if ( val > bnd ) {
-                            invalidMaxY.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    } else if ( dtTile ) {
-                        bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
-                        if ( val > bnd ) {
-                            invalidMaxY.add( srsTabNam + ":" + val + ", should be: " + bnd );
-                        }
-                    }
-                }
+                // test for: Table 26; Row 7
+                collectInvalidMaxValues( resultSet, invalidMaxY, srsTabNam, dtFeat, dtTile, "max_y" );
             }
             resultSet.close();
             statement.close();
@@ -145,38 +82,71 @@ public class NSG_DataContentsTests extends DataContentsTests {
         }
     }
 
+    private void collectInvalidMaxValues( ResultSet resultSet, Collection<String> invalidValue, String srsTabNam,
+                                          boolean dtFeat, boolean dtTile, String testBoundsColumn )
+                            throws SQLException {
+        if ( resultSet.getString( testBoundsColumn ) != null ) {
+            double val = resultSet.getDouble( testBoundsColumn );
+            if ( dtFeat ) {
+                double bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
+                if ( val > bnd ) {
+                    invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+                }
+            } else if ( dtTile ) {
+                double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+                if ( val > bnd ) {
+                    invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+                }
+            }
+        }
+    }
+
+    private void collectInvalidMinValues( ResultSet resultSet, Collection<String> invalidValue,
+                                          String srsTabNam, boolean dtFeat, boolean dtTile,
+                                          String testBoundsColumn )
+                            throws SQLException {
+        if ( resultSet.getString( testBoundsColumn ) != null ) {
+            double val = resultSet.getDouble( testBoundsColumn );
+            if ( dtFeat ) {
+                double bnd = this.checkFeatureBounds( srsTabNam, testBoundsColumn );
+                if ( val < bnd ) {
+                    invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+                }
+            } else if ( dtTile ) {
+                double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+                if ( val < bnd ) {
+                    invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+                }
+            }
+        }
+    }
+
     /*
      * convenience routine to consistently convert specific bounds column from ST_Geometry into double
      */
     private double checkFeatureBounds( String tableName, String boundsColumn )
                             throws SQLException {
-        String queryStr = "SELECT column_name FROM gpkg_geometry_columns WHERE table_name=\'" + tableName + "\';";
-        String columName;
+        String columName = checkColumnName( tableName );
 
-        try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
-            assertTrue( resultSet.next(), "Invalid no result from table: <gpkg_geometry_columns>" );
-            columName = resultSet.getString( "column_name" );
-        }
-
-        String function = boundsColumn;
-        if ( boundsColumn.equals( "min_x" ) ) {
-            function = "ST_MinX";
-        } else if ( boundsColumn.equals( "min_y" ) ) {
-            function = "ST_MinY";
-        } else if ( boundsColumn.equals( "min_x" ) ) {
-            function = "ST_MinX";
-        } else if ( boundsColumn.equals( "min_y" ) ) {
-            function = "ST_MinY";
-        }
-
-        queryStr = "SELECT " + function + "(" + columName + ") AS theResult FROM " + tableName + ";";
+        String function = findFunctionByBoundsColumn( boundsColumn );
+        String queryStr = "SELECT " + function + "(" + columName + ") AS theResult FROM " + tableName + ";";
 
         try (final Statement statement = this.databaseConnection.createStatement();
                                 final ResultSet resultSet = statement.executeQuery( queryStr )) {
             assertTrue( resultSet.next(), "Invalid no result from " + function + "(" + columName + ") in table:  "
                                           + tableName );
             return resultSet.getDouble( "theResult" );
+        }
+    }
+
+    private String checkColumnName( String tableName )
+                            throws SQLException {
+        String queryStr = "SELECT column_name FROM gpkg_geometry_columns WHERE table_name=\'" + tableName + "\';";
+
+        try (final Statement statement = this.databaseConnection.createStatement();
+                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
+            assertTrue( resultSet.next(), "Invalid no result from table: <gpkg_geometry_columns>" );
+            return resultSet.getString( "column_name" );
         }
     }
 
@@ -193,6 +163,19 @@ public class NSG_DataContentsTests extends DataContentsTests {
 
             return resultSet.getDouble( boundsColumn );
         }
+    }
+
+    private String findFunctionByBoundsColumn( String boundsColumn ) {
+        if ( boundsColumn.equals( "min_x" ) ) {
+            return "ST_MinX";
+        } else if ( boundsColumn.equals( "min_y" ) ) {
+            return "ST_MinY";
+        } else if ( boundsColumn.equals( "min_x" ) ) {
+            return "ST_MinX";
+        } else if ( boundsColumn.equals( "min_y" ) ) {
+            return "ST_MinY";
+        }
+        return boundsColumn;
     }
 
 }
