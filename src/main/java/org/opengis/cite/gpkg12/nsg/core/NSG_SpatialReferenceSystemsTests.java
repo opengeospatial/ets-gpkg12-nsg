@@ -269,14 +269,14 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
 
                     // --- test for: Table 26; Row 2
 
-                    String srsDesc = resultSet.getString( "description" ).trim();
+                    String srsDesc = resultSet.getString( "description" );
 
                     boolean found = false;
 
                     Element element = NSG_XMLUtils.getElementByTextValue( crsList, "srs_id", srsID );
-                    if ( element != null ) {
-                        if ( ( srsDesc != null ) && ( srsDesc.length() > 0 )
-                             && ( !srsDesc.toUpperCase().equalsIgnoreCase( "NULL" ) )
+                    if ( element != null && srsDesc != null ) {
+                        srsDesc = srsDesc.trim();
+                        if ( srsDesc.length() > 0 && ( !srsDesc.toUpperCase().equalsIgnoreCase( "NULL" ) )
                              && ( !srsDesc.toUpperCase().equalsIgnoreCase( "UNK" ) )
                              && ( !srsDesc.toUpperCase().equalsIgnoreCase( "UNKNOWN" ) )
                              && ( !srsDesc.toUpperCase().equalsIgnoreCase( "TBD" ) ) ) {
