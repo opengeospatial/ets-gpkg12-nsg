@@ -20,7 +20,6 @@ public class NSG_XMLUtils extends XMLUtils {
             Element el = (Element) nl.item( 0 );
             return el.getFirstChild().getNodeValue();
         }
-
         return null;
     }
 

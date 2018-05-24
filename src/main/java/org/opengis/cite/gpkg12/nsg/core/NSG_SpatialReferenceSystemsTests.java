@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +40,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTests {
+
+    private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );
 
     private static final String NSG_CRS_LISTING = "NSG_CRS_WKT.xml";
 
@@ -365,12 +369,8 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
                     return docElems.getElementsByTagName( rootName );
                 }
             }
-        } catch ( ParserConfigurationException pcEx ) {
-            pcEx.printStackTrace();
-        } catch ( SAXException saxEx ) {
-            saxEx.printStackTrace();
-        } catch ( IOException ioEx ) {
-            ioEx.printStackTrace();
+        } catch ( ParserConfigurationException | SAXException | IOException e ) {
+            LOG.log( Level.SEVERE, "Could not open CRS listing.", e );
         }
 
         return null;
