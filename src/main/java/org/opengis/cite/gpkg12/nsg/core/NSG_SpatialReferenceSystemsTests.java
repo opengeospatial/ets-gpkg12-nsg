@@ -213,25 +213,15 @@ public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTes
 
                     Element element = NSG_XMLUtils.getElementByTextValue( crsList, "srs_id", srsID );
                     if ( element != null ) {
-                        String crsDef = NSG_XMLUtils.getXMLElementTextValue( element, "definition" ).trim().replaceAll( "\\s+",
-                                                                                                                        "" );
-
-                        System.out.println( crsDef );
-                        System.out.println( srsDef );
-
-                        String code;
                         try {
                             CoordinateReferenceSystem example = CRS.parseWKT( srsDef );
-                            code = CRS.lookupIdentifier( example, true );
-                            CoordinateReferenceSystem crs = CRS.decode( code );
-                            System.out.println( crs.toString() );
+                            String code = CRS.lookupIdentifier( example, true );
+                            CRS.decode( code );
                         } catch ( FactoryException e ) {
                             invalidSrsDefs.add( srsID + ":" + srsDef );
                             Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}",
                                                                invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-                            e.printStackTrace();
                         }
-
                     }
                 }
             }
