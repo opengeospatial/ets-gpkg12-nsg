@@ -84,49 +84,52 @@ public class NSG_TileTests extends TileTests {
 
                     while ( tileResultSet.next() ) {
                         int zoom = tileResultSet.getInt( "zoom_level" );
-                        int tileWidth = tileResultSet.getInt( "tile_width" );
-                        int tileHeight = tileResultSet.getInt( "tile_height" );
+                        if ( zoom >= firstZoom && zoom <= lastZoom ) {
+                            int tileWidth = tileResultSet.getInt( "tile_width" );
+                            int tileHeight = tileResultSet.getInt( "tile_height" );
 
-                        double lastPixelSzX = pixelSzX;
-                        double lastPixelSzY = pixelSzY;
-                        pixelSzX = tileResultSet.getDouble( "pixel_x_size" );
-                        pixelSzY = tileResultSet.getDouble( "pixel_y_size" );
+                            double lastPixelSzX = pixelSzX;
+                            double lastPixelSzY = pixelSzY;
+                            pixelSzX = tileResultSet.getDouble( "pixel_x_size" );
+                            pixelSzY = tileResultSet.getDouble( "pixel_y_size" );
 
-                        // test for: Table 26; Row 12 (again)
-                        assertTrue( ( 0 <= zoom && zoom <= lastZoom ),
-                                    MessageFormat.format( "The gpkg_tile_matrix contains an invalid zoom_level: {0} for {1}, should be between {2} and {3}",
-                                                          Integer.toString( zoom ), tableName,
-                                                          Integer.toString( firstZoom ), Integer.toString( lastZoom ) ) );
+                            // test for: Table 26; Row 12 (again)
+                            assertTrue( ( 0 <= zoom && zoom <= lastZoom ),
+                                        MessageFormat.format( "The gpkg_tile_matrix contains an invalid zoom_level: {0} for {1}, should be between {2} and {3}",
+                                                              Integer.toString( zoom ), tableName,
+                                                              Integer.toString( firstZoom ),
+                                                              Integer.toString( lastZoom ) ) );
 
-                        if ( !firstFound ) {
-                            firstFound = ( zoom == firstZoom );
+                            if ( !firstFound ) {
+                                firstFound = ( zoom == firstZoom );
+                            }
+
+                            if ( !lastFound ) {
+                                lastFound = ( zoom == lastZoom );
+                            }
+
+                            // test for: Table 26; Row 13
+                            assertTrue( ( tileWidth == 256 ),
+                                        MessageFormat.format( "The gpkg_tile_matrix contains an invalid tile_width: {0} for {1}, should be 256",
+                                                              Integer.toString( tileWidth ), tableName ) );
+
+                            // test for: Table 26; Row 14
+                            assertTrue( ( tileHeight == 256 ),
+                                        MessageFormat.format( "The gpkg_tile_matrix contains an invalid tile_height: {0} for {1}, should be 256",
+                                                              Integer.toString( tileHeight ), tableName ) );
+
+                            // test for: Table 26; Row 15
+                            double deltaX = Math.abs( ( pixelSzX * 2.0D ) - lastPixelSzX );
+                            assertTrue( ( ( zoom == firstZoom ) || ( deltaX < this.TOLERANCE ) ),
+                                        MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}",
+                                                              String.format( "%.10f", pixelSzX ), tableName ) );
+
+                            // test for: Table 26; Row 16
+                            double deltaY = Math.abs( ( pixelSzY * 2.0D ) - lastPixelSzY );
+                            assertTrue( ( ( zoom == firstZoom ) || ( deltaY < this.TOLERANCE ) ),
+                                        MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}",
+                                                              String.format( "%.10f", pixelSzY ), tableName ) );
                         }
-
-                        if ( !lastFound ) {
-                            lastFound = ( zoom == lastZoom );
-                        }
-
-                        // test for: Table 26; Row 13
-                        assertTrue( ( tileWidth == 256 ),
-                                    MessageFormat.format( "The gpkg_tile_matrix contains an invalid tile_width: {0} for {1}, should be 256",
-                                                          Integer.toString( tileWidth ), tableName ) );
-
-                        // test for: Table 26; Row 14
-                        assertTrue( ( tileHeight == 256 ),
-                                    MessageFormat.format( "The gpkg_tile_matrix contains an invalid tile_height: {0} for {1}, should be 256",
-                                                          Integer.toString( tileHeight ), tableName ) );
-
-                        // test for: Table 26; Row 15
-                        double deltaX = Math.abs( ( pixelSzX * 2.0D ) - lastPixelSzX );
-                        assertTrue( ( ( zoom == firstZoom ) || ( deltaX < this.TOLERANCE ) ),
-                                    MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}",
-                                                          String.format( "%.10f", pixelSzX ), tableName ) );
-
-                        // test for: Table 26; Row 16
-                        double deltaY = Math.abs( ( pixelSzY * 2.0D ) - lastPixelSzY );
-                        assertTrue( ( ( zoom == firstZoom ) || ( deltaY < this.TOLERANCE ) ),
-                                    MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}",
-                                                          String.format( "%.10f", pixelSzY ), tableName ) );
                     }
 
                     // test for: Table 26; Row 12 & 17 (again)
