@@ -61,12 +61,12 @@ public class NSG_TileTests extends TileTests {
                     }
                 }
 
-                assertTrue( ( firstZoom >= this.MIN_ZOOM ),
+                assertTrue( ( firstZoom >= MIN_ZOOM ),
                             MessageFormat.format( "The "
                                                                           + tableName
                                                                           + " table contains an invalid minimum zoom_level: {0}, should be: {1}",
                                                   Integer.toString( firstZoom ), Integer.toString( this.MIN_ZOOM ) ) );
-                assertTrue( ( lastZoom <= this.MAX_ZOOM ),
+                assertTrue( ( lastZoom <= MAX_ZOOM ),
                             MessageFormat.format( "The "
                                                                           + tableName
                                                                           + " table contains an invalid maximum zoom_level: {0}, should be: {1}",
@@ -93,7 +93,7 @@ public class NSG_TileTests extends TileTests {
                         pixelSzY = tileResultSet.getDouble( "pixel_y_size" );
 
                         // test for: Table 26; Row 12 (again)
-                        assertTrue( ( ( zoom >= firstZoom ) && ( zoom <= lastZoom ) ),
+                        assertTrue( ( 0 <= zoom && zoom <= lastZoom ),
                                     MessageFormat.format( "The gpkg_tile_matrix contains an invalid zoom_level: {0} for {1}, should be between {2} and {3}",
                                                           Integer.toString( zoom ), tableName,
                                                           Integer.toString( firstZoom ), Integer.toString( lastZoom ) ) );
