@@ -2,23 +2,41 @@ package org.opengis.cite.gpkg12.nsg.tiles;
 
 import static org.testng.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.opengis.cite.gpkg12.ErrorMessage;
+import org.opengis.cite.gpkg12.ErrorMessageKeys;
 import org.opengis.cite.gpkg12.tiles.TileTests;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class NSG_TileTests extends TileTests {
 
@@ -118,13 +136,13 @@ public class NSG_TileTests extends TileTests {
 
                         // test for: Table 26; Row 15
                         double deltaX = Math.abs( ( pixelSzX * 2.0D ) - lastPixelSzX );
-                        assertTrue( ( ( zoom == firstZoom ) || ( deltaX < this.TOLERANCE ) ),
+                        assertTrue( ( ( zoom == firstZoom ) || ( deltaX < TOLERANCE ) ),
                                     MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}",
                                                           String.format( "%.10f", pixelSzX ), tableName ) );
 
                         // test for: Table 26; Row 16
                         double deltaY = Math.abs( ( pixelSzY * 2.0D ) - lastPixelSzY );
-                        assertTrue( ( ( zoom == firstZoom ) || ( deltaY < this.TOLERANCE ) ),
+                        assertTrue( ( ( zoom == firstZoom ) || ( deltaY < TOLERANCE ) ),
                                     MessageFormat.format( "The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}",
                                                           String.format( "%.10f", pixelSzY ), tableName ) );
                     }
@@ -332,5 +350,111 @@ public class NSG_TileTests extends TileTests {
         }
         return null;
     }
+
+    
+    /**
+     * --- NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using
+     * a test suite. Data validity MAY be enforced by SQL triggers.
+     *
+     * --- 19-B: Addresses Table 26 Rows 3-7 (regarding table "gpkg_contents")
+     *
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
+    @Test(groups = { "NSG" }, description = "NSG Req 19-B (Data Validity: gpkg_contents, tiles)")
+    public void dataValidity_gpkg_contents()
+                            throws SQLException {
+        String queryStr = "SELECT srs_id,table_name,min_x,min_y,max_x,max_y FROM \'gpkg_contents\' WHERE (data_type=\'tiles\');";
+
+
+        
+        try (final Statement statement = this.databaseConnection.createStatement();
+            final ResultSet resultSet = statement.executeQuery( queryStr )) {
+        	
+        	final String srsTabNam = resultSet.getString("table_name");
+            final Collection<String> invalidDataTypes = new LinkedList<>();
+            final Collection<String> invalidMinX = new LinkedList<>();
+            final Collection<String> invalidMinY = new LinkedList<>();
+            final Collection<String> invalidMaxX = new LinkedList<>();
+            final Collection<String> invalidMaxY = new LinkedList<>();
+
+            while ( resultSet.next() ) {
+
+                // test for: Table 26; Row 4
+                collectInvalidMinValues( resultSet, invalidMinX, srsTabNam,  "min_x" );
+
+                // test for: Table 26; Row 5
+                collectInvalidMinValues( resultSet, invalidMinY, srsTabNam,  "min_y" );
+
+                // test for: Table 26; Row 6
+                collectInvalidMaxValues( resultSet, invalidMaxX, srsTabNam,  "max_x" );
+
+                // test for: Table 26; Row 7
+                collectInvalidMaxValues( resultSet, invalidMaxY, srsTabNam,  "max_y" );
+            }
+
+
+            assertTrue( invalidDataTypes.isEmpty(),
+                        MessageFormat.format( "The gpkg_contents table contains invalid data type values for tables: {0}",
+                                              invalidDataTypes.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+            assertTrue( invalidMinX.isEmpty(),
+                        MessageFormat.format( "The gpkg_contents table contains invalid minimum X bounds values for tables: {0}",
+                                              invalidMinX.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+            assertTrue( invalidMinY.isEmpty(),
+                        MessageFormat.format( "The gpkg_contents table contains invalid minimum Y bounds values for tables: {0}",
+                                              invalidMinY.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+            assertTrue( invalidMaxX.isEmpty(),
+                        MessageFormat.format( "The gpkg_contents table contains invalid maximum X bounds values for tables: {0}",
+                                              invalidMaxX.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+            assertTrue( invalidMaxY.isEmpty(),
+                        MessageFormat.format( "The gpkg_contents table contains invalid maximum Y bounds values for tables: {0}",
+                                              invalidMaxY.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+        }
+
+    }
+
+    private void collectInvalidMaxValues( ResultSet resultSet, Collection<String> invalidValue, String srsTabNam,
+                                          String testBoundsColumn ) throws SQLException {
+        if ( resultSet.getString( testBoundsColumn ) != null ) {
+            double val = resultSet.getDouble( testBoundsColumn );
+
+            double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+            if ( val > bnd ) {
+                invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+            }
+         }
+    }
+
+    private void collectInvalidMinValues( ResultSet resultSet, Collection<String> invalidValue, String srsTabNam,
+                                          String testBoundsColumn )
+                            throws SQLException {
+        if ( resultSet.getString( testBoundsColumn ) != null ) {
+            double val = resultSet.getDouble( testBoundsColumn );
+
+            double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+            if ( val < bnd ) {
+                invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
+            }
+        }
+    }
+
+
+
+    /*
+     * convenience routine to consistently return specific bounds column as double
+     */
+    private double checkTileBounds( String tableName, String boundsColumn )
+                            throws SQLException {
+        String queryStr = "SELECT " + boundsColumn + " FROM gpkg_tile_matrix_set WHERE table_name = \'" + tableName
+                          + "\';";
+        try (final Statement statement = this.databaseConnection.createStatement();
+                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
+            assertTrue( resultSet.next(), ErrorMessage.format( ErrorMessageKeys.BAD_TILE_MATRIX_SET_TABLE_DEFINITION ) );
+
+            return resultSet.getDouble( boundsColumn );
+        }
+    }
+    
+
 
 }
