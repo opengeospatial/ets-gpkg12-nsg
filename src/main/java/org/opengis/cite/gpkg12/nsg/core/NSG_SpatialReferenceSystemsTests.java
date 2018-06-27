@@ -24,16 +24,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
+import org.opengis.cite.gpkg12.CommonFixture;
 import org.opengis.cite.gpkg12.ErrorMessage;
 import org.opengis.cite.gpkg12.ErrorMessageKeys;
-import org.opengis.cite.gpkg12.core.SpatialReferenceSystemsTests;
 import org.opengis.cite.gpkg12.nsg.util.NSG_XMLUtils;
 import org.opengis.cite.gpkg12.util.DatabaseUtility;
-
-
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
@@ -42,7 +40,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTests {
+public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
 
     private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );
 

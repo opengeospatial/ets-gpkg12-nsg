@@ -1,16 +1,15 @@
 package org.opengis.cite.gpkg12.nsg.core;
 
-import org.opengis.cite.gpkg12.ErrorMessage;
-import org.opengis.cite.gpkg12.ErrorMessageKeys;
-import org.opengis.cite.gpkg12.GPKG12;
-import org.opengis.cite.gpkg12.core.SQLiteContainerTests;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-public class NSG_SQLiteContainerTests extends SQLiteContainerTests {
+import org.opengis.cite.gpkg12.CommonFixture;
+import org.opengis.cite.gpkg12.ErrorMessage;
+import org.opengis.cite.gpkg12.ErrorMessageKeys;
+import org.opengis.cite.gpkg12.GPKG12;
+import org.testng.annotations.Test;
+
+public class NSG_SQLiteContainerTests extends CommonFixture {
 
     /**
      * NSG Req 1: GeoPackages that contains NSG data SHALL use the “gpkg” file extension. They SHALL NOT use the “gpkx”
