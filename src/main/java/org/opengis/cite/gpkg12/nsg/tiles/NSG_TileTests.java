@@ -369,37 +369,26 @@ public class NSG_TileTests extends TileTests {
                             throws SQLException {
         String queryStr = "SELECT srs_id,table_name,min_x,min_y,max_x,max_y FROM \'gpkg_contents\' WHERE (data_type=\'tiles\');";
 
-
-        
         try (final Statement statement = this.databaseConnection.createStatement();
             final ResultSet resultSet = statement.executeQuery( queryStr )) {
-        	
-        	final String srsTabNam = resultSet.getString("table_name");
-            final Collection<String> invalidDataTypes = new LinkedList<>();
+
             final Collection<String> invalidMinX = new LinkedList<>();
             final Collection<String> invalidMinY = new LinkedList<>();
             final Collection<String> invalidMaxX = new LinkedList<>();
             final Collection<String> invalidMaxY = new LinkedList<>();
 
             while ( resultSet.next() ) {
-
+                final String srsTabNam = resultSet.getString("table_name");
                 // test for: Table 26; Row 4
                 collectInvalidMinValues( resultSet, invalidMinX, srsTabNam,  "min_x" );
-
                 // test for: Table 26; Row 5
                 collectInvalidMinValues( resultSet, invalidMinY, srsTabNam,  "min_y" );
-
                 // test for: Table 26; Row 6
                 collectInvalidMaxValues( resultSet, invalidMaxX, srsTabNam,  "max_x" );
-
                 // test for: Table 26; Row 7
                 collectInvalidMaxValues( resultSet, invalidMaxY, srsTabNam,  "max_y" );
             }
 
-
-            assertTrue( invalidDataTypes.isEmpty(),
-                        MessageFormat.format( "The gpkg_contents table contains invalid data type values for tables: {0}",
-                                              invalidDataTypes.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
             assertTrue( invalidMinX.isEmpty(),
                         MessageFormat.format( "The gpkg_contents table contains invalid minimum X bounds values for tables: {0}",
                                               invalidMinX.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
