@@ -70,7 +70,7 @@ public class VerifyTestNGController {
         runTests(ClassLoader.getSystemResource("gpkg/sample1_2.gpkg"), 1); // R77
         runTests(ClassLoader.getSystemResource("gpkg/sample1_2F10.gpkg"), 2); // Default "undefined", R77
         runTests(ClassLoader.getSystemResource("gpkg/geonames_belgium.gpkg"), 3); // lower case data types, R77
-        runTests(ClassLoader.getSystemResource("gpkg/haiti-vectors-split.gpkg"), 3); // lower case data types, R77
+        runTests(ClassLoader.getSystemResource("gpkg/haiti-vectors-split.gpkg"), 2); // lower case data types, R77
         runTests(ClassLoader.getSystemResource("gpkg/bentiu_southsudan-osm-20170213.gpkg"), 2); //R5, R29
     }
     private void runTests(URL testSubject, int fails) throws Exception {
