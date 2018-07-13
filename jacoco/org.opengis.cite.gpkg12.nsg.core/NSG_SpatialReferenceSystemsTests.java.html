@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_SpatialReferenceSystemsTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.core</a> &gt; <span class="el_source">NSG_SpatialReferenceSystemsTests.java</span></div><h1>NSG_SpatialReferenceSystemsTests.java</h1><pre class="source lang-java linenums">
-package org.opengis.cite.gpkg12.nsg.core;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_SpatialReferenceSystemsTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.core</a> &gt; <span class="el_source">NSG_SpatialReferenceSystemsTests.java</span></div><h1>NSG_SpatialReferenceSystemsTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.core;
+
+import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,642 +13,394 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-//import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.opengis.cite.gpkg12.nsg.util.NSG_XMLUtils;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotools.referencing.CRS;
+import org.opengis.cite.gpkg12.CommonFixture;
 import org.opengis.cite.gpkg12.ErrorMessage;
 import org.opengis.cite.gpkg12.ErrorMessageKeys;
-import org.opengis.cite.gpkg12.core.SpatialReferenceSystemsTests;
+import org.opengis.cite.gpkg12.nsg.util.NSG_XMLUtils;
+import org.opengis.cite.gpkg12.util.DatabaseUtility;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-public class NSG_SpatialReferenceSystemsTests extends SpatialReferenceSystemsTests {
-<span class="fc" id="L36">	private final String NSG_CRS_listing = &quot;NSG_CRS_WKT.xml&quot;;</span>
-<span class="fc" id="L37">	private final String Annex_C_3395_Table = &quot;Annex_C_3395_Table.txt&quot;;</span>
-<span class="fc" id="L38">	private final String Annex_E_4326_Table = &quot;Annex_E_4326_Table.txt&quot;;</span>
-	/*
-	 * boolean _useHardCode = true; private String CRS_XML_Path = null;
-	 */
-<span class="fc" id="L42">	private String XML_root = &quot;Row&quot;;</span>
-
-	/*
-	 * private String CRS_XML_Str =
-	 * &quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot; standalone=\&quot;yes\&quot;?&gt;&quot; +
-	 * &quot;&lt;Root xmlns:xsi=\&quot;http://www.w3.org/2001/XMLSchema-instance\&quot;&gt;&quot; +
-	 * &quot;    &lt;Row&gt;&quot; + &quot;        &lt;srs_name&gt;WGS 84 Geographic 3D&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;4979&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;4979&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;GEODCRS[\&quot;WGS 84\&quot;, &quot; +
-	 * &quot;DATUM[\&quot;World Geodetic System 1984\&quot;,&quot; +
-	 * &quot;ELLIPSOID[\&quot;WGS 84\&quot;,6378137,298.257223563,LENGTHUNIT[\&quot;metre\&quot;,1.0]]],&quot; +
-	 * &quot;CS[ellipsoidal,3],&quot; +
-	 * &quot;AXIS[\&quot;latitude\&quot;,north,ORDER[1],ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot; +
-	 * &quot;AXIS[\&quot;longitude\&quot;,east,ORDER[2],ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot; +
-	 * &quot;AXIS[\&quot;ellipsoidal height\&quot;,up,ORDER[3],LENGTHUNIT[\&quot;metre\&quot;,1.0]],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,4979]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Used by the GPS satellite navigation system and for NATO military geodetic surveying.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;WGS 84 Geographic 2D&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;4326&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;4326&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;GEODCRS[\&quot;WGS 84\&quot;,&quot; +
-	 * &quot;DATUM[\&quot;World Geodetic System 1984\&quot;,&quot; +
-	 * &quot;ELLIPSOID[\&quot;WGS 84\&quot;,6378137,298.257223563,LENGTHUNIT[\&quot;metre\&quot;,1.0]]],&quot; +
-	 * &quot;CS[ellipsoidal,2],&quot; + &quot;AXIS[\&quot;latitude\&quot;,north,ORDER[1]],&quot; +
-	 * &quot;AXIS[\&quot;longitude\&quot;,east,ORDER[2]],&quot; + &quot;ANGLEUNIT[\&quot;degree\&quot;,0.01745329252],&quot;
-	 * + &quot;ID[\&quot;EPSG\&quot;,4326]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Horizontal component of 3D system. Used by the GPS satellite navigation systemand for NATO military geodetic surveying.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;WGS 84 / World Mercator&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;3395&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;3395&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;PROJCRS[\&quot;WGS 84 / World Mercator\&quot;,&quot; +
-	 * &quot;BASEGEODCRS[\&quot;WGS 84\&quot;,&quot; + &quot;DATUM[\&quot;World Geodetic System 1984\&quot;,&quot; +
-	 * &quot;ELLIPSOID[\&quot;WGS 84\&quot;,6378137,298.257223563,LENGTHUNIT[\&quot;metre\&quot;,1.0]]]],&quot; +
-	 * &quot;CONVERSION[\&quot;World Mercator\&quot;,&quot; +
-	 * &quot;METHOD[\&quot;Mercator (variant A)\&quot;,ID[\&quot;EPSG\&quot;,9804]],&quot; +
-	 * &quot;PARAMETER[\&quot;Latitude of natural origin\&quot;,0,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * +
-	 * &quot;PARAMETER[\&quot;Longitude of natural origin\&quot;,0,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * + &quot;PARAMETER[\&quot;Scale factor at natural origin\&quot;,1,SCALEUNIT[\&quot;unity\&quot;,1.0]],&quot;
-	 * + &quot;PARAMETER[\&quot;False easting\&quot;,0,LENGTHUNIT[\&quot;metre\&quot;,1.0]],&quot; +
-	 * &quot;PARAMETER[\&quot;False northing\&quot;,0,LENGTHUNIT[\&quot;metre\&quot;,1.0]]],&quot; +
-	 * &quot;CS[cartesian,2],&quot; + &quot;AXIS[\&quot;easting (E)\&quot;,east,ORDER[1]],&quot; +
-	 * &quot;AXIS[\&quot;northing (N)\&quot;,north,ORDER[2]],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,3395]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Euro-centric view of world excluding polar areas for very small scale mapping&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;WGS 84 / UPS North (E,N)&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;5041&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;5041&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;PROJCRS[\&quot;WGS 84 / UPS North (E,N)\&quot;,&quot; +
-	 * &quot;BASEGEODCRS[\&quot;WGS 84\&quot;,&quot; + &quot;DATUM[\&quot;World Geodetic System 1984\&quot;,&quot; +
-	 * &quot;ELLIPSOID[\&quot;WGS 84\&quot;,6378137,298.257223563,LENGTHUNIT[\&quot;metre\&quot;,1.0]]]],&quot; +
-	 * &quot;CONVERSION[\&quot;Universal Polar Stereographic North\&quot;,&quot; +
-	 * &quot;METHOD[\&quot;Polar Stereographic (variant A)\&quot;,ID[\&quot;EPSG\&quot;,9810]],&quot; +
-	 * &quot;PARAMETER[\&quot;Latitude of natural origin\&quot;,90,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * +
-	 * &quot;PARAMETER[\&quot;Longitude of natural origin\&quot;,0,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * +
-	 * &quot;PARAMETER[\&quot;Scale factor at natural origin\&quot;,0.994,SCALEUNIT[\&quot;unity\&quot;,1.0]],&quot;
-	 * + &quot;PARAMETER[\&quot;False easting\&quot;,2000000,LENGTHUNIT[\&quot;metre\&quot;,1.0]],&quot; +
-	 * &quot;PARAMETER[\&quot;False northing\&quot;,2000000,LENGTHUNIT[\&quot;metre\&quot;,1.0]]],&quot; +
-	 * &quot;CS[cartesian,2],&quot; +
-	 * &quot;AXIS[\&quot;easting (E)\&quot;,south,MERIDIAN[90,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],ORDER[1]],&quot;
-	 * +
-	 * &quot;AXIS[\&quot;northing (N)\&quot;,south,MERIDIAN[180,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],ORDER[2]],&quot;
-	 * + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; + &quot;ID[\&quot;EPSG\&quot;,5041]]&quot; +
-	 * &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Military mapping by NATO north of 60Â° N&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;WGS 84 / UPS South (E,N)&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;5042&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;5042&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;PROJCRS[\&quot;WGS 84 / UPS South (E,N)\&quot;,&quot; +
-	 * &quot;BASEGEODCRS[\&quot;WGS 84\&quot;,&quot; + &quot;DATUM[\&quot;World Geodetic System 1984\&quot;,&quot; +
-	 * &quot;ELLIPSOID[\&quot;WGS 84\&quot;,6378137,298.257223563,LENGTHUNIT[\&quot;metre\&quot;,1.0]]]],&quot; +
-	 * &quot;CONVERSION[\&quot;Universal Polar Stereographic South\&quot;,&quot; +
-	 * &quot;METHOD[\&quot;Polar Stereographic (variant A)\&quot;,ID[\&quot;EPSG\&quot;,9810]],&quot; +
-	 * &quot;PARAMETER[\&quot;Latitude of natural origin\&quot;,-90,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * +
-	 * &quot;PARAMETER[\&quot;Longitude of natural origin\&quot;,0,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],&quot;
-	 * +
-	 * &quot;PARAMETER[\&quot;Scale factor at natural origin\&quot;,0.994,SCALEUNIT[\&quot;unity\&quot;,1.0]],&quot;
-	 * + &quot;PARAMETER[\&quot;False easting\&quot;,2000000,LENGTHUNIT[\&quot;metre\&quot;,1.0]],&quot; +
-	 * &quot;PARAMETER[\&quot;False northing\&quot;,2000000,LENGTHUNIT[\&quot;metre\&quot;,1.0]]],&quot; +
-	 * &quot;CS[cartesian,2],&quot; +
-	 * &quot;AXIS[\&quot;easting (E)\&quot;,north,MERIDIAN[90,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],ORDER[1]],&quot;
-	 * +
-	 * &quot;AXIS[\&quot;northing (N)\&quot;,north,MERIDIAN[0,ANGLEUNIT[\&quot;degree\&quot;,0.01745329252]],ORDER[2]],&quot;
-	 * + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; + &quot;ID[\&quot;EPSG\&quot;,5042]]&quot; +
-	 * &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Military mapping by NATO south of 60Â° S&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;EGM2008 geoid height&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;3855&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;3855&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;EGM2008 height\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;EGM2008 geoid\&quot;],&quot; + &quot;CS[vertical,1],&quot; +
-	 * &quot;AXIS[\&quot;gravity-related height (H)\&quot;,up],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,3855]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Good approximation of Orthometric height above the EGM2008 modelof the geoid. Replaces EGM96 geoid (CRS code 5773).&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;EGM2008 geoid depth&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;8056&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;NGA&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;8056&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;EGM2008 geoid depth\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;EGM2008 geoid\&quot;,ANCHOR[\&quot;WGS 84 ellipsoid\&quot;]],&quot; + &quot;CS[vertical,1],&quot;
-	 * + &quot;AXIS[\&quot;gravity-related depth (D)\&quot;,down],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot;
-	 * + &quot;ID[\&quot;NSG\&quot;,\&quot;8056\&quot;]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Good approximation of Orthometric distance below the EGM2008model of the geoid.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;EGM96 geoid height&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;5773&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;5773&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;EGM96 height\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;EGM96 geoid\&quot;],&quot; + &quot;CS[vertical,1],&quot; +
-	 * &quot;AXIS[\&quot;gravity-related height (H)\&quot;,up],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,5773]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Height surface resulting from the application of the EGM96 geoidmodel to the WGS 84 ellipsoid. Replaces EGM84 geoid height (CRScode 5798). Replaced by EGM2008 geoid height (CRS code 3855).&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; +
-	 * &quot;        &lt;srs_name&gt;EGM96 geoid depth&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;8047&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;NGA&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;8047&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;EGM96 geoid depth\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;EGM96 geoid\&quot;,ANCHOR[\&quot;WGS 84 ellipsoid\&quot;]],&quot; + &quot;CS[vertical,1],&quot; +
-	 * &quot;AXIS[\&quot;gravity-related depth (D)\&quot;,down],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;NSG\&quot;,\&quot;8047\&quot;]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;The distance below the geopotential surface defined by the EarthGravity Model 1996 (EGM96) that is closely associated with the meanocean surface.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; + &quot;        &lt;srs_name&gt;MSL height&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;5714&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;5714&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;MSL height\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;Mean Sea Level\&quot;],&quot; + &quot;CS[vertical,1],&quot; +
-	 * &quot;AXIS[\&quot;gravity-related height (H)\&quot;,up],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,5714]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Height related to the average height of the surface of the sea at a tidestation for all stages of the tide over a 19-year period, usuallydetermined from hourly height readings measured from a fixedpredetermined reference level, usually by survey techniques.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;    &lt;Row&gt;&quot; + &quot;        &lt;srs_name&gt;MSL depth&lt;/srs_name&gt;&quot; +
-	 * &quot;        &lt;srs_id&gt;5715&lt;/srs_id&gt;&quot; + &quot;        &lt;organization&gt;EPSG&lt;/organization&gt;&quot;
-	 * + &quot;        &lt;organization_coordsys_id&gt;5715&lt;/organization_coordsys_id&gt;&quot; +
-	 * &quot;        &lt;definition&gt;&quot; + &quot;VERTCRS[\&quot;MSL depth\&quot;,&quot; +
-	 * &quot;VDATUM[\&quot;Mean Sea Level\&quot;],&quot; + &quot;CS[vertical,1],&quot; +
-	 * &quot;AXIS[\&quot;depth (D)\&quot;,down],&quot; + &quot;LENGTHUNIT[\&quot;metre\&quot;,1.0],&quot; +
-	 * &quot;ID[\&quot;EPSG\&quot;,5715]]&quot; + &quot;		   &lt;/definition&gt;&quot; +
-	 * &quot;        &lt;description&gt;Depth related to the average height of the surface of the sea at a tidestation for all stages of the tide over a 19-year period, usuallydetermined from hourly height readings measured from a fixedpredetermined reference level, usually by survey techniques.&lt;/description&gt;&quot;
-	 * + &quot;    &lt;/Row&gt;&quot; + &quot;&lt;/Root&gt;&quot;;
-	 */
-<span class="fc" id="L190">	NSG_SpatialReferenceSystemsTests() {</span>
-		/*
-		 * this.CRS_XML_Path = &quot;..\\webapps\\TEAMEngine\\WEB-INF\\NSG_LUTs\\&quot;; File
-		 * testPath = new File(this.CRS_XML_Path); if ( !testPath.exists() ) // --- if,
-		 * for example, in Eclipse IDE Workspace { this.CRS_XML_Path =
-		 * &quot;.\\src\\test\\resources\\WEB-INF\\NSG_LUTs\\&quot;; testPath = new
-		 * File(this.CRS_XML_Path);
-		 * 
-		 * if ( !testPath.exists() ) // --- not sure where, assume in local directory {
-		 * this.CRS_XML_Path = &quot;.&quot;; } }
-		 */
-<span class="fc" id="L201">	}</span>
-
-	// ----------------------------------------------------
-	/*
-	 * --- NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the
-	 * only CRSs used by raster tile pyramid and vector feature data tables in a
-	 * GeoPackage.
-	 * 
-	 */
-
-	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 3 (identifed CRSs)&quot;)
-	public void NSG_CRS_Test() throws SQLException {
-<span class="nc" id="L213">		NodeList crsList = NSG_XMLUtils.openXMLDocument(this.getClass().getResourceAsStream(this.NSG_CRS_listing),</span>
-				this.XML_root);
-		/*
-		 * NodeList crsList = null; if (this._useHardCode) { crsList =
-		 * NSG_XMLUtils.openXMLDocString(this.CRS_XML_Str, this.XML_root); } else {
-		 * crsList = NSG_XMLUtils.openXMLDocument(this.CRS_XML_Path + &quot;NSG_CRS_WKT.xml&quot;,
-		 * this.XML_root); }
-		 */
-<span class="nc bnc" id="L221" title="All 2 branches missed.">		Assert.assertTrue(crsList != null,</span>
-<span class="nc" id="L222">				ErrorMessage.format(ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot;));</span>
-
-<span class="nc bnc" id="L224" title="All 2 branches missed.">		if (crsList != null) {</span>
-<span class="nc" id="L225">			String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
-
-<span class="nc" id="L227">			try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L228">					final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
-<span class="nc" id="L229">				final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
-<span class="nc" id="L230">				final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
-
-<span class="nc bnc" id="L232" title="All 2 branches missed.">				while (resultSet.next()) {</span>
-<span class="nc" id="L233">					String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
-<span class="nc" id="L234">					String orgID = resultSet.getString(&quot;organization_coordsys_id&quot;).trim();</span>
-
-<span class="nc bnc" id="L236" title="All 4 branches missed.">					if (srsID.equals(&quot;0&quot;) || orgID.equals(&quot;0&quot;)) {</span>
-<span class="nc" id="L237">						continue;</span>
-					}
-<span class="nc bnc" id="L239" title="All 4 branches missed.">					if (srsID.equals(&quot;-1&quot;) || orgID.equals(&quot;-1&quot;)) {</span>
-<span class="nc" id="L240">						continue;</span>
-					}
-
-					// ---
-
-<span class="nc" id="L245">					Element element = NSG_XMLUtils.getElement(crsList, &quot;srs_id&quot;, srsID);</span>
-<span class="nc bnc" id="L246" title="All 2 branches missed.">					if (element == null) {</span>
-<span class="nc" id="L247">						invalidSrsIds.add(srsID);</span>
-					} else {
-<span class="nc" id="L249">						String crsOrgID = NSG_XMLUtils.getXMLElementTextValue(element, &quot;organization_coordsys_id&quot;)</span>
-<span class="nc" id="L250">								.trim();</span>
-<span class="nc bnc" id="L251" title="All 2 branches missed.">						if (!crsOrgID.equals(orgID)) {</span>
-<span class="nc" id="L252">							invalidOrgIds.add(orgID);</span>
-						}
-					}
-<span class="nc" id="L255">				}</span>
-<span class="nc" id="L256">				resultSet.close();</span>
-<span class="nc" id="L257">				statement.close();</span>
-
-<span class="nc" id="L259">				Assert.assertTrue(invalidSrsIds.isEmpty(),</span>
-<span class="nc" id="L260">						MessageFormat.format(&quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
-<span class="nc" id="L261">								invalidSrsIds.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc" id="L262">				Assert.assertTrue(invalidOrgIds.isEmpty(),</span>
-<span class="nc" id="L263">						MessageFormat.format(</span>
-								&quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,
-<span class="nc" id="L265">								invalidOrgIds.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc bnc" id="L266" title="All 16 branches missed.">			}</span>
-		}
-<span class="nc" id="L268">	}</span>
-
-	// ----------------------------------------------------
-
-<span class="fc" id="L272">	final private List&lt;Object[]&gt; AnnexC_3395 = new ArrayList&lt;Object[]&gt;();</span>
-<span class="fc" id="L273">	final private List&lt;Object[]&gt; AnnexE_4326 = new ArrayList&lt;Object[]&gt;();</span>
-<span class="fc" id="L274">	final private double tolerance = 1.0e-10;</span>
-
-	// ---
-
-	private void Add2List(List&lt;Object[]&gt; table, int zoom, double scale, double pixelSz, long matrixWidth,
-			long matrixHeight) {
-<span class="nc bnc" id="L280" title="All 2 branches missed.">		if (table != null) {</span>
-<span class="nc" id="L281">			Object[] row = { zoom, scale, pixelSz, matrixWidth, matrixHeight };</span>
-<span class="nc" id="L282">			table.add(row);</span>
-		}
-<span class="nc" id="L284">	}</span>
-
-	// ---
-
-	private void Add2List(List&lt;Object[]&gt; table, String zoom, String scale, String pixelSz, String matrixWidth,
-			String matrixHeight) {
-<span class="nc" id="L290">		Add2List(table, Integer.parseInt(zoom), Double.parseDouble(scale), Double.parseDouble(pixelSz),</span>
-<span class="nc" id="L291">				Long.parseLong(matrixWidth), Long.parseLong(matrixHeight));</span>
-<span class="nc" id="L292">	}</span>
-
-	// ---
-
-	private void PopulateAnnexC() {
-<span class="nc" id="L297">		AnnexC_3395.clear();</span>
-
-<span class="nc" id="L299">		try (BufferedReader br = new BufferedReader(</span>
-<span class="nc" id="L300">				new InputStreamReader(this.getClass().getResourceAsStream(this.Annex_C_3395_Table), &quot;UTF-8&quot;))) {</span>
-<span class="nc" id="L301">			String line = null;</span>
-<span class="nc bnc" id="L302" title="All 2 branches missed.">			while ((line = br.readLine()) != null) {</span>
-<span class="nc" id="L303">				List&lt;String&gt; items = Arrays.asList(line.split(&quot;\\s*,\\s*&quot;));</span>
-<span class="nc bnc" id="L304" title="All 4 branches missed.">				if (!items.isEmpty() &amp;&amp; (items.size() == 5)) {</span>
-<span class="nc" id="L305">					Add2List(AnnexC_3395, items.get(0), items.get(1), items.get(2), items.get(3), items.get(4));</span>
-				} else {
-<span class="nc" id="L307">					throw new SkipException(&quot;Annex C (EPSG:3395) Table is corrupt &quot;);</span>
-				}
-<span class="nc" id="L309">			}</span>
-<span class="nc bnc" id="L310" title="All 8 branches missed.">		} catch (IOException e) {</span>
-<span class="nc" id="L311">			throw new SkipException(&quot;Annex C (EPSG:3395) Table not available&quot;);</span>
-<span class="nc" id="L312">		}</span>
-		/*
-		 * Add2List(AnnexC_3395, 0, 559082264.028718, 156543.033928041, 1, 1);
-		 * Add2List(AnnexC_3395, 1, 279541132.014359, 78271.5169640205, 2, 2);
-		 * Add2List(AnnexC_3395, 2, 139770566.007179, 39135.7584820103, 4, 4);
-		 * Add2List(AnnexC_3395, 3, 69885283.0035897, 19567.8792410051, 8, 8);
-		 * Add2List(AnnexC_3395, 4, 34942641.5017949, 9783.9396205026, 16, 16);
-		 * Add2List(AnnexC_3395, 5, 17471320.7508974, 4891.9698102513, 32, 32);
-		 * Add2List(AnnexC_3395, 6, 8735660.37544872, 2445.9849051256, 64, 64);
-		 * Add2List(AnnexC_3395, 7, 4367830.18772436, 1222.9924525628, 128, 128);
-		 * Add2List(AnnexC_3395, 8, 2183915.09386218, 611.4962262814, 256, 256);
-		 * Add2List(AnnexC_3395, 9, 1091957.54693109, 305.7481131407, 512, 512);
-		 * Add2List(AnnexC_3395, 10, 545978.773465545, 152.8740565704, 1024, 1024);
-		 * Add2List(AnnexC_3395, 11, 272989.386732772, 76.4370282852, 2048, 2048);
-		 * Add2List(AnnexC_3395, 12, 136494.693366386, 38.2185141426, 4096, 4096);
-		 * Add2List(AnnexC_3395, 13, 68247.3466831931, 19.1092570713, 8192, 8192);
-		 * Add2List(AnnexC_3395, 14, 34123.6733415965, 9.5546285356, 16384, 16384);
-		 * Add2List(AnnexC_3395, 15, 17061.8366707983, 4.7773142678, 32768, 32768);
-		 * Add2List(AnnexC_3395, 16, 8530.9183353991, 2.3886571339, 65536, 65536);
-		 * Add2List(AnnexC_3395, 17, 4265.4591676996, 1.194328567, 131072, 131072);
-		 * Add2List(AnnexC_3395, 18, 2132.7295838498, 0.5971642835, 262144, 262144);
-		 * Add2List(AnnexC_3395, 19, 1066.3647919249, 0.2985821417, 524288, 524288);
-		 * Add2List(AnnexC_3395, 20, 533.1823959624, 0.1492910709, 1048576, 1048576);
-		 * Add2List(AnnexC_3395, 21, 266.5911979812, 0.0746455354, 2097152, 2097152);
-		 * Add2List(AnnexC_3395, 22, 133.2955989906, 0.0373227677, 4194304, 4194304);
-		 * Add2List(AnnexC_3395, 23, 66.6477994953, 0.0186613839, 8388608, 8388608);
-		 * Add2List(AnnexC_3395, 24, 33.3238997477, 0.0093306919, 16777216, 16777216);
-		 */
-
-<span class="nc" id="L341">	}</span>
-
-	private void PopulateAnnexE() {
-<span class="nc" id="L344">		AnnexE_4326.clear();</span>
-
-<span class="nc" id="L346">		try (BufferedReader br = new BufferedReader(</span>
-<span class="nc" id="L347">				new InputStreamReader(this.getClass().getResourceAsStream(this.Annex_E_4326_Table), &quot;UTF-8&quot;))) {</span>
-<span class="nc" id="L348">			String line = null;</span>
-<span class="nc bnc" id="L349" title="All 2 branches missed.">			while ((line = br.readLine()) != null) {</span>
-<span class="nc" id="L350">				List&lt;String&gt; items = Arrays.asList(line.split(&quot;\\s*,\\s*&quot;));</span>
-<span class="nc bnc" id="L351" title="All 4 branches missed.">				if (!items.isEmpty() &amp;&amp; (items.size() == 5)) {</span>
-<span class="nc" id="L352">					Add2List(AnnexE_4326, items.get(0), items.get(1), items.get(2), items.get(3), items.get(4));</span>
-				} else {
-<span class="nc" id="L354">					throw new SkipException(&quot;Annex E (EPSG:4326) Table is corrupt &quot;);</span>
-				}
-<span class="nc" id="L356">			}</span>
-<span class="nc bnc" id="L357" title="All 8 branches missed.">		} catch (IOException e) {</span>
-<span class="nc" id="L358">			throw new SkipException(&quot;Annex E (EPSG:4326) Table not available&quot;);</span>
-<span class="nc" id="L359">		}</span>
-
-		/*
-		 * Add2List(AnnexE_4326, 0, 279541132.01435900, 0.7031250, 2, 1);
-		 * Add2List(AnnexE_4326, 1, 139770566.00717900, 0.3515625, 4, 2);
-		 * Add2List(AnnexE_4326, 2, 69885283.00358960, 0.17578125, 8, 4);
-		 * Add2List(AnnexE_4326, 3, 34942641.50179480, 0.0878906250, 16, 8);
-		 * Add2List(AnnexE_4326, 4, 17471320.75089740, 0.0439453125, 32, 16);
-		 * Add2List(AnnexE_4326, 5, 8735660.37544870, 0.0219726563, 64, 32);
-		 * Add2List(AnnexE_4326, 6, 4367830.18772435, 0.0109863281, 128, 64);
-		 * Add2List(AnnexE_4326, 7, 2183915.09386218, 0.0054931641, 256, 128);
-		 * Add2List(AnnexE_4326, 8, 1091957.54693109, 0.0027465820, 512, 256);
-		 * Add2List(AnnexE_4326, 9, 545978.77346554, 0.0013732910, 1024, 512);
-		 * Add2List(AnnexE_4326, 10, 272989.38673277, 0.0006866455, 2048, 1024);
-		 * Add2List(AnnexE_4326, 11, 136494.69336639, 0.0003433228, 4096, 2048);
-		 * Add2List(AnnexE_4326, 12, 68247.34668319, 0.0001716614, 8192, 4096);
-		 * Add2List(AnnexE_4326, 13, 34123.67334160, 0.0000858307, 16384, 8192);
-		 * Add2List(AnnexE_4326, 14, 17061.83667080, 0.0000429153, 32768, 16384);
-		 * Add2List(AnnexE_4326, 15, 8530.91833540, 0.0000214577, 65536, 32768);
-		 * Add2List(AnnexE_4326, 16, 4265.45916770, 0.0000107288, 131072, 65536);
-		 * Add2List(AnnexE_4326, 17, 2132.72958385, 0.0000053644, 262144, 131072);
-		 * Add2List(AnnexE_4326, 18, 1066.36479192, 0.0000026822, 524288, 262144);
-		 * Add2List(AnnexE_4326, 19, 533.18239596, 0.0000013411, 1048576, 524288);
-		 * Add2List(AnnexE_4326, 20, 266.59119798, 0.0000006706, 2097152, 1048576);
-		 * Add2List(AnnexE_4326, 21, 133.29559899, 0.0000003353, 4194304, 2097152);
-		 * Add2List(AnnexE_4326, 22, 66.64779950, 0.0000001676, 8388608, 4194304);
-		 * Add2List(AnnexE_4326, 23, 33.32389975, 0.0000000838, 16777216, 8388608);
-		 */
-<span class="nc" id="L387">	}</span>
-
-	// ----------------------------------------------------
-	/*
-	 * --- NSG Req 4:
-	 * 
-	 * 
-	 * --- NSG Req 5:
-	 * 
-	 * 
-	 */
-	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 4 &amp; 5 (match Annex table)&quot;)
-	public void NSG_MatchAnnexTableTest() throws SQLException {
-		// --- original intent was to implement here; but may make more sense to
-		// implement in NSG_TileTests
-
-<span class="nc" id="L403">		final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
-
-<span class="nc" id="L405">		String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
-				+ &quot;FROM gpkg_tile_matrix tm &quot;
-				+ &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
-				+ &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
-
-<span class="nc" id="L410">		Statement ss = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L411">		ResultSet rs = ss.executeQuery(queryStr);</span>
-
-<span class="nc" id="L413">		try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L414">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
-<span class="nc" id="L415">			PopulateAnnexC();</span>
-<span class="nc" id="L416">			PopulateAnnexE();</span>
-<span class="nc" id="L417">			invalidMatrixEntries.clear();</span>
-
-<span class="nc" id="L419">			List&lt;Object[]&gt; table = null;</span>
-
-<span class="nc bnc" id="L421" title="All 2 branches missed.">			while (resultSet.next()) {</span>
-<span class="nc" id="L422">				String tabNam = resultSet.getString(&quot;tabName&quot;).trim();</span>
-<span class="nc" id="L423">				String srsID = resultSet.getString(&quot;crsID&quot;).trim();</span>
-<span class="nc" id="L424">				int zoomLvl = resultSet.getInt(&quot;zoomLvl&quot;);</span>
-
-<span class="nc" id="L426">				long mtrxW = resultSet.getLong(&quot;matrixW&quot;);</span>
-<span class="nc" id="L427">				long mtrxH = resultSet.getLong(&quot;matrixH&quot;);</span>
-				// int tileWidth = resultSet.getInt(&quot;tileW&quot; );
-				// int tileHeight = resultSet.getInt(&quot;tileH&quot;);
-<span class="nc" id="L430">				double pxlXSz = resultSet.getDouble(&quot;pixelSzX&quot;);</span>
-<span class="nc" id="L431">				double pxlYSz = resultSet.getDouble(&quot;pixelSzY&quot;);</span>
-
-<span class="nc bnc" id="L433" title="All 2 branches missed.">				if (srsID.equals(&quot;3395&quot;)) {</span>
-<span class="nc" id="L434">					table = this.AnnexC_3395; // --- test for: Req 4</span>
-<span class="nc bnc" id="L435" title="All 4 branches missed.">				} else if ((srsID.equals(&quot;5041&quot;)) || (srsID.equals(&quot;5042&quot;))) {</span>
-<span class="nc" id="L436">					table = null;</span>
-					// --- // --- test for: Req 4
-<span class="nc bnc" id="L438" title="All 2 branches missed.">				} else if (srsID.equals(&quot;4326&quot;)) {</span>
-<span class="nc" id="L439">					table = this.AnnexE_4326; // --- test for: Req 5</span>
-				} else {
-<span class="nc" id="L441">					table = null;</span>
-				}
-
-<span class="nc bnc" id="L444" title="All 4 branches missed.">				for (int i = 0; (table != null) &amp;&amp; (i &lt; table.size()); i++) {</span>
-<span class="nc" id="L445">					Object[] obj = table.get(i);</span>
-<span class="nc bnc" id="L446" title="All 2 branches missed.">					if (zoomLvl == (int) obj[0]) {</span>
-<span class="nc" id="L447">						long imW = (long) obj[3];</span>
-<span class="nc" id="L448">						long imH = (long) obj[4];</span>
-<span class="nc" id="L449">						double pX = (double) obj[2];</span>
-<span class="nc" id="L450">						double pY = (double) obj[2];</span>
-
-<span class="nc bnc" id="L452" title="All 2 branches missed.">						if (Math.abs(pX - pxlXSz) &gt; this.tolerance) {</span>
-<span class="nc" id="L453">							invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-									+ &quot;Pixel Size X: &quot; + pxlXSz + &quot;; but expected &quot; + pX);
-<span class="nc bnc" id="L455" title="All 2 branches missed.">						} else if (Math.abs(pY - pxlYSz) &gt; this.tolerance) {</span>
-<span class="nc" id="L456">							invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-									+ &quot;Pixel Size Y: &quot; + pxlYSz + &quot;; but expected &quot; + pY);
-<span class="nc bnc" id="L458" title="All 2 branches missed.">						} else if (imW != mtrxW) {</span>
-<span class="nc" id="L459">							invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-									+ &quot;Matrix Width: &quot; + mtrxW + &quot;; but expected &quot; + imW);
-<span class="nc bnc" id="L461" title="All 2 branches missed.">						} else if (imH != mtrxH) {</span>
-<span class="nc" id="L462">							invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-									+ &quot;Matrix Height: &quot; + mtrxH + &quot;; but expected &quot; + imH);
-						}
-					}
-				}
-<span class="nc" id="L467">			}</span>
-<span class="nc" id="L468">			resultSet.close();</span>
-<span class="nc" id="L469">			statement.close();</span>
-
-<span class="nc" id="L471">			Assert.assertTrue(invalidMatrixEntries.isEmpty(), MessageFormat.format(</span>
-					&quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,
-<span class="nc" id="L473">					invalidMatrixEntries.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc bnc" id="L474" title="All 16 branches missed.">		}</span>
-<span class="nc" id="L475">	}</span>
-
-	// ----------------------------------------------------
-	/*
-	 * --- NSG Req 6: The WGS 84 Geographic 2D CRS SHALL be used for 2D vector
-	 * features. WGS 84 Geographic 2D GeoPackages SHALL follow the technical
-	 * guidance provided in Annex E: Implementation Guide for EPSG::4326 Tiles.
-	 * 
-	 */
-
-	// --- TBD
-
-	// @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 6 (match Annex table)&quot;)
-
-	// ----------------------------------------------------
-	/*
-	 * --- NSG Req 8: The CRS definitions in Table 7 through Table 19 below SHALL be
-	 * used to specify the CRS used for tiles and vector feature user data tables
-	 * containing NSG data in a GeoPackage.
-	 * 
-	 * --- NSG Req 9: Other CRS definitions SHALL NOT be specified for GeoPackage
-	 * SQL tables containing NSG data.
-	 * 
-	 */
-
-	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 8 &amp; 9 (CRS definitions)&quot;)
-	public void NSG_CRSdefinitionsTest() throws SQLException {
-<span class="nc" id="L502">		NodeList crsList = NSG_XMLUtils.openXMLDocument(this.getClass().getResourceAsStream(this.NSG_CRS_listing),</span>
-				this.XML_root);
-		/*
-		 * NodeList crsList = null; if (this._useHardCode) { crsList =
-		 * NSG_XMLUtils.openXMLDocString(this.CRS_XML_Str, this.XML_root); } else {
-		 * crsList = NSG_XMLUtils.openXMLDocument(this.CRS_XML_Path + &quot;NSG_CRS_WKT.xml&quot;,
-		 * this.XML_root); }
-		 */
-<span class="nc bnc" id="L510" title="All 2 branches missed.">		Assert.assertTrue(crsList != null,</span>
-<span class="nc" id="L511">				ErrorMessage.format(ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot;));</span>
-
-<span class="nc bnc" id="L513" title="All 2 branches missed.">		if (crsList != null) {</span>
-<span class="nc" id="L514">			String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
-
-<span class="nc" id="L516">			try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L517">					final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
-<span class="nc" id="L518">				final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
-
-<span class="nc bnc" id="L520" title="All 2 branches missed.">				while (resultSet.next()) {</span>
-<span class="nc" id="L521">					String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
-<span class="nc bnc" id="L522" title="All 2 branches missed.">					if (srsID.equals(&quot;0&quot;)) {</span>
-<span class="nc" id="L523">						continue;</span>
-					}
-<span class="nc bnc" id="L525" title="All 2 branches missed.">					if (srsID.equals(&quot;-1&quot;)) {</span>
-<span class="nc" id="L526">						continue;</span>
-					}
-
-<span class="nc" id="L529">					String srsDef = resultSet.getString(&quot;definition&quot;).trim().replaceAll(&quot;\\s+&quot;, &quot;&quot;);</span>
-
-
-<span class="nc" id="L532">					Element element = NSG_XMLUtils.getElement(crsList, &quot;srs_id&quot;, srsID);</span>
-<span class="nc bnc" id="L533" title="All 2 branches missed.">					if (element != null) {</span>
-<span class="nc" id="L534">						String crsDef = NSG_XMLUtils.getXMLElementTextValue(element, &quot;definition&quot;).trim()</span>
-<span class="nc" id="L535">								.replaceAll(&quot;\\s+&quot;, &quot;&quot;);</span>
-						
-<span class="nc" id="L537">						System.out.println(crsDef);</span>
-<span class="nc" id="L538">						System.out.println(srsDef);</span>
-
-						String code;
-						try {
-<span class="nc" id="L542">							CoordinateReferenceSystem example = CRS.parseWKT(srsDef);</span>
-<span class="nc" id="L543">							code = CRS.lookupIdentifier(example, true);</span>
-<span class="nc" id="L544">							CoordinateReferenceSystem crs = CRS.decode(code);</span>
-<span class="nc" id="L545">							System.out.println(crs.toString());</span>
-<span class="nc" id="L546">						} catch (FactoryException e) {							</span>
-<span class="nc" id="L547">							invalidSrsDefs.add(srsID + &quot;:&quot; + srsDef);</span>
-<span class="nc" id="L548">							Assert.fail(MessageFormat.format(</span>
-								&quot;The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}&quot;,
-<span class="nc" id="L550">								invalidSrsDefs.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc" id="L551">							e.printStackTrace();</span>
-<span class="nc" id="L552">						}</span>
-
-					}
-<span class="nc" id="L555">				}</span>
-<span class="nc" id="L556">				resultSet.close();</span>
-<span class="nc" id="L557">				statement.close();</span>
-<span class="nc bnc" id="L558" title="All 16 branches missed.">			}</span>
-		}
-<span class="nc" id="L560">	}</span>
-
-	// ----------------------------------------------------
-	/*
-	 * --- NSG Req 19: Data validity SHALL be assessed against data value
-	 * constraints specified in Table 26 below using a test suite. Data validity MAY
-	 * be enforced by SQL triggers.
-	 * 
-	 * --- 19-A: Addresses Table 26 Rows 1-2 (regarding table
-	 * &quot;gpkg_spatial_ref_sys&quot;)
-	 */
-
-	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)&quot;)
-	public void NSG_DataValidity() throws SQLException {
-<span class="nc" id="L574">		NodeList crsList = NSG_XMLUtils.openXMLDocument(this.getClass().getResourceAsStream(this.NSG_CRS_listing),</span>
-				this.XML_root);
-		/*
-		 * NodeList crsList = null; if (this._useHardCode) { crsList =
-		 * NSG_XMLUtils.openXMLDocString(this.CRS_XML_Str, this.XML_root); } else {
-		 * crsList = NSG_XMLUtils.openXMLDocument(this.CRS_XML_Path + &quot;NSG_CRS_WKT.xml&quot;,
-		 * this.XML_root); }
-		 */
-<span class="nc bnc" id="L582" title="All 2 branches missed.">		Assert.assertTrue(crsList != null,</span>
-<span class="nc" id="L583">				ErrorMessage.format(ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot;));</span>
-
-<span class="nc bnc" id="L585" title="All 2 branches missed.">		if (crsList != null) {</span>
-<span class="nc" id="L586">			String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
-
-<span class="nc" id="L588">			try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L589">					final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
-<span class="nc" id="L590">				final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
-<span class="nc" id="L591">				final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
-
-<span class="nc bnc" id="L593" title="All 2 branches missed.">				while (resultSet.next()) {</span>
-<span class="nc" id="L594">					String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
-<span class="nc bnc" id="L595" title="All 2 branches missed.">					if (srsID.equals(&quot;0&quot;)) {</span>
-<span class="nc" id="L596">						continue;</span>
-					}
-<span class="nc bnc" id="L598" title="All 2 branches missed.">					if (srsID.equals(&quot;-1&quot;)) {</span>
-<span class="nc" id="L599">						continue;</span>
-					}
-
-					// --- test for: Table 26; Row 1
-
-<span class="nc" id="L604">					String srsOrg = resultSet.getString(&quot;organization&quot;).trim().toUpperCase();</span>
-<span class="nc bnc" id="L605" title="All 4 branches missed.">					if (!srsOrg.equals(&quot;EPSG&quot;) &amp;&amp; !srsOrg.equals(&quot;NGA&quot;)) {</span>
-<span class="nc" id="L606">						invalidOrgs.add(srsID + &quot;:&quot; + srsOrg);</span>
-					}
-
-					// --- test for: Table 26; Row 2
-
-<span class="nc" id="L611">					String srsDesc = resultSet.getString(&quot;description&quot;).trim();</span>
-
-<span class="nc" id="L613">					boolean found = false;</span>
-
-<span class="nc" id="L615">					Element element = NSG_XMLUtils.getElement(crsList, &quot;srs_id&quot;, srsID);</span>
-<span class="nc bnc" id="L616" title="All 2 branches missed.">					if (element != null) {</span>
-<span class="nc bnc" id="L617" title="All 4 branches missed.">						if ((srsDesc != null) &amp;&amp; (srsDesc.length() &gt; 0)</span>
-<span class="nc bnc" id="L618" title="All 2 branches missed.">								&amp;&amp; (!srsDesc.toUpperCase().equalsIgnoreCase(&quot;NULL&quot;))</span>
-<span class="nc bnc" id="L619" title="All 2 branches missed.">								&amp;&amp; (!srsDesc.toUpperCase().equalsIgnoreCase(&quot;UNK&quot;))</span>
-<span class="nc bnc" id="L620" title="All 2 branches missed.">								&amp;&amp; (!srsDesc.toUpperCase().equalsIgnoreCase(&quot;UNKNOWN&quot;))</span>
-<span class="nc bnc" id="L621" title="All 2 branches missed.">								&amp;&amp; (!srsDesc.toUpperCase().equalsIgnoreCase(&quot;TBD&quot;))) {</span>
-<span class="nc" id="L622">							String crsDesc = NSG_XMLUtils.getXMLElementTextValue(element, &quot;description&quot;).trim();</span>
-<span class="nc" id="L623">							found = crsDesc.equalsIgnoreCase(srsDesc);</span>
-<span class="nc bnc" id="L624" title="All 6 branches missed.">							if (!found &amp;&amp; (crsDesc.endsWith(&quot;.&quot;) || srsDesc.endsWith(&quot;.&quot;))) {</span>
-<span class="nc bnc" id="L625" title="All 2 branches missed.">								if (srsDesc.endsWith(&quot;.&quot;))</span>
-<span class="nc" id="L626">									srsDesc = srsDesc.substring(0, srsDesc.length() - 1);</span>
-<span class="nc bnc" id="L627" title="All 2 branches missed.">								if (crsDesc.endsWith(&quot;.&quot;))</span>
-<span class="nc" id="L628">									crsDesc = crsDesc.substring(0, crsDesc.length() - 1);</span>
-<span class="nc" id="L629">								found = crsDesc.equalsIgnoreCase(srsDesc);</span>
-							}
-						}
-					}
-
-<span class="nc bnc" id="L634" title="All 2 branches missed.">					if (!found) {</span>
-<span class="nc" id="L635">						invalidDesc.add(srsID);</span>
-					}
-<span class="nc" id="L637">				}</span>
-<span class="nc" id="L638">				resultSet.close();</span>
-<span class="nc" id="L639">				statement.close();</span>
-
-<span class="nc" id="L641">				Assert.assertTrue(invalidOrgs.isEmpty(), MessageFormat.format(</span>
-						&quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,
-<span class="nc" id="L643">						invalidOrgs.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc" id="L644">				Assert.assertTrue(invalidDesc.isEmpty(),</span>
-<span class="nc" id="L645">						MessageFormat.format(&quot;The gpkg_spatial_ref_sys table contains invalid desciptions for IDs: {0}&quot;,</span>
-<span class="nc" id="L646">								invalidDesc.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
-<span class="nc bnc" id="L647" title="All 16 branches missed.">			}</span>
-		}
-<span class="nc" id="L649">	}</span>
-
-	// ----------------------------------------------------
-
-	// ----------------------------------------------------
-
+import org.xml.sax.SAXException;
+
+<span class="fc" id="L43">public class NSG_SpatialReferenceSystemsTests extends CommonFixture {</span>
+
+<span class="fc" id="L45">    private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );</span>
+
+    private static final String NSG_CRS_LISTING = &quot;NSG_CRS_WKT.xml&quot;;
+
+    private static final String ANNEX_C_3395_TABLE = &quot;Annex_C_3395_Table.txt&quot;;
+
+    private static final String ANNEX_E_4326_TABLE = &quot;Annex_E_4326_Table.txt&quot;;
+
+    private static final double TOLERANCE = 1.0e-10;
+
+    /**
+     * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs used by raster tile pyramid
+     * and vector feature data tables in a GeoPackage.
+     *
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
+    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 3 (identified CRSs)&quot;)
+    public void crsTest()
+                            throws SQLException {
+<span class="nc" id="L65">        NodeList crsList = openCrsListing();</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
+<span class="nc" id="L67">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if ( crsList != null ) {</span>
+<span class="nc" id="L70">            String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
+
+<span class="nc" id="L72">            try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L73">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L74">                final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L75">                final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
+<span class="nc" id="L78">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc" id="L79">                    String orgID = resultSet.getString( &quot;organization_coordsys_id&quot; ).trim();</span>
+
+<span class="nc bnc" id="L81" title="All 4 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) || orgID.equals( &quot;0&quot; ) ) {</span>
+<span class="nc" id="L82">                        continue;</span>
+                    }
+<span class="nc bnc" id="L84" title="All 4 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) || orgID.equals( &quot;-1&quot; ) ) {</span>
+<span class="nc" id="L85">                        continue;</span>
+                    }
+
+<span class="nc" id="L88">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                    if ( element == null ) {</span>
+<span class="nc" id="L90">                        invalidSrsIds.add( srsID );</span>
+                    } else {
+<span class="nc" id="L92">                        String crsOrgID = NSG_XMLUtils.getXMLElementTextValue( element, &quot;organization_coordsys_id&quot; ).trim();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                        if ( !crsOrgID.equals( orgID ) ) {</span>
+<span class="nc" id="L94">                            invalidOrgIds.add( orgID );</span>
+                        }
+                    }
+<span class="nc" id="L97">                }</span>
+<span class="nc" id="L98">                resultSet.close();</span>
+<span class="nc" id="L99">                statement.close();</span>
+
+<span class="nc" id="L101">                assertTrue( invalidSrsIds.isEmpty(),</span>
+<span class="nc" id="L102">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
+<span class="nc" id="L103">                                                  invalidSrsIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L104">                assertTrue( invalidOrgIds.isEmpty(),</span>
+<span class="nc" id="L105">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,</span>
+<span class="nc" id="L106">                                                  invalidOrgIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L107" title="All 16 branches missed.">            }</span>
+        }
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
+    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 4 &amp; 5 (match Annex table)&quot;)
+    public void matchAnnexTableTest()
+                            throws SQLException {
+        // --- original intent was to implement here; but may make more sense to
+        // implement in NSG_TileTests
+<span class="nc" id="L120">        final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
+
+        // In the case there is no gpkg_tile_matrix ... say this geopackage has no tiles, skip this test
+<span class="nc" id="L123">        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix&quot;);</span>
+        
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (hasTileMatrixTable) {</span>
+        
+<span class="nc" id="L127">	        String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
+	                          + &quot;FROM gpkg_tile_matrix tm &quot;
+	                          + &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
+	                          + &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
+	
+<span class="nc" id="L132">	        try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L133">	                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L134">	            List&lt;Object[]&gt; annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, &quot;Annex C (EPSG:3395)&quot; );</span>
+<span class="nc" id="L135">	            List&lt;Object[]&gt; annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, &quot;Annex E (EPSG:4326)&quot; );</span>
+	
+<span class="nc bnc" id="L137" title="All 2 branches missed.">	            while ( resultSet.next() ) {</span>
+<span class="nc" id="L138">	                String tabNam = resultSet.getString( &quot;tabName&quot; ).trim();</span>
+<span class="nc" id="L139">	                String srsID = resultSet.getString( &quot;crsID&quot; ).trim();</span>
+<span class="nc" id="L140">	                int zoomLvl = resultSet.getInt( &quot;zoomLvl&quot; );</span>
+	
+<span class="nc" id="L142">	                long matrixW = resultSet.getLong( &quot;matrixW&quot; );</span>
+<span class="nc" id="L143">	                long matrixH = resultSet.getLong( &quot;matrixH&quot; );</span>
+<span class="nc" id="L144">	                double pixelSzX = resultSet.getDouble( &quot;pixelSzX&quot; );</span>
+<span class="nc" id="L145">	                double pixelSzY = resultSet.getDouble( &quot;pixelSzY&quot; );</span>
+	
+<span class="nc" id="L147">	                List&lt;Object[]&gt; annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">	                for ( Object[] obj : annexTable ) {</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">	                    if ( zoomLvl == (int) obj[0] ) {</span>
+<span class="nc" id="L150">	                        long imW = (long) obj[3];</span>
+<span class="nc" id="L151">	                        long imH = (long) obj[4];</span>
+<span class="nc" id="L152">	                        double pX = (double) obj[2];</span>
+<span class="nc" id="L153">	                        double pY = (double) obj[2];</span>
+	
+<span class="nc bnc" id="L155" title="All 2 branches missed.">	                        if ( Math.abs( pX - pixelSzX ) &gt; TOLERANCE ) {</span>
+<span class="nc" id="L156">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+	                                                      + &quot;Pixel Size X: &quot; + pixelSzX + &quot;; but expected &quot; + pX );
+<span class="nc bnc" id="L158" title="All 2 branches missed.">	                        } else if ( Math.abs( pY - pixelSzY ) &gt; TOLERANCE ) {</span>
+<span class="nc" id="L159">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+	                                                      + &quot;Pixel Size Y: &quot; + pixelSzY + &quot;; but expected &quot; + pY );
+<span class="nc bnc" id="L161" title="All 2 branches missed.">	                        } else if ( imW != matrixW ) {</span>
+<span class="nc" id="L162">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+	                                                      + &quot;Matrix Width: &quot; + matrixW + &quot;; but expected &quot; + imW );
+<span class="nc bnc" id="L164" title="All 2 branches missed.">	                        } else if ( imH != matrixH ) {</span>
+<span class="nc" id="L165">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+	                                                      + &quot;Matrix Height: &quot; + matrixH + &quot;; but expected &quot; + imH );
+	                        }
+	                    }
+<span class="nc" id="L169">	                }</span>
+<span class="nc" id="L170">	            }</span>
+<span class="nc" id="L171">	            assertTrue( invalidMatrixEntries.isEmpty(),</span>
+<span class="nc" id="L172">	                        MessageFormat.format( &quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,</span>
+<span class="nc" id="L173">	                                              invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L174" title="All 16 branches missed.">	        }</span>
+        }
+<span class="nc" id="L176">    }</span>
+
+    /*
+     * TODO: Implement Test for Requirement 6
+     * 
+     * --- NSG Req 6: The WGS 84 Geographic 2D CRS SHALL be used for 2D vector features. WGS 84 Geographic 2D
+     * GeoPackages SHALL follow the technical guidance provided in Annex E: Implementation Guide for EPSG::4326 Tiles.
+     * 
+     * @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 6 (match Annex table)&quot;)
+     */
+
+    /**
+     * NSG Req 8: The CRS definitions in Table 7 through Table 19 below SHALL be used to specify the CRS used for tiles
+     * and vector feature user data tables containing NSG data in a GeoPackage.
+     *
+     * NSG Req 9: Other CRS definitions SHALL NOT be specified for GeoPackage SQL tables containing NSG data.
+     *
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
+    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 8 &amp; 9 (CRS definitions)&quot;)
+    public void crsDefinitionsTest()
+                            throws SQLException {
+<span class="nc" id="L199">        NodeList crsList = openCrsListing();</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
+<span class="nc" id="L201">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if ( crsList != null ) {</span>
+<span class="nc" id="L204">            String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
+
+<span class="nc" id="L206">            try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L207">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L208">                final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
+<span class="nc" id="L211">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) ) {</span>
+<span class="nc" id="L213">                        continue;</span>
+                    }
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) ) {</span>
+<span class="nc" id="L216">                        continue;</span>
+                    }
+
+<span class="nc" id="L219">                    String srsDef = resultSet.getString( &quot;definition&quot; ).trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
+
+<span class="nc" id="L221">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
+<span class="nc" id="L222">                    String crsDef = NSG_XMLUtils.getXMLElementTextValue( element, &quot;definition&quot; ).trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
+<span class="nc" id="L223">                    boolean found = crsDef.equalsIgnoreCase( srsDef );</span>
+                    
+<span class="nc" id="L225">                    String code = &quot;&quot;;</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">                    if ( element != null &amp;&amp; !found) {</span>
+                    	try {
+	                        try {
+	                        	// This call consistently fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory
+<span class="nc" id="L230">	                            CoordinateReferenceSystem example = CRS.parseWKT( srsDef );</span>
+	
+	                            
+<span class="nc" id="L233">	                            code = CRS.lookupIdentifier( example, true );</span>
+<span class="nc" id="L234">	                        } catch (FactoryException e) {</span>
+<span class="nc" id="L235">	                            invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot; : &quot; + e.getMessage() );</span>
+<span class="nc" id="L236">	                            Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}&quot;,</span>
+<span class="nc" id="L237">	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L238">	                        }</span>
+	                        try {
+<span class="nc" id="L240">	                            CoordinateReferenceSystem  decodedcrs = CRS.decode( code );</span>
+<span class="nc" id="L241">	                        } catch ( FactoryException e ) {</span>
+<span class="nc" id="L242">	                            invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot;: &quot; + code + &quot;:&quot; + e.getMessage());</span>
+<span class="nc" id="L243">	                            Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}&quot;,</span>
+<span class="nc" id="L244">	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L245">	                        }</span>
+<span class="nc" id="L246">                    	} catch (Exception ex) {   // The exectpin is consistently being caught from the CRS.parseWKT fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory</span>
+<span class="nc" id="L247">                    		invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot; : &quot; + ex.getMessage() );</span>
+<span class="nc" id="L248">                    		LOG.log( Level.WARNING, &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.&quot;, invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) );</span>
+                        	//Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}&quot;,
+                            //    invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );
+<span class="nc" id="L251">                    	}</span>
+                    }
+<span class="nc" id="L253">                }</span>
+<span class="nc bnc" id="L254" title="All 16 branches missed.">            }</span>
+        }
+<span class="nc" id="L256">    }</span>
+
+    /**
+     * NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using a
+     * test suite. Data validity MAY be enforced by SQL triggers.
+     *
+     * 19-A: Addresses Table 26 Rows 1-2 (regarding table &quot;gpkg_spatial_ref_sys&quot;)
+     *
+     * @throws SQLException
+     *             if access to gpkg failed
+     */
+    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)&quot;)
+    public void dataValidity_gpkg_spatial_ref_sys()
+                            throws SQLException {
+<span class="nc" id="L270">        NodeList crsList = openCrsListing();</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
+<span class="nc" id="L272">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if ( crsList != null ) {</span>
+<span class="nc" id="L275">            String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
+
+<span class="nc" id="L277">            try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L278">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L279">                final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L280">                final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L282" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
+<span class="nc" id="L283">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) ) {</span>
+<span class="nc" id="L285">                        continue;</span>
+                    }
+<span class="nc bnc" id="L287" title="All 2 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) ) {</span>
+<span class="nc" id="L288">                        continue;</span>
+                    }
+
+                    // --- test for: Table 26; Row 1
+
+<span class="nc" id="L293">                    String srsOrg = resultSet.getString( &quot;organization&quot; ).trim().toUpperCase();</span>
+<span class="nc bnc" id="L294" title="All 4 branches missed.">                    if ( !srsOrg.equals( &quot;EPSG&quot; ) &amp;&amp; !srsOrg.equals( &quot;NGA&quot; ) ) {</span>
+<span class="nc" id="L295">                        invalidOrgs.add( srsID + &quot;:&quot; + srsOrg );</span>
+                    }
+
+                    // --- test for: Table 26; Row 2
+
+<span class="nc" id="L300">                    String srsDesc = resultSet.getString( &quot;description&quot; );</span>
+
+<span class="nc" id="L302">                    boolean found = false;</span>
+
+<span class="nc" id="L304">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
+<span class="nc bnc" id="L305" title="All 4 branches missed.">                    if ( element != null &amp;&amp; srsDesc != null ) {</span>
+<span class="nc" id="L306">                        srsDesc = srsDesc.trim();</span>
+<span class="nc bnc" id="L307" title="All 4 branches missed.">                        if ( srsDesc.length() &gt; 0 &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;NULL&quot; ) )</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;UNK&quot; ) )</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;UNKNOWN&quot; ) )</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;TBD&quot; ) ) ) {</span>
+<span class="nc" id="L311">                            String crsDesc = NSG_XMLUtils.getXMLElementTextValue( element, &quot;description&quot; ).trim();</span>
+<span class="nc" id="L312">                            found = crsDesc.equalsIgnoreCase( srsDesc );</span>
+<span class="nc bnc" id="L313" title="All 6 branches missed.">                            if ( !found &amp;&amp; ( crsDesc.endsWith( &quot;.&quot; ) || srsDesc.endsWith( &quot;.&quot; ) ) ) {</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">                                if ( srsDesc.endsWith( &quot;.&quot; ) )</span>
+<span class="nc" id="L315">                                    srsDesc = srsDesc.substring( 0, srsDesc.length() - 1 );</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">                                if ( crsDesc.endsWith( &quot;.&quot; ) )</span>
+<span class="nc" id="L317">                                    crsDesc = crsDesc.substring( 0, crsDesc.length() - 1 );</span>
+<span class="nc" id="L318">                                found = crsDesc.equalsIgnoreCase( srsDesc );</span>
+                            }
+                        }
+                    }
+
+<span class="nc bnc" id="L323" title="All 2 branches missed.">                    if ( !found ) {</span>
+<span class="nc" id="L324">                        invalidDesc.add( srsID );</span>
+                    }
+<span class="nc" id="L326">                }</span>
+<span class="nc" id="L327">                resultSet.close();</span>
+<span class="nc" id="L328">                statement.close();</span>
+
+<span class="nc" id="L330">                assertTrue( invalidOrgs.isEmpty(),</span>
+<span class="nc" id="L331">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,</span>
+<span class="nc" id="L332">                                                  invalidOrgs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L333">                assertTrue( invalidDesc.isEmpty(),</span>
+<span class="nc" id="L334">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid desciptions for IDs: {0}&quot;,</span>
+<span class="nc" id="L335">                                                  invalidDesc.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L336" title="All 16 branches missed.">            }</span>
+        }
+<span class="nc" id="L338">    }</span>
+
+
+    
+    private List&lt;Object[]&gt; selectAnnexBySrsId( String srsID, List&lt;Object[]&gt; annexC_3395, List&lt;Object[]&gt; annexE_4326 ) {
+<span class="nc bnc" id="L343" title="All 2 branches missed.">        if ( srsID.equals( &quot;3395&quot; ) ) {</span>
+<span class="nc" id="L344">            return annexC_3395;</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        } else if ( srsID.equals( &quot;4326&quot; ) ) {</span>
+<span class="nc" id="L346">            return annexE_4326;</span>
+<span class="nc bnc" id="L347" title="All 4 branches missed.">        } else if ( ( srsID.equals( &quot;5041&quot; ) ) || ( srsID.equals( &quot;5042&quot; ) ) ) {</span>
+<span class="nc" id="L348">            return Collections.emptyList();</span>
+        }
+<span class="nc" id="L350">        return Collections.emptyList();</span>
+    }
+
+    private List&lt;Object[]&gt; populateAnnex( String annexTableName, String annexName ) {
+<span class="nc" id="L354">        InputStream resourceToRead = this.getClass().getResourceAsStream( annexTableName );</span>
+<span class="nc" id="L355">        try (BufferedReader br = new BufferedReader( new InputStreamReader( resourceToRead, &quot;UTF-8&quot; ) )) {</span>
+<span class="nc" id="L356">            List&lt;Object[]&gt; annexEntries = new ArrayList&lt;&gt;();</span>
+            String line;
+<span class="nc bnc" id="L358" title="All 2 branches missed.">            while ( ( line = br.readLine() ) != null ) {</span>
+<span class="nc" id="L359">                List&lt;String&gt; items = Arrays.asList( line.split( &quot;\\s*,\\s*&quot; ) );</span>
+<span class="nc bnc" id="L360" title="All 4 branches missed.">                if ( !items.isEmpty() &amp;&amp; ( items.size() == 5 ) ) {</span>
+<span class="nc" id="L361">                    addNewEntry( annexEntries, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),</span>
+<span class="nc" id="L362">                                 items.get( 4 ) );</span>
+                } else {
+<span class="nc" id="L364">                    throw new SkipException( annexName + &quot; Table is corrupt &quot; );</span>
+                }
+<span class="nc" id="L366">            }</span>
+<span class="nc" id="L367">            return annexEntries;</span>
+<span class="nc bnc" id="L368" title="All 8 branches missed.">        } catch ( IOException e ) {</span>
+<span class="nc" id="L369">            throw new SkipException( annexName + &quot; Table not available&quot; );</span>
+        }
+    }
+    
+
+    private void addNewEntry( List&lt;Object[]&gt; table, String zoom, String scale, String pixelSz, String matrixWidth,
+                              String matrixHeight ) {
+<span class="nc" id="L376">        int zoomAsInt = Integer.parseInt( zoom );</span>
+<span class="nc" id="L377">        double scaleAsDouble = Double.parseDouble( scale );</span>
+<span class="nc" id="L378">        double pixelSizeAsDouble = Double.parseDouble( pixelSz );</span>
+<span class="nc" id="L379">        long matrixWidthAsLong = Long.parseLong( matrixWidth );</span>
+<span class="nc" id="L380">        long matrixHeightAsLong = Long.parseLong( matrixHeight );</span>
+<span class="nc" id="L381">        Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };</span>
+<span class="nc" id="L382">        table.add( row );</span>
+<span class="nc" id="L383">    }</span>
+
+    private NodeList openCrsListing() {
+<span class="nc" id="L386">        InputStream crsListing = this.getClass().getResourceAsStream( NSG_CRS_LISTING );</span>
+<span class="nc" id="L387">        String rootName = &quot;Row&quot;;</span>
+<span class="nc" id="L388">        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
+
+        try {
+<span class="nc" id="L391">            DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
+<span class="nc" id="L392">            Document dom = ioe.parse( crsListing );</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">            if ( dom != null ) {</span>
+<span class="nc" id="L394">                Element docElems = dom.getDocumentElement();</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">                if ( docElems != null ) {</span>
+<span class="nc" id="L396">                    return docElems.getElementsByTagName( rootName );</span>
+                }
+            }
+<span class="nc" id="L399">        } catch ( ParserConfigurationException | SAXException | IOException e ) {</span>
+<span class="nc" id="L400">            LOG.log( Level.SEVERE, &quot;Could not open CRS listing.&quot;, e );</span>
+<span class="nc" id="L401">        }</span>
+
+<span class="nc" id="L403">        return null;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,154 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_XMLUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.util</a> &gt; <span class="el_source">NSG_XMLUtils.java</span></div><h1>NSG_XMLUtils.java</h1><pre class="source lang-java linenums">
-package org.opengis.cite.gpkg12.nsg.util;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_XMLUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.util</a> &gt; <span class="el_source">NSG_XMLUtils.java</span></div><h1>NSG_XMLUtils.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.opengis.cite.gpkg12.util.XMLUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-<span class="nc" id="L19">public class NSG_XMLUtils extends XMLUtils</span>
-{
-	public static String getXMLElementTextValue(Element ele, String tagName)
-	{
-<span class="nc" id="L23">		String textVal = null;</span>
-<span class="nc" id="L24">		NodeList nl = ele.getElementsByTagName(tagName);</span>
-<span class="nc bnc" id="L25" title="All 4 branches missed.">		if (nl != null &amp;&amp; nl.getLength() &gt; 0)</span>
-		{
-<span class="nc" id="L27">			Element el = (Element) nl.item(0);</span>
-<span class="nc" id="L28">			textVal = el.getFirstChild().getNodeValue();</span>
-		}
+<span class="nc" id="L7">public class NSG_XMLUtils extends XMLUtils {</span>
 
-<span class="nc" id="L31">		return textVal;</span>
-	}
+    /**
+     * @param element
+     *            never &lt;code&gt;null&lt;/code&gt;
+     * @param tagName
+     *            never &lt;code&gt;null&lt;/code&gt;
+     * @return The text value of the tag with the passed name which is a descendant of the passed element,
+     *         &lt;code&gt;null&lt;/code&gt; if the element does not contain the passed tag
+     */
+    public static String getXMLElementTextValue( Element element, String tagName ) {
+<span class="nc" id="L18">        NodeList nl = element.getElementsByTagName( tagName );</span>
+<span class="nc bnc" id="L19" title="All 4 branches missed.">        if ( nl != null &amp;&amp; nl.getLength() &gt; 0 ) {</span>
+<span class="nc" id="L20">            Element el = (Element) nl.item( 0 );</span>
+<span class="nc" id="L21">            return el.getFirstChild().getNodeValue();</span>
+        }
+<span class="nc" id="L23">        return null;</span>
+    }
 
-	// ----------------------------------------------------
-	
-	public static Element getElement(NodeList nodes, String tagName, String value)
-	{
-<span class="nc" id="L38">		Element ele = null;</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">		for (int ni=0; ni&lt;nodes.getLength(); ni++)</span>
-		{
-<span class="nc" id="L41">			Element e = (Element)nodes.item(ni);  </span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">			if (getXMLElementTextValue(e,tagName).equalsIgnoreCase(value))</span>
-			{
-<span class="nc" id="L44">				ele = e;</span>
-<span class="nc" id="L45">				break;</span>
-			}
-		}
-<span class="nc" id="L48">		return ele;</span>
-	}
-	
-	// ----------------------------------------------------
+    /**
+     *
+     * @param nodes
+     *            a list of nodes to search in, never &lt;code&gt;null&lt;/code&gt;
+     * @param tagName
+     *            the name of tag, never &lt;code&gt;null&lt;/code&gt;
+     * @param value
+     *            the text value
+     * @return the first element with the passed tag name and value (case insensitive), may be &lt;code&gt;null&lt;/code&gt; if no
+     *         such element could be found
+     */
+    public static Element getElementByTextValue( NodeList nodes, String tagName, String value ) {
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        for ( int ni = 0; ni &lt; nodes.getLength(); ni++ ) {</span>
+<span class="nc" id="L39">            Element e = (Element) nodes.item( ni );</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">            if ( getXMLElementTextValue( e, tagName ).equalsIgnoreCase( value ) ) {</span>
+<span class="nc" id="L41">                return e;</span>
+            }
+        }
+<span class="nc" id="L44">        return null;</span>
+    }
 
-	public static NodeList openXMLDocString(String _xmlStr, String rootName)
-	{
-<span class="nc" id="L55">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
-
-		try 
-		{
-<span class="nc" id="L59">			DocumentBuilder docBld = dbf.newDocumentBuilder();</span>
-<span class="nc" id="L60">			Document doc = docBld.parse(new InputSource(new StringReader(_xmlStr)));</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">			if (doc != null)</span>
-			{
-<span class="nc" id="L63">				Element docElems = doc.getDocumentElement();</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">				if (docElems != null)</span>
-				{
-<span class="nc" id="L66">					return docElems.getElementsByTagName(rootName);</span>
-				}
-			}
-		}
-<span class="nc" id="L70">		catch (ParserConfigurationException pcEx) </span>
-		{
-<span class="nc" id="L72">			pcEx.printStackTrace();</span>
-		} 
-<span class="nc" id="L74">		catch (SAXException saxEx)</span>
-		{
-<span class="nc" id="L76">			saxEx.printStackTrace();</span>
-		} 
-<span class="nc" id="L78">		catch (IOException ioEx)</span>
-		{
-<span class="nc" id="L80">			ioEx.printStackTrace();</span>
-<span class="nc" id="L81">		}</span>
-
-<span class="nc" id="L83">		return null;</span>
-	}
-
-	// ----------------------------------------------------
-	
-	public static NodeList openXMLDocument(String xmlName, String rootName)
-	{
-<span class="nc" id="L90">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
-
-		try
-		{
-<span class="nc" id="L94">			DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
-<span class="nc" id="L95">			Document dom = ioe.parse(xmlName);</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">			if (dom != null) {</span>
-<span class="nc" id="L97">				Element docElems = dom.getDocumentElement();</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">				if (docElems != null) {</span>
-<span class="nc" id="L99">					return docElems.getElementsByTagName(rootName);</span>
-				}
-			}
-		}
-<span class="nc" id="L103">		catch (ParserConfigurationException pcEx)</span>
-		{
-<span class="nc" id="L105">			pcEx.printStackTrace();</span>
-		}
-<span class="nc" id="L107">		catch (SAXException saxEx)</span>
-		{
-<span class="nc" id="L109">			saxEx.printStackTrace();</span>
-		}
-<span class="nc" id="L111">		catch (IOException ioEx)</span>
-		{
-<span class="nc" id="L113">			ioEx.printStackTrace();</span>
-<span class="nc" id="L114">		}</span>
-
-<span class="nc" id="L116">		return null;</span>
-	}
-	
-	// ----------------------------------------------------
-	
-	public static NodeList openXMLDocument(InputStream xml_IS, String rootName)
-	{
-<span class="nc" id="L123">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
-
-		try
-		{
-<span class="nc" id="L127">			DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
-<span class="nc" id="L128">			Document dom = ioe.parse(xml_IS);</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">			if (dom != null) {</span>
-<span class="nc" id="L130">				Element docElems = dom.getDocumentElement();</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">				if (docElems != null) {</span>
-<span class="nc" id="L132">					return docElems.getElementsByTagName(rootName);</span>
-				}
-			}
-		}
-<span class="nc" id="L136">		catch (ParserConfigurationException pcEx)</span>
-		{
-<span class="nc" id="L138">			pcEx.printStackTrace();</span>
-		}
-<span class="nc" id="L140">		catch (SAXException saxEx)</span>
-		{
-<span class="nc" id="L142">			saxEx.printStackTrace();</span>
-		}
-<span class="nc" id="L144">		catch (IOException ioEx)</span>
-		{
-<span class="nc" id="L146">			ioEx.printStackTrace();</span>
-<span class="nc" id="L147">		}</span>
-
-<span class="nc" id="L149">		return null;</span>
-	}
-	
-	// ----------------------------------------------------
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
