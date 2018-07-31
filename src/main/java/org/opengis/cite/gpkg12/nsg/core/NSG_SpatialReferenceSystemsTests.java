@@ -120,58 +120,59 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
         final Collection<String> invalidMatrixEntries = new LinkedList<>();
 
         // In the case there is no gpkg_tile_matrix ... say this geopackage has no tiles, skip this test
-        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist(this.databaseConnection, "gpkg_tile_matrix");
-        
-        if (hasTileMatrixTable) {
-        
-	        String queryStr = "SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY "
-	                          + "FROM gpkg_tile_matrix tm "
-	                          + "INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel "
-	                          + "ON tm.table_name=sel.table_name " + "WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;";
-	
-	        try (final Statement statement = this.databaseConnection.createStatement();
-	                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
-	            List<Object[]> annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, "Annex C (EPSG:3395)" );
-	            List<Object[]> annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, "Annex E (EPSG:4326)" );
-	
-	            while ( resultSet.next() ) {
-	                String tabNam = resultSet.getString( "tabName" ).trim();
-	                String srsID = resultSet.getString( "crsID" ).trim();
-	                int zoomLvl = resultSet.getInt( "zoomLvl" );
-	
-	                long matrixW = resultSet.getLong( "matrixW" );
-	                long matrixH = resultSet.getLong( "matrixH" );
-	                double pixelSzX = resultSet.getDouble( "pixelSzX" );
-	                double pixelSzY = resultSet.getDouble( "pixelSzY" );
-	
-	                List<Object[]> annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );
-	                for ( Object[] obj : annexTable ) {
-	                    if ( zoomLvl == (int) obj[0] ) {
-	                        long imW = (long) obj[3];
-	                        long imH = (long) obj[4];
-	                        double pX = (double) obj[2];
-	                        double pY = (double) obj[2];
-	
-	                        if ( Math.abs( pX - pixelSzX ) > TOLERANCE ) {
-	                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-	                                                      + "Pixel Size X: " + pixelSzX + "; but expected " + pX );
-	                        } else if ( Math.abs( pY - pixelSzY ) > TOLERANCE ) {
-	                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-	                                                      + "Pixel Size Y: " + pixelSzY + "; but expected " + pY );
-	                        } else if ( imW != matrixW ) {
-	                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-	                                                      + "Matrix Width: " + matrixW + "; but expected " + imW );
-	                        } else if ( imH != matrixH ) {
-	                            invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
-	                                                      + "Matrix Height: " + matrixH + "; but expected " + imH );
-	                        }
-	                    }
-	                }
-	            }
-	            assertTrue( invalidMatrixEntries.isEmpty(),
-	                        MessageFormat.format( "The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}",
-	                                              invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-	        }
+        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist( this.databaseConnection,
+                                                                                 "gpkg_tile_matrix" );
+
+        if ( hasTileMatrixTable ) {
+
+            String queryStr = "SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY "
+                              + "FROM gpkg_tile_matrix tm "
+                              + "INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel "
+                              + "ON tm.table_name=sel.table_name " + "WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;";
+
+            try (final Statement statement = this.databaseConnection.createStatement();
+                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {
+                List<Object[]> annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, "Annex C (EPSG:3395)" );
+                List<Object[]> annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, "Annex E (EPSG:4326)" );
+
+                while ( resultSet.next() ) {
+                    String tabNam = resultSet.getString( "tabName" ).trim();
+                    String srsID = resultSet.getString( "crsID" ).trim();
+                    int zoomLvl = resultSet.getInt( "zoomLvl" );
+
+                    long matrixW = resultSet.getLong( "matrixW" );
+                    long matrixH = resultSet.getLong( "matrixH" );
+                    double pixelSzX = resultSet.getDouble( "pixelSzX" );
+                    double pixelSzY = resultSet.getDouble( "pixelSzY" );
+
+                    List<Object[]> annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );
+                    for ( Object[] obj : annexTable ) {
+                        if ( zoomLvl == (int) obj[0] ) {
+                            long imW = (long) obj[3];
+                            long imH = (long) obj[4];
+                            double pX = (double) obj[2];
+                            double pY = (double) obj[2];
+
+                            if ( Math.abs( pX - pixelSzX ) > TOLERANCE ) {
+                                invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                          + "Pixel Size X: " + pixelSzX + "; but expected " + pX );
+                            } else if ( Math.abs( pY - pixelSzY ) > TOLERANCE ) {
+                                invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                          + "Pixel Size Y: " + pixelSzY + "; but expected " + pY );
+                            } else if ( imW != matrixW ) {
+                                invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                          + "Matrix Width: " + matrixW + "; but expected " + imW );
+                            } else if ( imH != matrixH ) {
+                                invalidMatrixEntries.add( tabNam + " (" + srsID + ", Zoom Level: " + zoomLvl + "): "
+                                                          + "Matrix Height: " + matrixH + "; but expected " + imH );
+                            }
+                        }
+                    }
+                }
+                assertTrue( invalidMatrixEntries.isEmpty(),
+                            MessageFormat.format( "The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}",
+                                                  invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+            }
         }
     }
 
@@ -219,36 +220,45 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
                     String srsDef = resultSet.getString( "definition" ).trim().replaceAll( "\\s+", "" );
 
                     Element element = NSG_XMLUtils.getElementByTextValue( crsList, "srs_id", srsID );
-                    String crsDef = NSG_XMLUtils.getXMLElementTextValue( element, "definition" ).trim().replaceAll( "\\s+", "" );
+                    String crsDef = NSG_XMLUtils.getXMLElementTextValue( element, "definition" ).trim().replaceAll( "\\s+",
+                                                                                                                    "" );
                     boolean found = crsDef.equalsIgnoreCase( srsDef );
-                    
+
                     String code = "";
-                    if ( element != null && !found) {
-                    	try {
-	                        try {
-	                        	// This call consistently fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory
-	                            CoordinateReferenceSystem example = CRS.parseWKT( srsDef );
-	
-	                            
-	                            code = CRS.lookupIdentifier( example, true );
-	                        } catch (FactoryException e) {
-	                            invalidSrsDefs.add( srsID + ":" + srsDef + " : " + e.getMessage() );
-	                            Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}",
-	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-	                        }
-	                        try {
-	                            CoordinateReferenceSystem  decodedcrs = CRS.decode( code );
-	                        } catch ( FactoryException e ) {
-	                            invalidSrsDefs.add( srsID + ":" + srsDef + ": " + code + ":" + e.getMessage());
-	                            Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}",
-	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-	                        }
-                    	} catch (Exception ex) {   // The exectpin is consistently being caught from the CRS.parseWKT fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory
-                    		invalidSrsDefs.add( srsID + ":" + srsDef + " : " + ex.getMessage() );
-                    		LOG.log( Level.WARNING, "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.", invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
-                        	//Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}",
-                            //    invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-                    	}
+                    if ( element != null && !found ) {
+                        try {
+                            try {
+                                // This call consistently fails with:
+                                // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to
+                                // org.opengis.referencing.Factory
+                                CoordinateReferenceSystem example = CRS.parseWKT( srsDef );
+
+                                code = CRS.lookupIdentifier( example, true );
+                            } catch ( FactoryException e ) {
+                                invalidSrsDefs.add( srsID + ":" + srsDef + " : " + e.getMessage() );
+                                Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}",
+                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+                            }
+                            try {
+                                CoordinateReferenceSystem decodedcrs = CRS.decode( code );
+                            } catch ( FactoryException e ) {
+                                invalidSrsDefs.add( srsID + ":" + srsDef + ": " + code + ":" + e.getMessage() );
+                                Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}",
+                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+                            }
+                        } catch ( Exception ex ) { // The exectpin is consistently being caught from the CRS.parseWKT
+                                                   // fails with:
+                                                   // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot
+                                                   // be cast to org.opengis.referencing.Factory
+                            invalidSrsDefs.add( srsID + ":" + srsDef + " : " + ex.getMessage() );
+                            LOG.log( Level.WARNING,
+                                     "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.",
+                                     invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
+                            // Assert.fail( MessageFormat.format(
+                            // "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}",
+                            // invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) )
+                            // );
+                        }
                     }
                 }
             }
@@ -337,8 +347,6 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
         }
     }
 
-
-    
     private List<Object[]> selectAnnexBySrsId( String srsID, List<Object[]> annexC_3395, List<Object[]> annexE_4326 ) {
         if ( srsID.equals( "3395" ) ) {
             return annexC_3395;
@@ -369,7 +377,6 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
             throw new SkipException( annexName + " Table not available" );
         }
     }
-    
 
     private void addNewEntry( List<Object[]> table, String zoom, String scale, String pixelSz, String matrixWidth,
                               String matrixHeight ) {
