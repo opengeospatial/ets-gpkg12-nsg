@@ -36,7 +36,8 @@ public class CrsListingUtils {
             String id = getXMLElementTextValue( row, "srs_id" );
             String definition = getXMLElementTextValue( row, "definition" );
             String organization_coordsys_id = getXMLElementTextValue( row, "organization_coordsys_id" );
-            crsList.addListing( id, definition, organization_coordsys_id );
+            String description = getXMLElementTextValue( row, "description" );
+            crsList.addListing( id, definition, organization_coordsys_id, description );
         }
         return crsList;
 

@@ -208,44 +208,45 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
                     continue;
                 }
 
-                String srsDef = parseromResultSetAndRemoveWhiteSpaces( resultSet, "definition" );
-                String crsDef = crsListing.getDefinitionBySrsId( srsID );
-
-                boolean found = crsDef != null && crsDef.equalsIgnoreCase( srsDef );
-                if ( !found ) {
-                    try {
-                        String code = "";
+                String definition = resultSet.getString( "definition" );
+                String expectedDefinition = crsListing.getDefinitionBySrsId( srsID );
+                if ( definition != null ) {
+                    boolean found = expectedDefinition != null && compareDefintion( definition, expectedDefinition );
+                    if ( !found ) {
                         try {
-                            // This call consistently fails with:
-                            // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to
-                            // org.opengis.referencing.Factory
-                            CoordinateReferenceSystem example = CRS.parseWKT( srsDef );
+                            String code = "";
+                            try {
+                                // This call consistently fails with:
+                                // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to
+                                // org.opengis.referencing.Factory
+                                CoordinateReferenceSystem example = CRS.parseWKT( definition );
 
-                            code = CRS.lookupIdentifier( example, true );
-                        } catch ( FactoryException e ) {
-                            invalidSrsDefs.add( srsID + ":" + srsDef + " : " + e.getMessage() );
-                            Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}",
-                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+                                code = CRS.lookupIdentifier( example, true );
+                            } catch ( FactoryException e ) {
+                                invalidSrsDefs.add( srsID + ":" + definition + " : " + e.getMessage() );
+                                Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}",
+                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+                            }
+                            try {
+                                CoordinateReferenceSystem decodedcrs = CRS.decode( code );
+                            } catch ( FactoryException e ) {
+                                invalidSrsDefs.add( srsID + ":" + definition + ": " + code + ":" + e.getMessage() );
+                                Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}",
+                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+                            }
+                        } catch ( Exception ex ) { // The exectpin is consistently being caught from the CRS.parseWKT
+                            // fails with:
+                            // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot
+                            // be cast to org.opengis.referencing.Factory
+                            invalidSrsDefs.add( srsID + ":" + definition + " : " + ex.getMessage() );
+                            LOG.log( Level.WARNING,
+                                     "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.",
+                                     invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
+                            // Assert.fail( MessageFormat.format(
+                            // "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}",
+                            // invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) )
+                            // );
                         }
-                        try {
-                            CoordinateReferenceSystem decodedcrs = CRS.decode( code );
-                        } catch ( FactoryException e ) {
-                            invalidSrsDefs.add( srsID + ":" + srsDef + ": " + code + ":" + e.getMessage() );
-                            Assert.fail( MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}",
-                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-                        }
-                    } catch ( Exception ex ) { // The exectpin is consistently being caught from the CRS.parseWKT
-                                               // fails with:
-                                               // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot
-                                               // be cast to org.opengis.referencing.Factory
-                        invalidSrsDefs.add( srsID + ":" + srsDef + " : " + ex.getMessage() );
-                        LOG.log( Level.WARNING,
-                                 "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.",
-                                 invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
-                        // Assert.fail( MessageFormat.format(
-                        // "The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}",
-                        // invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) )
-                        // );
                     }
                 }
             }
@@ -276,54 +277,71 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
 
             while ( resultSet.next() ) {
                 String srsID = resultSet.getString( "srs_id" ).trim();
-                if ( srsID.equals( "0" ) ) {
-                    continue;
-                }
-                if ( srsID.equals( "-1" ) ) {
+                if ( "0".equals( srsID ) || "-1".equals( srsID ) ) {
                     continue;
                 }
 
                 // --- test for: Table 26; Row 1
-
-                String srsOrg = resultSet.getString( "organization" ).trim().toUpperCase();
-                if ( !srsOrg.equals( "EPSG" ) && !srsOrg.equals( "NGA" ) ) {
-                    invalidOrgs.add( srsID + ":" + srsOrg );
-                }
+                String srsOrg = resultSet.getString( "organization" );
+                validateCrsOrganistion( srsID, srsOrg, invalidOrgs );
 
                 // --- test for: Table 26; Row 2
-
-                String srsDesc = parseromResultSetAndRemoveWhiteSpaces( resultSet, "description" );
-                String crsDesc = crsListing.getDefinitionBySrsId( srsID );
-
-                boolean found = false;
-                if ( crsDesc != null && srsDesc != null ) {
-                    if ( srsDefintionRequiresCheck( srsDesc ) ) {
-                        found = isStringEqual( srsDesc, crsDesc );
-                    }
-                }
-
-                if ( !found ) {
-                    invalidDesc.add( srsID );
-                }
+                String description = resultSet.getString( "description" );
+                validateCrsDescription( srsID, description, invalidDesc );
             }
-            resultSet.close();
-            statement.close();
 
             assertTrue( invalidOrgs.isEmpty(),
                         MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'",
                                               invalidOrgs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
             assertTrue( invalidDesc.isEmpty(),
-                        MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid desciptions for IDs: {0}",
+                        MessageFormat.format( "The gpkg_spatial_ref_sys table contains invalid descriptions for IDs: {0}",
                                               invalidDesc.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
         }
     }
 
-    private boolean isStringEqual( String srsDesc, String crsDesc ) {
-        if ( srsDesc.endsWith( "." ) )
-            srsDesc = srsDesc.substring( 0, srsDesc.length() - 1 );
-        if ( crsDesc.endsWith( "." ) )
-            crsDesc = crsDesc.substring( 0, crsDesc.length() - 1 );
-        return crsDesc.equalsIgnoreCase( srsDesc );
+    private void validateCrsOrganistion( String srsID, String srsOrg, Collection<String> invalidOrgs ) {
+        if ( srsOrg == null ) {
+            invalidOrgs.add( srsID + ": null (expected 'EPSG' or 'NGA')" );
+        } else {
+            srsOrg = srsOrg.trim();
+            if ( !"EPSG".equalsIgnoreCase( srsOrg ) && !"NGA".equalsIgnoreCase( srsOrg ) ) {
+                invalidOrgs.add( srsID + ": " + srsOrg + " (expected 'EPSG' or 'NGA')" );
+            }
+        }
+    }
+
+    private void validateCrsDescription( String srsID, String description, Collection<String> invalidDesc ) {
+        if ( description == null ) {
+            invalidDesc.add( srsID + " (expected not to be null)" );
+            return;
+        }
+        if ( !isCrsDescriptionValid( description ) ) {
+            invalidDesc.add( srsID
+                             + ": '"
+                             + description
+                             + "' (expected not to be an empty string, not all whitespace, not “unknown” (any case), not “tbd” (any case))" );
+            return;
+        }
+        String expectedDescription = crsListing.getDescriptionBySrsId( srsID );
+        if ( expectedDescription != null && !isDescriptionAsExpected( description, expectedDescription ) ) {
+            invalidDesc.add( srsID + " : '" + description + "' (expected: '" + expectedDescription + "')" );
+        }
+    }
+
+    private boolean isDescriptionAsExpected( String descriptionToTest, String expectedDescription ) {
+        descriptionToTest = removeWhitespaces( descriptionToTest );
+        expectedDescription = removeWhitespaces( expectedDescription );
+        if ( descriptionToTest.endsWith( "." ) )
+            descriptionToTest = descriptionToTest.substring( 0, descriptionToTest.length() - 1 );
+        if ( expectedDescription.endsWith( "." ) )
+            expectedDescription = expectedDescription.substring( 0, expectedDescription.length() - 1 );
+        return descriptionToTest.equalsIgnoreCase( expectedDescription );
+    }
+
+    private boolean compareDefintion( String definitionToTest, String expectedDefinition ) {
+        definitionToTest = removeWhitespaces( definitionToTest );
+        expectedDefinition = removeWhitespaces( expectedDefinition );
+        return definitionToTest.equalsIgnoreCase( expectedDefinition );
     }
 
     private List<Object[]> selectAnnexBySrsId( String srsID, List<Object[]> annexC_3395, List<Object[]> annexE_4326 ) {
@@ -368,17 +386,16 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
         table.add( row );
     }
 
-    private String parseromResultSetAndRemoveWhiteSpaces( ResultSet resultSet, String column )
-                            throws SQLException {
-        String description = resultSet.getString( column );
-        if ( description == null )
-            return null;
-        return description.trim().replaceAll( "\\s+", "" );
+    private String removeWhitespaces( String description ) {
+        if ( description != null )
+            return description.trim().replaceAll( "\\s+", "" );
+        return description;
     }
 
-    private boolean srsDefintionRequiresCheck( String srsDesc ) {
-        return srsDesc.length() > 0 && ( !srsDesc.equalsIgnoreCase( "NULL" ) ) && ( !srsDesc.equalsIgnoreCase( "UNK" ) )
-               && ( !srsDesc.equalsIgnoreCase( "UNKNOWN" ) ) && ( !srsDesc.equalsIgnoreCase( "TBD" ) );
+    private boolean isCrsDescriptionValid( String srsDesc ) {
+        return srsDesc.length() > 0 && srsDesc.trim().length() > 0 && ( !srsDesc.equalsIgnoreCase( "NULL" ) )
+               && ( !srsDesc.equalsIgnoreCase( "UNK" ) ) && ( !srsDesc.equalsIgnoreCase( "UNKNOWN" ) )
+               && ( !srsDesc.equalsIgnoreCase( "TBD" ) );
     }
 
 }
