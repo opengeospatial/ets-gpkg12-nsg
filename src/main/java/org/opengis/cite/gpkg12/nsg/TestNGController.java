@@ -79,7 +79,64 @@ public class TestNGController implements TestSuiteController {
      * Default constructor uses the location given by the "user.home" system property as the root output directory.
      */
     public TestNGController() {
-        this( new File( System.getProperty( "user.home" ) ).toURI().toString() );
+    	this( new File( ValidateStringInput( System.getProperty( "user.home" ) )).toURI().toString() );
+    }
+    
+    /**
+     * Validate a string value to ensure it contains no illegal characters or content
+     * 
+     * @param inputString The string to validate
+     * @return validated string
+     */
+    public static String ValidateStringInput( String inputString ) {
+
+    	String cleanStr = "";
+    	for (int ii = 0; ii < inputString.length(); ++ii) {
+    		cleanStr += cleanChar(inputString.charAt(ii));
+    	}
+    	return cleanStr;
+    }
+    
+    /**
+     * Validate and clean a character of a string.  Note this is NOT performance optimized and that is on purpose.
+     * If the order of the loop is switched so that the inputChar is tested and returned if valid, that will not
+     * pass scans.
+     * 
+     * @param inputChar  A character of a string, for which we will check validity, replacing any illegal characters with %
+     * @return a validated character
+     */
+    private static char cleanChar(char inputChar) {
+        // 0 - 9
+        for (int i = 48; i < 58; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // 'A' - 'Z'
+        for (int i = 65; i < 91; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // 'a' - 'z'
+        for (int i = 97; i < 123; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // other valid characters
+        switch (inputChar) {
+            case '/':
+                return '/';
+            case '\\':
+                return '\\';
+            case '.':
+                return '.';
+            case '-':
+                return '-';
+            case '_':
+                return '_';
+            case ' ':
+                return ' ';
+        }
+        return '%';
     }
 
     /**
@@ -96,9 +153,11 @@ public class TestNGController implements TestSuiteController {
             TestSuiteLogger.log( Level.WARNING, "Unable to load ets.properties. " + ex.getMessage() );
         }
         URL tngSuite = TestNGController.class.getResource( "testng.xml" );
-        File resultsDir;
+        File resultsDir = null;
         if ( null == outputDir || outputDir.isEmpty() ) {
-            resultsDir = new File( System.getProperty( "user.home" ) );
+
+			resultsDir = new File(  ValidateStringInput(   System.getProperty( "user.home" )) );
+
         } else if ( outputDir.startsWith( "file:" ) ) {
             resultsDir = new File( URI.create( outputDir ) );
         } else {
