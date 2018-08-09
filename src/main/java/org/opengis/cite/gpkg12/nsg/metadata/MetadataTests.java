@@ -50,6 +50,8 @@ public class MetadataTests extends CommonFixture {
 	                assertSchemaValid( validator, source );
 	            }
 	        }
+        } else {
+        	throw new SkipException( "Table gpkg_metadata required to evaluate metadata." );
         }
     }
 
