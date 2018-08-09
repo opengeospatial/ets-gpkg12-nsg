@@ -279,6 +279,8 @@ public class NSG_TileTests extends CommonFixture {
 	                }
 	            }
 	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix required to perform this test." );
 	    }
     }
 
@@ -382,6 +384,8 @@ public class NSG_TileTests extends CommonFixture {
 	                                                  Double.valueOf( maxY ), tableName, Double.valueOf( mbr[3] ) ) );
 	            }
 	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix_set required to perform this test." );
 	    }
     }
 
@@ -406,6 +410,8 @@ public class NSG_TileTests extends CommonFixture {
 	            }
 	            
 	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix_set required to perform this test." );
 	    }
     	return tableNamesAndExtents;
     }
