@@ -11,48 +11,61 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * @author <a href="mailto:goltz@lat-lon.de">Lyn Goltz </a>
  */
 public class MetadataTestsTest {
 
-    @Test
+    private MetadataTests metadataTests;
+
+    @Before
+    public void initMetadataTests()
+            throws SAXException, ParserConfigurationException {
+        this.metadataTests = new MetadataTests();
+        metadataTests.initSchema();
+        metadataTests.initDocumentBuilder();
+    }
+
+    @Test(expected = AssertionError.class)
     public void testWithOneInvalidEntry()
                             throws Exception {
-        MetadataTests metadataTests = new MetadataTests();
-        metadataTests.initSchema();
+        ResultSet resultSet = mockResultSetWithOneStringEntry();
+        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
+        assertThat( xmlEntries.size(), is( 0 ) );
 
-        ResultSet resultSet = mockResultSetWithOneInvalidEntry();
-        boolean isValid = metadataTests.hasValidEntry( resultSet );
-        assertThat( isValid, is( false ) );
+        metadataTests.validateXmlEntries( xmlEntries );
     }
 
     @Test
     public void testWithOneValidEntry()
                             throws Exception {
-        MetadataTests metadataTests = new MetadataTests();
-        metadataTests.initSchema();
-
         ResultSet resultSet = mockResultSetWithOneValidEntry();
-        boolean isValid = metadataTests.hasValidEntry( resultSet );
-        assertThat( isValid, is( true ) );
+        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
+        assertThat( xmlEntries.size(), is( 1 ) );
+
+        metadataTests.validateXmlEntries( xmlEntries );
     }
 
     @Test
     public void testWithOneInvalidAndOneValidEntry()
                             throws Exception {
-        MetadataTests metadataTests = new MetadataTests();
-        metadataTests.initSchema();
-
         ResultSet resultSet = mockResultSetWithOneInvalidAndOneValidEntry();
-        boolean isValid = metadataTests.hasValidEntry( resultSet );
-        assertThat( isValid, is( true ) );
+        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
+        assertThat( xmlEntries.size(), is( 1 ) );
+
+        metadataTests.validateXmlEntries( xmlEntries );
     }
 
-    private ResultSet mockResultSetWithOneInvalidEntry()
+    private ResultSet mockResultSetWithOneStringEntry()
                             throws SQLException {
         ResultSet mock = mock( ResultSet.class );
         when( mock.next() ).thenReturn( true, false );

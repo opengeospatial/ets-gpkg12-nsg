@@ -13,7 +13,7 @@
 <!--<?xml-stylesheet href="./nas/nmisGmdSchem.xsl" type="text/xsl"?>-->
 <!--<?xml-stylesheet href="./nas/nmisGmiSchem.xsl" type="text/xsl"?>-->
 
-<nas:MD_Metadata xmlns:nas="http://metadata.ces.mil/dse/ns/GSIP/5.0/nas" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ism="urn:us:gov:ic:ism" xmlns:ntk="urn:us:gov:ic:ntk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.ces.mil/dse/ns/GSIP/5.0/nas ./nas/nmis.xsd" ism:DESVersion="6" ntk:DESVersion="4" ism:resourceElement="true" ism:createDate="2010-09-21" ism:classification="U" ism:ownerProducer="USA">
+<nas:MD_Metadata xmlns:nas="http://metadata.ces.mil/dse/ns/GSIP/5.0/nas" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ism="urn:us:gov:ic:ism" xmlns:ntk="urn:us:gov:ic:ntk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.ces.mil/dse/ns/GSIP/5.0/nas ./NMIS_v2.X_Schema/nas/nmis.xsd" ism:DESVersion="9" ntk:DESVersion="7" ism:resourceElement="true" ism:createDate="2010-09-21" ism:classification="U" ism:ownerProducer="USA">
     <!-- Note that the value of the xsi:schemaLocation in this example references a local copy of the nmis.xsd.
           The correct reference in the DSE is: http://metadata.ces.mil/dse/ns/GSIP/nmis/2.1.0/nmis.xsd.
   -->
