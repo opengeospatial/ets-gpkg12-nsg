@@ -25,6 +25,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.opengis.cite.gpkg12.CommonFixture;
+import org.opengis.cite.gpkg12.util.DatabaseUtility;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
@@ -67,11 +68,16 @@ public class MetadataTests extends CommonFixture {
                             throws SQLException {
         if ( this.schema == null )
             throw new SkipException( "Schema required for validation could not be loaded." );
+        
+        if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, "gpkg_metadata")) {
 
-        try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( "SELECT metadata FROM gpkg_metadata;" )) {
-            List<String> xmlEntries = findXmlEntries( resultSet );
-            validateXmlEntries( xmlEntries );
+          try (final Statement statement = this.databaseConnection.createStatement();
+                                  final ResultSet resultSet = statement.executeQuery( "SELECT metadata FROM gpkg_metadata;" )) {
+              List<String> xmlEntries = findXmlEntries( resultSet );
+              validateXmlEntries( xmlEntries );
+	        }
+        } else {
+        	throw new SkipException( "Table gpkg_metadata required to evaluate metadata." );
         }
     }
 

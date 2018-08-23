@@ -1,6 +1,7 @@
 package org.opengis.cite.gpkg12.nsg;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -20,6 +21,8 @@ import org.opengis.cite.gpkg12.util.TestSuiteLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import org.apache.commons.io.FilenameUtils;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -79,8 +82,11 @@ public class TestNGController implements TestSuiteController {
      * Default constructor uses the location given by the "user.home" system property as the root output directory.
      */
     public TestNGController() {
-        this( new File( System.getProperty( "user.home" ) ).toURI().toString() );
+    	this( new File( FilenameUtils.normalize( System.getProperty( "user.home" ) )).toURI().toString() );
     }
+    
+    
+
 
     /**
      * Construct a controller that writes results to the given output directory.
@@ -96,9 +102,11 @@ public class TestNGController implements TestSuiteController {
             TestSuiteLogger.log( Level.WARNING, "Unable to load ets.properties. " + ex.getMessage() );
         }
         URL tngSuite = TestNGController.class.getResource( "testng.xml" );
-        File resultsDir;
+        File resultsDir = null;
         if ( null == outputDir || outputDir.isEmpty() ) {
-            resultsDir = new File( System.getProperty( "user.home" ) );
+
+			resultsDir = new File(  FilenameUtils.normalize(   System.getProperty( "user.home" )) );
+
         } else if ( outputDir.startsWith( "file:" ) ) {
             resultsDir = new File( URI.create( outputDir ) );
         } else {

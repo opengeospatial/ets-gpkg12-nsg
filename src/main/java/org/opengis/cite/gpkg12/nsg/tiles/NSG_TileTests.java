@@ -32,6 +32,7 @@ import org.opengis.cite.gpkg12.CommonFixture;
 import org.opengis.cite.gpkg12.ErrorMessage;
 import org.opengis.cite.gpkg12.ErrorMessageKeys;
 import org.opengis.cite.gpkg12.tiles.TileTests;
+import org.opengis.cite.gpkg12.util.DatabaseUtility;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -46,7 +47,60 @@ public class NSG_TileTests extends CommonFixture {
     private static final int MAX_ZOOM = 24;
 
     private static final double TOLERANCE = 1.0e-10;
+    
 
+    /**
+     * Validate a string value to ensure it contains no illegal characters or content
+     * 
+     * @param inputString The string to validate
+     * @return validated string
+     */
+    public static String ValidateStringInput( String inputString ) {
+
+    	String cleanStr = "";
+    	for (int ii = 0; ii < inputString.length(); ++ii) {
+    		cleanStr += cleanChar(inputString.charAt(ii));
+    	}
+    	return cleanStr;
+    }
+    
+    /**
+     * Validate and clean a character of a string.
+     * 
+     * @param inputChar  A character of a string, for which we will check validity, replacing any illegal characters with %
+     * @return a validated character
+     */
+    private static char cleanChar(char inputChar) {
+        // 0 - 9
+        for (int i = 48; i < 58; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // 'A' - 'Z'
+        for (int i = 65; i < 91; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // 'a' - 'z'
+        for (int i = 97; i < 123; ++i) {
+            if (inputChar == i) return (char) i;
+        }
+
+        // other valid characters
+        switch (inputChar) {
+            case '.':
+                return '.';
+            case '-':
+                return '-';
+            case '_':
+                return '_';
+            case ' ':
+                return ' ';
+        }
+        return '%';
+    }
+
+    
     /**
      * NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using a
      * test suite. Data validity MAY be enforced by SQL triggers.
@@ -65,14 +119,13 @@ public class NSG_TileTests extends CommonFixture {
         try (final Statement statement = this.databaseConnection.createStatement();
                                 final ResultSet resultSet = statement.executeQuery( queryStr )) {
             while ( resultSet.next() ) {
-                String tableName = resultSet.getString( "table_name" ).trim();
+                String tableName = ValidateStringInput(resultSet.getString( "table_name" ).trim());
                 int firstZoom = 999;
                 int lastZoom = -1;
-                String zoomLevelQuery = "SELECT DISTINCT zoom_level FROM " + tableName + " ORDER BY zoom_level;";
 
                 // test for: Table 26; Row 12 & 17
                 try (final Statement tileStatement = this.databaseConnection.createStatement();
-                                        final ResultSet tileResultSet = tileStatement.executeQuery( zoomLevelQuery )) {
+                                        final ResultSet tileResultSet = tileStatement.executeQuery( "SELECT DISTINCT zoom_level FROM " + tableName + " ORDER BY zoom_level;" )) {
                     while ( tileResultSet.next() ) {
                         int zoom = tileResultSet.getInt( "zoom_level" );
                         firstZoom = Math.min( firstZoom, zoom );
@@ -91,11 +144,10 @@ public class NSG_TileTests extends CommonFixture {
                                                                           + " table contains an invalid maximum zoom_level: {0}, should be: {1}",
                                                   Integer.toString( firstZoom ), Integer.toString( this.MAX_ZOOM ) ) );
 
-                String zoomLevelAndExtentQuery = "SELECT zoom_level, tile_width, tile_height, pixel_x_size, pixel_y_size FROM gpkg_tile_matrix WHERE table_name=\'"
-                                                 + tableName + "\' ORDER BY zoom_level;";
 
                 try (final Statement tileStatement = this.databaseConnection.createStatement();
-                                        final ResultSet tileResultSet = tileStatement.executeQuery( zoomLevelAndExtentQuery )) {
+                                        final ResultSet tileResultSet = tileStatement.executeQuery( "SELECT zoom_level, tile_width, tile_height, pixel_x_size, pixel_y_size FROM gpkg_tile_matrix WHERE table_name=\'"
+                                                + tableName + "\' ORDER BY zoom_level;" )) {
                     boolean firstFound = false;
                     boolean lastFound = false;
                     double pixelSzX = 0.0D;
@@ -178,53 +230,58 @@ public class NSG_TileTests extends CommonFixture {
     @Test(groups = { "NSG" }, description = "NSG Req 20 & 21 (Tile widths and heights)")
     public void tileSizeTests()
                             throws SQLException, IOException {
-        // test Req 20
-        Collection<String> tableNameAndExtents = collectTableNameAndExtents();
-        assertTrue( tableNameAndExtents.isEmpty(),
-                    MessageFormat.format( "The gpkg_tile_matrix table contains invalid tile width/height values for tables: {0}",
-                                          tableNameAndExtents.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-
-        // test Req 21
-        String tableNameQuery = "SELECT DISTINCT table_name FROM gpkg_tile_matrix;";
-
-        try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( tableNameQuery )) {
-            while ( resultSet.next() ) {
-                String tableName = resultSet.getString( "table_name" );
-                String subQueryStr = "SELECT zoom_level, tile_column, tile_row, tile_data FROM " + tableName;
-
-                try (final Statement subStatement = this.databaseConnection.createStatement();
-                                        final ResultSet subResultSet = subStatement.executeQuery( subQueryStr )) {
-                    while ( subResultSet.next() ) {
-                        byte[] image = subResultSet.getBytes( "tile_data" );
-                        ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream( image ) );
-                        Iterator readers = ImageIO.getImageReaders( iis );
-
-                        while ( readers.hasNext() ) {
-                            ImageReader read = (ImageReader) readers.next();
-                            read.setInput( iis, true );
-                            int width = read.getWidth( 0 );
-                            int height = read.getHeight( 0 );
-
-                            assertTrue( ( width == 256 ),
-                                        MessageFormat.format( "The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_width: {4}",
-                                                              tableName,
-                                                              Integer.toString( subResultSet.getInt( "zoom_level" ) ),
-                                                              Integer.toString( subResultSet.getInt( "tile_column" ) ),
-                                                              Integer.toString( subResultSet.getInt( "tile_row" ) ),
-                                                              Integer.toString( width ) ) );
-                            assertTrue( ( height == 256 ),
-                                        MessageFormat.format( "The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_height: {4}",
-                                                              tableName,
-                                                              Integer.toString( subResultSet.getInt( "zoom_level" ) ),
-                                                              Integer.toString( subResultSet.getInt( "tile_column" ) ),
-                                                              Integer.toString( subResultSet.getInt( "tile_row" ) ),
-                                                              Integer.toString( height ) ) );
-                        }
-                    }
-                }
-            }
-        }
+        
+    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, "gpkg_tile_matrix")) {
+    		
+	    	// test Req 20
+	        Collection<String> tableNameAndExtents = collectTableNameAndExtents();
+	        assertTrue( tableNameAndExtents.isEmpty(),
+	                    MessageFormat.format( "The gpkg_tile_matrix table contains invalid tile width/height values for tables: {0}",
+	                                          tableNameAndExtents.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
+	
+	        // test Req 21
+	        String tableNameQuery = "SELECT DISTINCT table_name FROM gpkg_tile_matrix;";
+	
+	        try (final Statement statement = this.databaseConnection.createStatement();
+	                                final ResultSet resultSet = statement.executeQuery( tableNameQuery )) {
+	            while ( resultSet.next() ) {
+	                String tableName = ValidateStringInput(resultSet.getString( "table_name" ).trim());
+	
+	                try (final Statement subStatement = this.databaseConnection.createStatement();
+	                                        final ResultSet subResultSet = subStatement.executeQuery( "SELECT zoom_level, tile_column, tile_row, tile_data FROM " + tableName )) {
+	                    while ( subResultSet.next() ) {
+	                        byte[] image = subResultSet.getBytes( "tile_data" );
+	                        ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream( image ) );
+	                        Iterator readers = ImageIO.getImageReaders( iis );
+	
+	                        while ( readers.hasNext() ) {
+	                            ImageReader read = (ImageReader) readers.next();
+	                            read.setInput( iis, true );
+	                            int width = read.getWidth( 0 );
+	                            int height = read.getHeight( 0 );
+	
+	                            assertTrue( ( width == 256 ),
+	                                        MessageFormat.format( "The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_width: {4}",
+	                                                              tableName,
+	                                                              Integer.toString( subResultSet.getInt( "zoom_level" ) ),
+	                                                              Integer.toString( subResultSet.getInt( "tile_column" ) ),
+	                                                              Integer.toString( subResultSet.getInt( "tile_row" ) ),
+	                                                              Integer.toString( width ) ) );
+	                            assertTrue( ( height == 256 ),
+	                                        MessageFormat.format( "The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_height: {4}",
+	                                                              tableName,
+	                                                              Integer.toString( subResultSet.getInt( "zoom_level" ) ),
+	                                                              Integer.toString( subResultSet.getInt( "tile_column" ) ),
+	                                                              Integer.toString( subResultSet.getInt( "tile_row" ) ),
+	                                                              Integer.toString( height ) ) );
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix required to perform this test." );
+	    }
     }
 
     /**
@@ -244,7 +301,8 @@ public class NSG_TileTests extends CommonFixture {
         try (final Statement statement = this.databaseConnection.createStatement();
                                 final ResultSet resultSet = statement.executeQuery( queryStr )) {
             while ( resultSet.next() ) {
-                String tableName = resultSet.getString( "table_name" ).trim();
+                String tableName = ValidateStringInput(resultSet.getString( "table_name" ).trim());
+
                 String subQueryStr = "SELECT pixel_x_size, pixel_y_size FROM gpkg_tile_matrix " + "WHERE table_name=\'"
                                      + tableName + "\' ORDER BY zoom_level;";
 
@@ -289,59 +347,73 @@ public class NSG_TileTests extends CommonFixture {
     @Test(groups = { "NSG" }, description = "NSG Req 23 (bounding box in gpkg_tile_matrix_set)")
     public void boundingBoxTests()
                             throws SQLException {
-        String queryStr = "SELECT table_name, srs_id, min_x, min_y, max_x, max_y FROM gpkg_tile_matrix_set;";
-
-        try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
-            while ( resultSet.next() ) {
-                String srsID = resultSet.getString( "srs_id" ).trim();
-                String tableName = resultSet.getString( "table_name" ).trim();
-                double[] mbr = findMbrBySrsId( srsID );
-
-                assertTrue( ( mbr != null ),
-                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid CRS definition: {0} for table {1}",
-                                                  srsID, tableName ) );
-
-                double minX = resultSet.getDouble( "min_x" );
-                assertTrue( ( minX == mbr[0] ),
-                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid min_x value: {0} for table {1} (should be {2})",
-                                                  Double.valueOf( minX ), tableName, Double.valueOf( mbr[0] ) ) );
-
-                double minY = resultSet.getDouble( "min_y" );
-                assertTrue( ( minY == mbr[1] ),
-                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid min_y value: {0} for table {1} (should be {2})",
-                                                  Double.valueOf( minY ), tableName, Double.valueOf( mbr[1] ) ) );
-
-                double maxX = resultSet.getDouble( "max_x" );
-                assertTrue( ( maxX == mbr[2] ),
-                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid max_x value: {0} for table {1} (should be {2})",
-                                                  Double.valueOf( maxX ), tableName, Double.valueOf( mbr[2] ) ) );
-
-                double maxY = resultSet.getDouble( "max_y" );
-                assertTrue( ( maxY == mbr[3] ),
-                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid max_y value: {0} for table {1} (should be {2})",
-                                                  Double.valueOf( maxY ), tableName, Double.valueOf( mbr[3] ) ) );
-            }
-        }
+    	
+    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, "gpkg_tile_matrix_set")) {
+    		
+	        String queryStr = "SELECT table_name, srs_id, min_x, min_y, max_x, max_y FROM gpkg_tile_matrix_set;";
+	
+	        try (final Statement statement = this.databaseConnection.createStatement();
+	                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
+	            while ( resultSet.next() ) {
+	                String srsID = resultSet.getString( "srs_id" ).trim();
+	                String tableName = resultSet.getString( "table_name" ).trim();
+	                double[] mbr = findMbrBySrsId( srsID );
+	
+	                assertTrue( ( mbr != null ),
+	                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid CRS definition: {0} for table {1}",
+	                                                  srsID, tableName ) );
+	
+	                double minX = resultSet.getDouble( "min_x" );
+	                assertTrue( ( minX == mbr[0] ),
+	                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid min_x value: {0} for table {1} (should be {2})",
+	                                                  Double.valueOf( minX ), tableName, Double.valueOf( mbr[0] ) ) );
+	
+	                double minY = resultSet.getDouble( "min_y" );
+	                assertTrue( ( minY == mbr[1] ),
+	                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid min_y value: {0} for table {1} (should be {2})",
+	                                                  Double.valueOf( minY ), tableName, Double.valueOf( mbr[1] ) ) );
+	
+	                double maxX = resultSet.getDouble( "max_x" );
+	                assertTrue( ( maxX == mbr[2] ),
+	                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid max_x value: {0} for table {1} (should be {2})",
+	                                                  Double.valueOf( maxX ), tableName, Double.valueOf( mbr[2] ) ) );
+	
+	                double maxY = resultSet.getDouble( "max_y" );
+	                assertTrue( ( maxY == mbr[3] ),
+	                            MessageFormat.format( "The gpkg_tile_matrix_set contains an invalid max_y value: {0} for table {1} (should be {2})",
+	                                                  Double.valueOf( maxY ), tableName, Double.valueOf( mbr[3] ) ) );
+	            }
+	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix_set required to perform this test." );
+	    }
     }
 
     private Collection<String> collectTableNameAndExtents()
                             throws SQLException {
-        String tableNameAndExtentsQuery = "SELECT table_name, zoom_level, tile_width, tile_height FROM gpkg_tile_matrix "
-                                          + "WHERE NOT ((tile_width=256) AND (tile_height=256));";
-
-        try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( tableNameAndExtentsQuery )) {
-            final Collection<String> tableNamesAndExtents = new LinkedList<>();
-
-            while ( resultSet.next() ) {
-                String tableName = resultSet.getString( "table_name" );
-                int tileWidth = resultSet.getInt( "tile_width" );
-                int tileHeight = resultSet.getInt( "tile_height" );
-                tableNamesAndExtents.add( tableName + ": (tile_width)" + tileWidth + ", (tile_height)" + tileHeight );
-            }
-            return tableNamesAndExtents;
-        }
+    	
+    	final Collection<String> tableNamesAndExtents = new LinkedList<>();
+    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, "gpkg_tile_matrix_set")) {
+    		
+	        String tableNameAndExtentsQuery = "SELECT table_name, zoom_level, tile_width, tile_height FROM gpkg_tile_matrix "
+	                                          + "WHERE NOT ((tile_width=256) AND (tile_height=256));";
+	
+	        try (final Statement statement = this.databaseConnection.createStatement();
+	                                final ResultSet resultSet = statement.executeQuery( tableNameAndExtentsQuery )) {
+	            
+	
+	            while ( resultSet.next() ) {
+	                String tableName = resultSet.getString( "table_name" );
+	                int tileWidth = resultSet.getInt( "tile_width" );
+	                int tileHeight = resultSet.getInt( "tile_height" );
+	                tableNamesAndExtents.add( tableName + ": (tile_width)" + tileWidth + ", (tile_height)" + tileHeight );
+	            }
+	            
+	        }
+	    } else {
+	    	throw new SkipException( "Table gpkg_tile_matrix_set required to perform this test." );
+	    }
+    	return tableNamesAndExtents;
     }
 
     private double[] findMbrBySrsId( String srsID ) {
@@ -411,7 +483,7 @@ public class NSG_TileTests extends CommonFixture {
         if ( resultSet.getString( testBoundsColumn ) != null ) {
             double val = resultSet.getDouble( testBoundsColumn );
 
-            double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+            double bnd = this.checkTileBounds( ValidateStringInput(srsTabNam), testBoundsColumn );
             if ( val > bnd ) {
                 invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
             }
@@ -424,7 +496,7 @@ public class NSG_TileTests extends CommonFixture {
         if ( resultSet.getString( testBoundsColumn ) != null ) {
             double val = resultSet.getDouble( testBoundsColumn );
 
-            double bnd = this.checkTileBounds( srsTabNam, testBoundsColumn );
+            double bnd = this.checkTileBounds( ValidateStringInput(srsTabNam), testBoundsColumn );
             if ( val < bnd ) {
                 invalidValue.add( srsTabNam + ":" + val + ", should be: " + bnd );
             }
@@ -438,15 +510,16 @@ public class NSG_TileTests extends CommonFixture {
      */
     private double checkTileBounds( String tableName, String boundsColumn )
                             throws SQLException {
-        String queryStr = "SELECT " + boundsColumn + " FROM gpkg_tile_matrix_set WHERE table_name = \'" + tableName
-                          + "\';";
+
         try (final Statement statement = this.databaseConnection.createStatement();
-                                final ResultSet resultSet = statement.executeQuery( queryStr )) {
+                                final ResultSet resultSet = statement.executeQuery( "SELECT " + boundsColumn + " FROM gpkg_tile_matrix_set WHERE table_name = \'" + tableName + "\';" )) {
             assertTrue( resultSet.next(), ErrorMessage.format( ErrorMessageKeys.BAD_TILE_MATRIX_SET_TABLE_DEFINITION ) );
 
             return resultSet.getDouble( boundsColumn );
         }
-    }
+	}
+
+
     
 
 
