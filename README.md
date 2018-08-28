@@ -58,6 +58,10 @@ The latest test suite release are usually available at the [beta testing facilit
 You can also [build and deploy](https://github.com/opengeospatial/teamengine) the test
 harness yourself and use a local installation.
 
+#### 4. Docker
+
+This test suite comes with a Dockerfile which can be used to easily setup the OGC test harness with
+the test suite. Details can be found on [Create Docker Image and create and start Docker Container](https://github.com/opengeospatial/cite/wiki/How-to-create-Docker-Images-of-test-suites#create-docker-image-and-create-and-start-docker-container).
 
 ### How to contribute
 
