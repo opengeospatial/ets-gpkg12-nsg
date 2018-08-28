@@ -1,5 +1,15 @@
 # Release Notes NSG GeoPackage 2.1
 
+## 0.5 (2018-08-28)
+
+* [#21](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/21): Test NSG_filenameExtension is a duplicate of the test filenameExtension
+* [#36](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/36): Lack of metadata results in SQLITE ERROR hard failure
+* [#38](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/38): Fortify scan reports issues
+* [#37](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/37): Geopackage having no Tile data results in SQLITE ERROR
+* [#27](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/27): Improve exception message of test dataValidity_gpkg_spatial_ref_sys
+* [#30](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/30): Test metadataSchemaValidation fails if table gpkg_metadata contains multiple values with at least one not NMIS valid entry
+* [#42](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/42): Introduce Dockerfile and Maven Docker plugin
+
 ## 0.4 (2018-07-13)
 
 * [#33](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/33): Set GeoPackage 1.2 ETS dependency to version 0.7
