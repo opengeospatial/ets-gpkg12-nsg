@@ -20,37 +20,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.geotools.referencing.CRS;
 import org.opengis.cite.gpkg12.CommonFixture;
-import org.opengis.cite.gpkg12.ErrorMessage;
-import org.opengis.cite.gpkg12.ErrorMessageKeys;
-import org.opengis.cite.gpkg12.nsg.util.NSG_XMLUtils;
+import org.opengis.cite.gpkg12.nsg.util.CrsList;
+import org.opengis.cite.gpkg12.nsg.util.CrsListingUtils;
 import org.opengis.cite.gpkg12.util.DatabaseUtility;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.testng.Assert;
 import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-<span class="fc" id="L43">public class NSG_SpatialReferenceSystemsTests extends CommonFixture {</span>
+<span class="fc" id="L35">public class NSG_SpatialReferenceSystemsTests extends CommonFixture {</span>
 
-<span class="fc" id="L45">    private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );</span>
-
-    private static final String NSG_CRS_LISTING = &quot;NSG_CRS_WKT.xml&quot;;
+<span class="fc" id="L37">    private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );</span>
 
     private static final String ANNEX_C_3395_TABLE = &quot;Annex_C_3395_Table.txt&quot;;
 
     private static final String ANNEX_E_4326_TABLE = &quot;Annex_E_4326_Table.txt&quot;;
 
     private static final double TOLERANCE = 1.0e-10;
+
+    private CrsList crsListing;
+
+    @BeforeClass
+    public void parseCrsListing() {
+<span class="nc" id="L49">        crsListing = CrsListingUtils.parseCrsListing();</span>
+<span class="nc" id="L50">    }</span>
 
     /**
      * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs used by raster tile pyramid
@@ -62,51 +59,47 @@ import org.xml.sax.SAXException;
     @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 3 (identified CRSs)&quot;)
     public void crsTest()
                             throws SQLException {
-<span class="nc" id="L65">        NodeList crsList = openCrsListing();</span>
-<span class="nc bnc" id="L66" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
-<span class="nc" id="L67">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if ( crsListing == null )</span>
+<span class="nc" id="L63">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
 
-<span class="nc bnc" id="L69" title="All 2 branches missed.">        if ( crsList != null ) {</span>
-<span class="nc" id="L70">            String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
+<span class="nc" id="L65">        String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
 
-<span class="nc" id="L72">            try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L73">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="nc" id="L74">                final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
-<span class="nc" id="L75">                final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L67">        try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L68">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L69">            final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L70">            final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
 
-<span class="nc bnc" id="L77" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
-<span class="nc" id="L78">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="nc" id="L79">                    String orgID = resultSet.getString( &quot;organization_coordsys_id&quot; ).trim();</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            while ( resultSet.next() ) {</span>
+<span class="nc" id="L73">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc" id="L74">                String orgID = resultSet.getString( &quot;organization_coordsys_id&quot; ).trim();</span>
 
-<span class="nc bnc" id="L81" title="All 4 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) || orgID.equals( &quot;0&quot; ) ) {</span>
-<span class="nc" id="L82">                        continue;</span>
+<span class="nc bnc" id="L76" title="All 4 branches missed.">                if ( srsID.equals( &quot;0&quot; ) || orgID.equals( &quot;0&quot; ) ) {</span>
+<span class="nc" id="L77">                    continue;</span>
+                }
+<span class="nc bnc" id="L79" title="All 4 branches missed.">                if ( srsID.equals( &quot;-1&quot; ) || orgID.equals( &quot;-1&quot; ) ) {</span>
+<span class="nc" id="L80">                    continue;</span>
+                }
+
+<span class="nc" id="L83">                String crsOrgID = crsListing.getOrganizationCoordsysIdBySrsId( srsID );</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                if ( crsOrgID == null ) {</span>
+<span class="nc" id="L85">                    invalidSrsIds.add( srsID );</span>
+                } else {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                    if ( !crsOrgID.equals( orgID ) ) {</span>
+<span class="nc" id="L88">                        invalidOrgIds.add( orgID );</span>
                     }
-<span class="nc bnc" id="L84" title="All 4 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) || orgID.equals( &quot;-1&quot; ) ) {</span>
-<span class="nc" id="L85">                        continue;</span>
-                    }
+                }
+<span class="nc" id="L91">            }</span>
+<span class="nc" id="L92">            resultSet.close();</span>
+<span class="nc" id="L93">            statement.close();</span>
 
-<span class="nc" id="L88">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">                    if ( element == null ) {</span>
-<span class="nc" id="L90">                        invalidSrsIds.add( srsID );</span>
-                    } else {
-<span class="nc" id="L92">                        String crsOrgID = NSG_XMLUtils.getXMLElementTextValue( element, &quot;organization_coordsys_id&quot; ).trim();</span>
-<span class="nc bnc" id="L93" title="All 2 branches missed.">                        if ( !crsOrgID.equals( orgID ) ) {</span>
-<span class="nc" id="L94">                            invalidOrgIds.add( orgID );</span>
-                        }
-                    }
-<span class="nc" id="L97">                }</span>
-<span class="nc" id="L98">                resultSet.close();</span>
-<span class="nc" id="L99">                statement.close();</span>
-
-<span class="nc" id="L101">                assertTrue( invalidSrsIds.isEmpty(),</span>
-<span class="nc" id="L102">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
-<span class="nc" id="L103">                                                  invalidSrsIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc" id="L104">                assertTrue( invalidOrgIds.isEmpty(),</span>
-<span class="nc" id="L105">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,</span>
-<span class="nc" id="L106">                                                  invalidOrgIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc bnc" id="L107" title="All 16 branches missed.">            }</span>
-        }
-<span class="nc" id="L109">    }</span>
+<span class="nc" id="L95">            assertTrue( invalidSrsIds.isEmpty(),</span>
+<span class="nc" id="L96">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
+<span class="nc" id="L97">                                              invalidSrsIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L98">            assertTrue( invalidOrgIds.isEmpty(),</span>
+<span class="nc" id="L99">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,</span>
+<span class="nc" id="L100">                                              invalidOrgIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L101" title="All 16 branches missed.">        }</span>
+<span class="nc" id="L102">    }</span>
 
     /**
      * @throws SQLException
@@ -117,63 +110,64 @@ import org.xml.sax.SAXException;
                             throws SQLException {
         // --- original intent was to implement here; but may make more sense to
         // implement in NSG_TileTests
-<span class="nc" id="L120">        final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L113">        final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
 
         // In the case there is no gpkg_tile_matrix ... say this geopackage has no tiles, skip this test
-<span class="nc" id="L123">        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix&quot;);</span>
-        
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (hasTileMatrixTable) {</span>
-        
-<span class="nc" id="L127">	        String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
-	                          + &quot;FROM gpkg_tile_matrix tm &quot;
-	                          + &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
-	                          + &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
-	
-<span class="nc" id="L132">	        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L133">	                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="nc" id="L134">	            List&lt;Object[]&gt; annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, &quot;Annex C (EPSG:3395)&quot; );</span>
-<span class="nc" id="L135">	            List&lt;Object[]&gt; annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, &quot;Annex E (EPSG:4326)&quot; );</span>
-	
-<span class="nc bnc" id="L137" title="All 2 branches missed.">	            while ( resultSet.next() ) {</span>
-<span class="nc" id="L138">	                String tabNam = resultSet.getString( &quot;tabName&quot; ).trim();</span>
-<span class="nc" id="L139">	                String srsID = resultSet.getString( &quot;crsID&quot; ).trim();</span>
-<span class="nc" id="L140">	                int zoomLvl = resultSet.getInt( &quot;zoomLvl&quot; );</span>
-	
-<span class="nc" id="L142">	                long matrixW = resultSet.getLong( &quot;matrixW&quot; );</span>
-<span class="nc" id="L143">	                long matrixH = resultSet.getLong( &quot;matrixH&quot; );</span>
-<span class="nc" id="L144">	                double pixelSzX = resultSet.getDouble( &quot;pixelSzX&quot; );</span>
-<span class="nc" id="L145">	                double pixelSzY = resultSet.getDouble( &quot;pixelSzY&quot; );</span>
-	
-<span class="nc" id="L147">	                List&lt;Object[]&gt; annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );</span>
-<span class="nc bnc" id="L148" title="All 2 branches missed.">	                for ( Object[] obj : annexTable ) {</span>
-<span class="nc bnc" id="L149" title="All 2 branches missed.">	                    if ( zoomLvl == (int) obj[0] ) {</span>
-<span class="nc" id="L150">	                        long imW = (long) obj[3];</span>
-<span class="nc" id="L151">	                        long imH = (long) obj[4];</span>
-<span class="nc" id="L152">	                        double pX = (double) obj[2];</span>
-<span class="nc" id="L153">	                        double pY = (double) obj[2];</span>
-	
-<span class="nc bnc" id="L155" title="All 2 branches missed.">	                        if ( Math.abs( pX - pixelSzX ) &gt; TOLERANCE ) {</span>
-<span class="nc" id="L156">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-	                                                      + &quot;Pixel Size X: &quot; + pixelSzX + &quot;; but expected &quot; + pX );
-<span class="nc bnc" id="L158" title="All 2 branches missed.">	                        } else if ( Math.abs( pY - pixelSzY ) &gt; TOLERANCE ) {</span>
-<span class="nc" id="L159">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-	                                                      + &quot;Pixel Size Y: &quot; + pixelSzY + &quot;; but expected &quot; + pY );
-<span class="nc bnc" id="L161" title="All 2 branches missed.">	                        } else if ( imW != matrixW ) {</span>
-<span class="nc" id="L162">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-	                                                      + &quot;Matrix Width: &quot; + matrixW + &quot;; but expected &quot; + imW );
-<span class="nc bnc" id="L164" title="All 2 branches missed.">	                        } else if ( imH != matrixH ) {</span>
-<span class="nc" id="L165">	                            invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-	                                                      + &quot;Matrix Height: &quot; + matrixH + &quot;; but expected &quot; + imH );
-	                        }
-	                    }
-<span class="nc" id="L169">	                }</span>
-<span class="nc" id="L170">	            }</span>
-<span class="nc" id="L171">	            assertTrue( invalidMatrixEntries.isEmpty(),</span>
-<span class="nc" id="L172">	                        MessageFormat.format( &quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,</span>
-<span class="nc" id="L173">	                                              invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc bnc" id="L174" title="All 16 branches missed.">	        }</span>
+<span class="nc" id="L116">        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist( this.databaseConnection,</span>
+                                                                                 &quot;gpkg_tile_matrix&quot; );
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if ( hasTileMatrixTable ) {</span>
+
+<span class="nc" id="L121">            String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
+                              + &quot;FROM gpkg_tile_matrix tm &quot;
+                              + &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
+                              + &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
+
+<span class="nc" id="L126">            try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L127">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L128">                List&lt;Object[]&gt; annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, &quot;Annex C (EPSG:3395)&quot; );</span>
+<span class="nc" id="L129">                List&lt;Object[]&gt; annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, &quot;Annex E (EPSG:4326)&quot; );</span>
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
+<span class="nc" id="L132">                    String tabNam = resultSet.getString( &quot;tabName&quot; ).trim();</span>
+<span class="nc" id="L133">                    String srsID = resultSet.getString( &quot;crsID&quot; ).trim();</span>
+<span class="nc" id="L134">                    int zoomLvl = resultSet.getInt( &quot;zoomLvl&quot; );</span>
+
+<span class="nc" id="L136">                    long matrixW = resultSet.getLong( &quot;matrixW&quot; );</span>
+<span class="nc" id="L137">                    long matrixH = resultSet.getLong( &quot;matrixH&quot; );</span>
+<span class="nc" id="L138">                    double pixelSzX = resultSet.getDouble( &quot;pixelSzX&quot; );</span>
+<span class="nc" id="L139">                    double pixelSzY = resultSet.getDouble( &quot;pixelSzY&quot; );</span>
+
+<span class="nc" id="L141">                    List&lt;Object[]&gt; annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                    for ( Object[] obj : annexTable ) {</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                        if ( zoomLvl == (int) obj[0] ) {</span>
+<span class="nc" id="L144">                            long imW = (long) obj[3];</span>
+<span class="nc" id="L145">                            long imH = (long) obj[4];</span>
+<span class="nc" id="L146">                            double pX = (double) obj[2];</span>
+<span class="nc" id="L147">                            double pY = (double) obj[2];</span>
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                            if ( Math.abs( pX - pixelSzX ) &gt; TOLERANCE ) {</span>
+<span class="nc" id="L150">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+                                                          + &quot;Pixel Size X: &quot; + pixelSzX + &quot;; but expected &quot; + pX );
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                            } else if ( Math.abs( pY - pixelSzY ) &gt; TOLERANCE ) {</span>
+<span class="nc" id="L153">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+                                                          + &quot;Pixel Size Y: &quot; + pixelSzY + &quot;; but expected &quot; + pY );
+<span class="nc bnc" id="L155" title="All 2 branches missed.">                            } else if ( imW != matrixW ) {</span>
+<span class="nc" id="L156">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+                                                          + &quot;Matrix Width: &quot; + matrixW + &quot;; but expected &quot; + imW );
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                            } else if ( imH != matrixH ) {</span>
+<span class="nc" id="L159">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+                                                          + &quot;Matrix Height: &quot; + matrixH + &quot;; but expected &quot; + imH );
+                            }
+                        }
+<span class="nc" id="L163">                    }</span>
+<span class="nc" id="L164">                }</span>
+<span class="nc" id="L165">                assertTrue( invalidMatrixEntries.isEmpty(),</span>
+<span class="nc" id="L166">                            MessageFormat.format( &quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,</span>
+<span class="nc" id="L167">                                                  invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L168" title="All 16 branches missed.">            }</span>
         }
-<span class="nc" id="L176">    }</span>
+<span class="nc" id="L170">    }</span>
 
     /*
      * TODO: Implement Test for Requirement 6
@@ -196,64 +190,68 @@ import org.xml.sax.SAXException;
     @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 8 &amp; 9 (CRS definitions)&quot;)
     public void crsDefinitionsTest()
                             throws SQLException {
-<span class="nc" id="L199">        NodeList crsList = openCrsListing();</span>
-<span class="nc bnc" id="L200" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
-<span class="nc" id="L201">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if ( crsListing == null )</span>
+<span class="nc" id="L194">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
 
-<span class="nc bnc" id="L203" title="All 2 branches missed.">        if ( crsList != null ) {</span>
-<span class="nc" id="L204">            String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
+<span class="nc" id="L196">        String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
 
-<span class="nc" id="L206">            try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L207">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="nc" id="L208">                final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L198">        try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L199">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L200">            final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
 
-<span class="nc bnc" id="L210" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
-<span class="nc" id="L211">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) ) {</span>
-<span class="nc" id="L213">                        continue;</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            while ( resultSet.next() ) {</span>
+<span class="nc" id="L203">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                if ( srsID.equals( &quot;0&quot; ) ) {</span>
+<span class="nc" id="L205">                    continue;</span>
+                }
+<span class="nc bnc" id="L207" title="All 2 branches missed.">                if ( srsID.equals( &quot;-1&quot; ) ) {</span>
+<span class="nc" id="L208">                    continue;</span>
+                }
+
+<span class="nc" id="L211">                String definition = resultSet.getString( &quot;definition&quot; );</span>
+<span class="nc" id="L212">                String expectedDefinition = crsListing.getDefinitionBySrsId( srsID );</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                if ( definition != null ) {</span>
+<span class="nc bnc" id="L214" title="All 4 branches missed.">                    boolean found = expectedDefinition != null &amp;&amp; compareDefintion( definition, expectedDefinition );</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                    if ( !found ) {</span>
+                        try {
+<span class="nc" id="L217">                            String code = &quot;&quot;;</span>
+                            try {
+                                // This call consistently fails with:
+                                // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to
+                                // org.opengis.referencing.Factory
+<span class="nc" id="L222">                                CoordinateReferenceSystem example = CRS.parseWKT( definition );</span>
+
+<span class="nc" id="L224">                                code = CRS.lookupIdentifier( example, true );</span>
+<span class="nc" id="L225">                            } catch ( FactoryException e ) {</span>
+<span class="nc" id="L226">                                invalidSrsDefs.add( srsID + &quot;:&quot; + definition + &quot; : &quot; + e.getMessage() );</span>
+<span class="nc" id="L227">                                Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}&quot;,</span>
+<span class="nc" id="L228">                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L229">                            }</span>
+                            try {
+<span class="nc" id="L231">                                CoordinateReferenceSystem decodedcrs = CRS.decode( code );</span>
+<span class="nc" id="L232">                            } catch ( FactoryException e ) {</span>
+<span class="nc" id="L233">                                invalidSrsDefs.add( srsID + &quot;:&quot; + definition + &quot;: &quot; + code + &quot;:&quot; + e.getMessage() );</span>
+<span class="nc" id="L234">                                Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}&quot;,</span>
+<span class="nc" id="L235">                                                                   invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L236">                            }</span>
+<span class="nc" id="L237">                        } catch ( Exception ex ) { // The exectpin is consistently being caught from the CRS.parseWKT</span>
+                            // fails with:
+                            // org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot
+                            // be cast to org.opengis.referencing.Factory
+<span class="nc" id="L241">                            invalidSrsDefs.add( srsID + &quot;:&quot; + definition + &quot; : &quot; + ex.getMessage() );</span>
+<span class="nc" id="L242">                            LOG.log( Level.WARNING,</span>
+                                     &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.&quot;,
+<span class="nc" id="L244">                                     invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) );</span>
+                            // Assert.fail( MessageFormat.format(
+                            // &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}&quot;,
+                            // invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) )
+                            // );
+<span class="nc" id="L249">                        }</span>
                     }
-<span class="nc bnc" id="L215" title="All 2 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) ) {</span>
-<span class="nc" id="L216">                        continue;</span>
-                    }
-
-<span class="nc" id="L219">                    String srsDef = resultSet.getString( &quot;definition&quot; ).trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
-
-<span class="nc" id="L221">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
-<span class="nc" id="L222">                    String crsDef = NSG_XMLUtils.getXMLElementTextValue( element, &quot;definition&quot; ).trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
-<span class="nc" id="L223">                    boolean found = crsDef.equalsIgnoreCase( srsDef );</span>
-                    
-<span class="nc" id="L225">                    String code = &quot;&quot;;</span>
-<span class="nc bnc" id="L226" title="All 4 branches missed.">                    if ( element != null &amp;&amp; !found) {</span>
-                    	try {
-	                        try {
-	                        	// This call consistently fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory
-<span class="nc" id="L230">	                            CoordinateReferenceSystem example = CRS.parseWKT( srsDef );</span>
-	
-	                            
-<span class="nc" id="L233">	                            code = CRS.lookupIdentifier( example, true );</span>
-<span class="nc" id="L234">	                        } catch (FactoryException e) {</span>
-<span class="nc" id="L235">	                            invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot; : &quot; + e.getMessage() );</span>
-<span class="nc" id="L236">	                            Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table error srs_id, wkt, error: {0}&quot;,</span>
-<span class="nc" id="L237">	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc" id="L238">	                        }</span>
-	                        try {
-<span class="nc" id="L240">	                            CoordinateReferenceSystem  decodedcrs = CRS.decode( code );</span>
-<span class="nc" id="L241">	                        } catch ( FactoryException e ) {</span>
-<span class="nc" id="L242">	                            invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot;: &quot; + code + &quot;:&quot; + e.getMessage());</span>
-<span class="nc" id="L243">	                            Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid CRS defintions values for IDs {0}&quot;,</span>
-<span class="nc" id="L244">	                                                               invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc" id="L245">	                        }</span>
-<span class="nc" id="L246">                    	} catch (Exception ex) {   // The exectpin is consistently being caught from the CRS.parseWKT fails with: org.geotoolkit.referencing.factory.ReferencingObjectFactory cannot be cast to org.opengis.referencing.Factory</span>
-<span class="nc" id="L247">                    		invalidSrsDefs.add( srsID + &quot;:&quot; + srsDef + &quot; : &quot; + ex.getMessage() );</span>
-<span class="nc" id="L248">                    		LOG.log( Level.WARNING, &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception.&quot;, invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) );</span>
-                        	//Assert.fail( MessageFormat.format( &quot;The gpkg_spatial_ref_sys table could not be examined for IDs due to processing exception {0}&quot;,
-                            //    invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );
-<span class="nc" id="L251">                    	}</span>
-                    }
-<span class="nc" id="L253">                }</span>
-<span class="nc bnc" id="L254" title="All 16 branches missed.">            }</span>
-        }
-<span class="nc" id="L256">    }</span>
+                }
+<span class="nc" id="L252">            }</span>
+<span class="nc bnc" id="L253" title="All 16 branches missed.">        }</span>
+<span class="nc" id="L254">    }</span>
 
     /**
      * NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using a
@@ -267,140 +265,138 @@ import org.xml.sax.SAXException;
     @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)&quot;)
     public void dataValidity_gpkg_spatial_ref_sys()
                             throws SQLException {
-<span class="nc" id="L270">        NodeList crsList = openCrsListing();</span>
-<span class="nc bnc" id="L271" title="All 2 branches missed.">        assertTrue( crsList != null,</span>
-<span class="nc" id="L272">                    ErrorMessage.format( ErrorMessageKeys.UNDEFINED_SRS, &quot; - no designated CRS Lookup Table&quot; ) );</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if ( crsListing == null )</span>
+<span class="nc" id="L269">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
 
-<span class="nc bnc" id="L274" title="All 2 branches missed.">        if ( crsList != null ) {</span>
-<span class="nc" id="L275">            String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
+<span class="nc" id="L271">        String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
 
-<span class="nc" id="L277">            try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L278">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="nc" id="L279">                final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
-<span class="nc" id="L280">                final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L273">        try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="nc" id="L274">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
+<span class="nc" id="L275">            final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L276">            final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
 
-<span class="nc bnc" id="L282" title="All 2 branches missed.">                while ( resultSet.next() ) {</span>
-<span class="nc" id="L283">                    String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="nc bnc" id="L284" title="All 2 branches missed.">                    if ( srsID.equals( &quot;0&quot; ) ) {</span>
-<span class="nc" id="L285">                        continue;</span>
-                    }
-<span class="nc bnc" id="L287" title="All 2 branches missed.">                    if ( srsID.equals( &quot;-1&quot; ) ) {</span>
-<span class="nc" id="L288">                        continue;</span>
-                    }
+<span class="nc bnc" id="L278" title="All 2 branches missed.">            while ( resultSet.next() ) {</span>
+<span class="nc" id="L279">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
+<span class="nc bnc" id="L280" title="All 4 branches missed.">                if ( &quot;0&quot;.equals( srsID ) || &quot;-1&quot;.equals( srsID ) ) {</span>
+<span class="nc" id="L281">                    continue;</span>
+                }
 
-                    // --- test for: Table 26; Row 1
+                // --- test for: Table 26; Row 1
+<span class="nc" id="L285">                String srsOrg = resultSet.getString( &quot;organization&quot; );</span>
+<span class="nc" id="L286">                validateCrsOrganistion( srsID, srsOrg, invalidOrgs );</span>
 
-<span class="nc" id="L293">                    String srsOrg = resultSet.getString( &quot;organization&quot; ).trim().toUpperCase();</span>
-<span class="nc bnc" id="L294" title="All 4 branches missed.">                    if ( !srsOrg.equals( &quot;EPSG&quot; ) &amp;&amp; !srsOrg.equals( &quot;NGA&quot; ) ) {</span>
-<span class="nc" id="L295">                        invalidOrgs.add( srsID + &quot;:&quot; + srsOrg );</span>
-                    }
+                // --- test for: Table 26; Row 2
+<span class="nc" id="L289">                String description = resultSet.getString( &quot;description&quot; );</span>
+<span class="nc" id="L290">                validateCrsDescription( srsID, description, invalidDesc );</span>
+<span class="nc" id="L291">            }</span>
 
-                    // --- test for: Table 26; Row 2
+<span class="nc" id="L293">            assertTrue( invalidOrgs.isEmpty(),</span>
+<span class="nc" id="L294">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,</span>
+<span class="nc" id="L295">                                              invalidOrgs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc" id="L296">            assertTrue( invalidDesc.isEmpty(),</span>
+<span class="nc" id="L297">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid descriptions for IDs: {0}&quot;,</span>
+<span class="nc" id="L298">                                              invalidDesc.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
+<span class="nc bnc" id="L299" title="All 16 branches missed.">        }</span>
+<span class="nc" id="L300">    }</span>
 
-<span class="nc" id="L300">                    String srsDesc = resultSet.getString( &quot;description&quot; );</span>
-
-<span class="nc" id="L302">                    boolean found = false;</span>
-
-<span class="nc" id="L304">                    Element element = NSG_XMLUtils.getElementByTextValue( crsList, &quot;srs_id&quot;, srsID );</span>
-<span class="nc bnc" id="L305" title="All 4 branches missed.">                    if ( element != null &amp;&amp; srsDesc != null ) {</span>
-<span class="nc" id="L306">                        srsDesc = srsDesc.trim();</span>
-<span class="nc bnc" id="L307" title="All 4 branches missed.">                        if ( srsDesc.length() &gt; 0 &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;NULL&quot; ) )</span>
-<span class="nc bnc" id="L308" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;UNK&quot; ) )</span>
-<span class="nc bnc" id="L309" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;UNKNOWN&quot; ) )</span>
-<span class="nc bnc" id="L310" title="All 2 branches missed.">                             &amp;&amp; ( !srsDesc.toUpperCase().equalsIgnoreCase( &quot;TBD&quot; ) ) ) {</span>
-<span class="nc" id="L311">                            String crsDesc = NSG_XMLUtils.getXMLElementTextValue( element, &quot;description&quot; ).trim();</span>
-<span class="nc" id="L312">                            found = crsDesc.equalsIgnoreCase( srsDesc );</span>
-<span class="nc bnc" id="L313" title="All 6 branches missed.">                            if ( !found &amp;&amp; ( crsDesc.endsWith( &quot;.&quot; ) || srsDesc.endsWith( &quot;.&quot; ) ) ) {</span>
-<span class="nc bnc" id="L314" title="All 2 branches missed.">                                if ( srsDesc.endsWith( &quot;.&quot; ) )</span>
-<span class="nc" id="L315">                                    srsDesc = srsDesc.substring( 0, srsDesc.length() - 1 );</span>
-<span class="nc bnc" id="L316" title="All 2 branches missed.">                                if ( crsDesc.endsWith( &quot;.&quot; ) )</span>
-<span class="nc" id="L317">                                    crsDesc = crsDesc.substring( 0, crsDesc.length() - 1 );</span>
-<span class="nc" id="L318">                                found = crsDesc.equalsIgnoreCase( srsDesc );</span>
-                            }
-                        }
-                    }
-
-<span class="nc bnc" id="L323" title="All 2 branches missed.">                    if ( !found ) {</span>
-<span class="nc" id="L324">                        invalidDesc.add( srsID );</span>
-                    }
-<span class="nc" id="L326">                }</span>
-<span class="nc" id="L327">                resultSet.close();</span>
-<span class="nc" id="L328">                statement.close();</span>
-
-<span class="nc" id="L330">                assertTrue( invalidOrgs.isEmpty(),</span>
-<span class="nc" id="L331">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,</span>
-<span class="nc" id="L332">                                                  invalidOrgs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc" id="L333">                assertTrue( invalidDesc.isEmpty(),</span>
-<span class="nc" id="L334">                            MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid desciptions for IDs: {0}&quot;,</span>
-<span class="nc" id="L335">                                                  invalidDesc.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="nc bnc" id="L336" title="All 16 branches missed.">            }</span>
+    private void validateCrsOrganistion( String srsID, String srsOrg, Collection&lt;String&gt; invalidOrgs ) {
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if ( srsOrg == null ) {</span>
+<span class="nc" id="L304">            invalidOrgs.add( srsID + &quot;: null (expected 'EPSG' or 'NGA')&quot; );</span>
+        } else {
+<span class="nc" id="L306">            srsOrg = srsOrg.trim();</span>
+<span class="nc bnc" id="L307" title="All 4 branches missed.">            if ( !&quot;EPSG&quot;.equalsIgnoreCase( srsOrg ) &amp;&amp; !&quot;NGA&quot;.equalsIgnoreCase( srsOrg ) ) {</span>
+<span class="nc" id="L308">                invalidOrgs.add( srsID + &quot;: &quot; + srsOrg + &quot; (expected 'EPSG' or 'NGA')&quot; );</span>
+            }
         }
-<span class="nc" id="L338">    }</span>
+<span class="nc" id="L311">    }</span>
 
+    private void validateCrsDescription( String srsID, String description, Collection&lt;String&gt; invalidDesc ) {
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if ( description == null ) {</span>
+<span class="nc" id="L315">            invalidDesc.add( srsID + &quot; (expected not to be null)&quot; );</span>
+<span class="nc" id="L316">            return;</span>
+        }
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if ( !isCrsDescriptionValid( description ) ) {</span>
+<span class="nc" id="L319">            invalidDesc.add( srsID</span>
+                             + &quot;: '&quot;
+                             + description
+                             + &quot;' (expected not to be an empty string, not all whitespace, not “unknown” (any case), not “tbd” (any case))&quot; );
+<span class="nc" id="L323">            return;</span>
+        }
+<span class="nc" id="L325">        String expectedDescription = crsListing.getDescriptionBySrsId( srsID );</span>
+<span class="nc bnc" id="L326" title="All 4 branches missed.">        if ( expectedDescription != null &amp;&amp; !isDescriptionAsExpected( description, expectedDescription ) ) {</span>
+<span class="nc" id="L327">            invalidDesc.add( srsID + &quot; : '&quot; + description + &quot;' (expected: '&quot; + expectedDescription + &quot;')&quot; );</span>
+        }
+<span class="nc" id="L329">    }</span>
 
-    
+    private boolean isDescriptionAsExpected( String descriptionToTest, String expectedDescription ) {
+<span class="nc" id="L332">        descriptionToTest = removeWhitespaces( descriptionToTest );</span>
+<span class="nc" id="L333">        expectedDescription = removeWhitespaces( expectedDescription );</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">        if ( descriptionToTest.endsWith( &quot;.&quot; ) )</span>
+<span class="nc" id="L335">            descriptionToTest = descriptionToTest.substring( 0, descriptionToTest.length() - 1 );</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        if ( expectedDescription.endsWith( &quot;.&quot; ) )</span>
+<span class="nc" id="L337">            expectedDescription = expectedDescription.substring( 0, expectedDescription.length() - 1 );</span>
+<span class="nc" id="L338">        return descriptionToTest.equalsIgnoreCase( expectedDescription );</span>
+    }
+
+    private boolean compareDefintion( String definitionToTest, String expectedDefinition ) {
+<span class="nc" id="L342">        definitionToTest = removeWhitespaces( definitionToTest );</span>
+<span class="nc" id="L343">        expectedDefinition = removeWhitespaces( expectedDefinition );</span>
+<span class="nc" id="L344">        return definitionToTest.equalsIgnoreCase( expectedDefinition );</span>
+    }
+
     private List&lt;Object[]&gt; selectAnnexBySrsId( String srsID, List&lt;Object[]&gt; annexC_3395, List&lt;Object[]&gt; annexE_4326 ) {
-<span class="nc bnc" id="L343" title="All 2 branches missed.">        if ( srsID.equals( &quot;3395&quot; ) ) {</span>
-<span class="nc" id="L344">            return annexC_3395;</span>
-<span class="nc bnc" id="L345" title="All 2 branches missed.">        } else if ( srsID.equals( &quot;4326&quot; ) ) {</span>
-<span class="nc" id="L346">            return annexE_4326;</span>
-<span class="nc bnc" id="L347" title="All 4 branches missed.">        } else if ( ( srsID.equals( &quot;5041&quot; ) ) || ( srsID.equals( &quot;5042&quot; ) ) ) {</span>
-<span class="nc" id="L348">            return Collections.emptyList();</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">        if ( srsID.equals( &quot;3395&quot; ) ) {</span>
+<span class="nc" id="L349">            return annexC_3395;</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        } else if ( srsID.equals( &quot;4326&quot; ) ) {</span>
+<span class="nc" id="L351">            return annexE_4326;</span>
+<span class="nc bnc" id="L352" title="All 4 branches missed.">        } else if ( ( srsID.equals( &quot;5041&quot; ) ) || ( srsID.equals( &quot;5042&quot; ) ) ) {</span>
+<span class="nc" id="L353">            return Collections.emptyList();</span>
         }
-<span class="nc" id="L350">        return Collections.emptyList();</span>
+<span class="nc" id="L355">        return Collections.emptyList();</span>
     }
 
     private List&lt;Object[]&gt; populateAnnex( String annexTableName, String annexName ) {
-<span class="nc" id="L354">        InputStream resourceToRead = this.getClass().getResourceAsStream( annexTableName );</span>
-<span class="nc" id="L355">        try (BufferedReader br = new BufferedReader( new InputStreamReader( resourceToRead, &quot;UTF-8&quot; ) )) {</span>
-<span class="nc" id="L356">            List&lt;Object[]&gt; annexEntries = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L359">        InputStream resourceToRead = this.getClass().getResourceAsStream( annexTableName );</span>
+<span class="nc" id="L360">        try (BufferedReader br = new BufferedReader( new InputStreamReader( resourceToRead, &quot;UTF-8&quot; ) )) {</span>
+<span class="nc" id="L361">            List&lt;Object[]&gt; annexEntries = new ArrayList&lt;&gt;();</span>
             String line;
-<span class="nc bnc" id="L358" title="All 2 branches missed.">            while ( ( line = br.readLine() ) != null ) {</span>
-<span class="nc" id="L359">                List&lt;String&gt; items = Arrays.asList( line.split( &quot;\\s*,\\s*&quot; ) );</span>
-<span class="nc bnc" id="L360" title="All 4 branches missed.">                if ( !items.isEmpty() &amp;&amp; ( items.size() == 5 ) ) {</span>
-<span class="nc" id="L361">                    addNewEntry( annexEntries, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),</span>
-<span class="nc" id="L362">                                 items.get( 4 ) );</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">            while ( ( line = br.readLine() ) != null ) {</span>
+<span class="nc" id="L364">                List&lt;String&gt; items = Arrays.asList( line.split( &quot;\\s*,\\s*&quot; ) );</span>
+<span class="nc bnc" id="L365" title="All 4 branches missed.">                if ( !items.isEmpty() &amp;&amp; ( items.size() == 5 ) ) {</span>
+<span class="nc" id="L366">                    addNewEntry( annexEntries, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),</span>
+<span class="nc" id="L367">                                 items.get( 4 ) );</span>
                 } else {
-<span class="nc" id="L364">                    throw new SkipException( annexName + &quot; Table is corrupt &quot; );</span>
+<span class="nc" id="L369">                    throw new SkipException( annexName + &quot; Table is corrupt &quot; );</span>
                 }
-<span class="nc" id="L366">            }</span>
-<span class="nc" id="L367">            return annexEntries;</span>
-<span class="nc bnc" id="L368" title="All 8 branches missed.">        } catch ( IOException e ) {</span>
-<span class="nc" id="L369">            throw new SkipException( annexName + &quot; Table not available&quot; );</span>
+<span class="nc" id="L371">            }</span>
+<span class="nc" id="L372">            return annexEntries;</span>
+<span class="nc bnc" id="L373" title="All 8 branches missed.">        } catch ( IOException e ) {</span>
+<span class="nc" id="L374">            throw new SkipException( annexName + &quot; Table not available&quot; );</span>
         }
     }
-    
 
     private void addNewEntry( List&lt;Object[]&gt; table, String zoom, String scale, String pixelSz, String matrixWidth,
                               String matrixHeight ) {
-<span class="nc" id="L376">        int zoomAsInt = Integer.parseInt( zoom );</span>
-<span class="nc" id="L377">        double scaleAsDouble = Double.parseDouble( scale );</span>
-<span class="nc" id="L378">        double pixelSizeAsDouble = Double.parseDouble( pixelSz );</span>
-<span class="nc" id="L379">        long matrixWidthAsLong = Long.parseLong( matrixWidth );</span>
-<span class="nc" id="L380">        long matrixHeightAsLong = Long.parseLong( matrixHeight );</span>
-<span class="nc" id="L381">        Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };</span>
-<span class="nc" id="L382">        table.add( row );</span>
-<span class="nc" id="L383">    }</span>
+<span class="nc" id="L380">        int zoomAsInt = Integer.parseInt( zoom );</span>
+<span class="nc" id="L381">        double scaleAsDouble = Double.parseDouble( scale );</span>
+<span class="nc" id="L382">        double pixelSizeAsDouble = Double.parseDouble( pixelSz );</span>
+<span class="nc" id="L383">        long matrixWidthAsLong = Long.parseLong( matrixWidth );</span>
+<span class="nc" id="L384">        long matrixHeightAsLong = Long.parseLong( matrixHeight );</span>
+<span class="nc" id="L385">        Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };</span>
+<span class="nc" id="L386">        table.add( row );</span>
+<span class="nc" id="L387">    }</span>
 
-    private NodeList openCrsListing() {
-<span class="nc" id="L386">        InputStream crsListing = this.getClass().getResourceAsStream( NSG_CRS_LISTING );</span>
-<span class="nc" id="L387">        String rootName = &quot;Row&quot;;</span>
-<span class="nc" id="L388">        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
-
-        try {
-<span class="nc" id="L391">            DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
-<span class="nc" id="L392">            Document dom = ioe.parse( crsListing );</span>
-<span class="nc bnc" id="L393" title="All 2 branches missed.">            if ( dom != null ) {</span>
-<span class="nc" id="L394">                Element docElems = dom.getDocumentElement();</span>
-<span class="nc bnc" id="L395" title="All 2 branches missed.">                if ( docElems != null ) {</span>
-<span class="nc" id="L396">                    return docElems.getElementsByTagName( rootName );</span>
-                }
-            }
-<span class="nc" id="L399">        } catch ( ParserConfigurationException | SAXException | IOException e ) {</span>
-<span class="nc" id="L400">            LOG.log( Level.SEVERE, &quot;Could not open CRS listing.&quot;, e );</span>
-<span class="nc" id="L401">        }</span>
-
-<span class="nc" id="L403">        return null;</span>
+    private String removeWhitespaces( String description ) {
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        if ( description != null )</span>
+<span class="nc" id="L391">            return description.trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
+<span class="nc" id="L392">        return description;</span>
     }
+
+    private boolean isCrsDescriptionValid( String srsDesc ) {
+<span class="nc bnc" id="L396" title="All 6 branches missed.">        return srsDesc.length() &gt; 0 &amp;&amp; srsDesc.trim().length() &gt; 0 &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;NULL&quot; ) )</span>
+<span class="nc bnc" id="L397" title="All 4 branches missed.">               &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;UNK&quot; ) ) &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;UNKNOWN&quot; ) )</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">               &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;TBD&quot; ) );</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
