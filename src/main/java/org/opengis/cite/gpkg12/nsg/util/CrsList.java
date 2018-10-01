@@ -2,6 +2,7 @@ package org.opengis.cite.gpkg12.nsg.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:goltz@lat-lon.de">Lyn Goltz </a>
@@ -9,6 +10,13 @@ import java.util.List;
 public class CrsList {
 
     private List<CrsListing> crsListingList = new ArrayList<>();
+
+    /**
+     * @return all parsed {@link CrsListing}s
+     */
+    protected List<String> getCrsIds() {
+        return crsListingList.stream().map(CrsListing::getId).collect(Collectors.toList());
+    }
 
     /**
      * Adds a new CrsListing to the list.
@@ -79,6 +87,10 @@ public class CrsList {
             this.definition = definition;
             this.organization_coordsys_id = organization_coordsys_id;
             this.description = description;
+        }
+
+        public String getId(){
+            return id;
         }
     }
 
