@@ -54,14 +54,21 @@ public class NSG_TileTests extends CommonFixture {
      * 
      * @param inputString The string to validate
      * @return validated string
+     * @throws IllegalArgumentException if the input is found to be invalid
      */
-    public static String ValidateStringInput( String inputString ) {
+    public static String ValidateStringInput( String inputString ) throws IllegalArgumentException {
 
-    	String cleanStr = "";
+    	StringBuilder sb = new StringBuilder(50);  // initial size is 50. This is expected to be sufficient for most table and field names. This is NOT a limit.
     	for (int ii = 0; ii < inputString.length(); ++ii) {
-    		cleanStr += cleanChar(inputString.charAt(ii));
+    		final char cleanedchar = cleanChar(inputString.charAt(ii));
+    		if (cleanedchar == '^') {   // This is an illegal character indicator
+    			throw new IllegalArgumentException(String.format("Illegal parameter provided within SQL statement. Error in %s at character %c",inputString,  inputString.charAt(ii)));
+    		}
+    		else {
+    			sb.append(cleanedchar);
+    		}
     	}
-    	return cleanStr;
+    	return sb.toString();
     }
     
     /**
@@ -97,7 +104,7 @@ public class NSG_TileTests extends CommonFixture {
             case ' ':
                 return ' ';
         }
-        return '%';
+        return '^';
     }
 
     
