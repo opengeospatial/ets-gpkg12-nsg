@@ -6,14 +6,18 @@
 		<organization>EPSG</organization>
 		<organization_coordsys_id>4979</organization_coordsys_id>
 		<definition>
-			GEODCRS["WGS 84", 
+			GEODCRS["WGS 84",
 			   DATUM["World Geodetic System 1984",
-			      ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1.0]]],
-			   CS[ellipsoidal,3],
-			      AXIS["latitude",north,ORDER[1],ANGLEUNIT["degree",0.01745329252]],
-			      AXIS["longitude",east,ORDER[2],ANGLEUNIT["degree",0.01745329252]],
-			      AXIS["ellipsoidal height",up,ORDER[3],LENGTHUNIT["metre",1.0]],
-			   ID["EPSG",4979]]
+			      ELLIPSOID["WGS 84",6378137,298.257223563,
+			        LENGTHUNIT["metre",1.0]]],
+			    CS[ellipsoidal,3],
+			    AXIS["Geodetic latitude (Lat)",north,
+			      ANGLEUNIT["degree",0.0174532925199433]],
+			    AXIS["Geodetic longitude (Long)",east,
+			      ANGLEUNIT["degree",0.0174532925199433]],
+			    AXIS["Ellipsoidal height (h)",up,
+			      LENGTHUNIT["metre",1.0]],
+			    ID["EPSG",4979]]
 		</definition>
 		<description>Used by the GPS satellite navigation system and for NATO military geodetic surveying.</description>
 	</Row> 
@@ -23,11 +27,11 @@
 		<organization>EPSG</organization>
 		<organization_coordsys_id>4326</organization_coordsys_id>
 		<definition>
-			GEOGCS["WGS84",
-				DATUM["WGS_1984",
-					SPHEROID["WGS84",6378137,298.257223563]],
-				PRIMEM["Greenwich",0],
-				UNIT["degree",0.0174532925199433]]
+			GEOGCS["WGS 84",
+			DATUM["WGS_1984",
+			SPHEROID["WGS84",6378137,298.257223563]],
+			PRIMEM["Greenwich",0],
+			UNIT["degree",0.0174532925199433]]
 		</definition>
 		<WKT2_alternative_def>
 			GEODCRS["WGS 84",
@@ -48,21 +52,25 @@
 		<organization_coordsys_id>3395</organization_coordsys_id>
 		<definition>
 			PROJCRS["WGS 84 / World Mercator",
-			   BASEGEODCRS["WGS 84",
-			      DATUM["World Geodetic System 1984",
-			         ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1.0]]]],
-			   CONVERSION["World Mercator",
-			      METHOD["Mercator (variant A)",ID["EPSG",9804]],
-			      PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1.0]],
-			      PARAMETER["False easting",0,LENGTHUNIT["metre",1.0]],
-			      PARAMETER["False northing",0,LENGTHUNIT["metre",1.0]]],
-			   CS[cartesian,2],
-			      AXIS["easting (E)",east,ORDER[1]],
-			      AXIS["northing (N)",north,ORDER[2]],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",3395]]
+		    BASEGEODCRS["WGS 84",
+		        DATUM["World Geodetic System 1984",
+		             ELLIPSOID["WGS 84",6378137,298.257223563]]],
+		    CONVERSION["Mercator",
+		        METHOD["Mercator (variant A)",ID["EPSG","9804"]],
+		        PARAMETER["Latitude of natural origin",0,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Longitude of natural origin",0,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Scale factor at natural origin",1,
+		            SCALEUNIT["unity",1.0]],
+		        PARAMETER["False easting",0,LENGTHUNIT["metre",1.0]],
+		        PARAMETER["False northing",0,LENGTHUNIT["metre",1.0]],
+		        ID["EPSG","19833"]],
+		    CS[Cartesian,2],
+		        AXIS["Easting (E)",east,ORDER[1]],
+		        AXIS["Northing (N)",north,ORDER[2]],
+		        LENGTHUNIT["metre",1.0]
+		    ID["EPSG","3395"]]
 		</definition>
 		<description>Euro-centric view of world excluding polar areas for very small scale mapping.</description>
 	</Row>
@@ -73,21 +81,32 @@
 		<organization_coordsys_id>5041</organization_coordsys_id>
 		<definition>
 			PROJCRS["WGS 84 / UPS North (E,N)",
-			   BASEGEODCRS["WGS 84",
-			      DATUM["World Geodetic System 1984",
-			         ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1.0]]]],
-			   CONVERSION["Universal Polar Stereographic North",
-			      METHOD["Polar Stereographic (variant A)",ID["EPSG",9810]],
-			      PARAMETER["Latitude of natural origin",90,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Scale factor at natural origin",0.994,SCALEUNIT["unity",1.0]],
-			      PARAMETER["False easting",2000000,LENGTHUNIT["metre",1.0]],
-			      PARAMETER["False northing",2000000,LENGTHUNIT["metre",1.0]]],
-			   CS[cartesian,2],
-			      AXIS["easting (E)",south,MERIDIAN[90,ANGLEUNIT["degree",0.01745329252]],ORDER[1]],
-			      AXIS["northing (N)",south,MERIDIAN[180,ANGLEUNIT["degree",0.01745329252]],ORDER[2]],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",5041]]
+		    BASEGEODCRS["WGS 84",
+		        DATUM["World Geodetic System 1984",
+		            ELLIPSOID["WGS 84",6378137,298.257223563,   
+		                  LENGTHUNIT["metre",1.0]]],
+		    CONVERSION["Universal Polar Stereographic North",
+		        METHOD["Polar Stereographic (variant A)",ID["EPSG","9810"]],
+		        PARAMETER["Latitude of natural origin",90,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Longitude of natural origin",0,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Scale factor at natural origin",0.994,
+		            SCALEUNIT["unity",1.0]],
+		        PARAMETER["False easting",2000000,
+		            LENGTHUNIT["metre",1.0]],
+		        PARAMETER["False northing",2000000,
+		            LENGTHUNIT["metre",1.0]],
+		        ID["EPSG","16061"]],
+		    CS[Cartesian,2],
+		        AXIS["Easting (E)",south,
+		           MERIDIAN[90,ANGLEUNIT["degree",0.0174532925199433]],
+		           ORDER[1]],
+		        AXIS["Northing (N)",south,
+		            MERIDIAN[180,ANGLEUNIT["degree",0.0174532925199433]],
+		            ORDER[2]],
+		        LENGTHUNIT["metre",1.0]
+		    ID["EPSG","5041"]]
 		</definition>
 		<description>Military mapping by NATO north of 60° N</description>
 	</Row> 
@@ -98,21 +117,32 @@
 		<organization_coordsys_id>5042</organization_coordsys_id>
 		<definition>
 			PROJCRS["WGS 84 / UPS South (E,N)",
-			   BASEGEODCRS["WGS 84",
-			      DATUM["World Geodetic System 1984",
-			         ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1.0]]]],
-			   CONVERSION["Universal Polar Stereographic South",
-			      METHOD["Polar Stereographic (variant A)",ID["EPSG",9810]],
-			      PARAMETER["Latitude of natural origin",-90,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]],
-			      PARAMETER["Scale factor at natural origin",0.994,SCALEUNIT["unity",1.0]],
-			      PARAMETER["False easting",2000000,LENGTHUNIT["metre",1.0]],
-			      PARAMETER["False northing",2000000,LENGTHUNIT["metre",1.0]]],
-			   CS[cartesian,2],
-			      AXIS["easting (E)",north,MERIDIAN[90,ANGLEUNIT["degree",0.01745329252]],ORDER[1]],
-			      AXIS["northing (N)",north,MERIDIAN[0,ANGLEUNIT["degree",0.01745329252]],ORDER[2]],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",5042]]
+		    BASEGEODCRS["WGS 84",
+		        DATUM["World Geodetic System 1984",
+		            ELLIPSOID["WGS 84",6378137,298.257223563,   
+		                  LENGTHUNIT["metre",1.0]]],
+		    CONVERSION["Universal Polar Stereographic North",
+		        METHOD["Polar Stereographic (variant A)",ID["EPSG","9810"]],
+		        PARAMETER["Latitude of natural origin",-90,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Longitude of natural origin",0,
+		            ANGLEUNIT["degree",0.0174532925199433]],
+		        PARAMETER["Scale factor at natural origin",0.994,
+		            SCALEUNIT["unity",1.0]],
+		        PARAMETER["False easting",2000000,
+		            LENGTHUNIT["metre",1.0]],
+		        PARAMETER["False northing",2000000,
+		            LENGTHUNIT["metre",1.0]],
+		        ID["EPSG","16161"]],
+		    CS[Cartesian,2],
+		        AXIS["Easting (E)",north,
+		           MERIDIAN[90,ANGLEUNIT["degree",0.0174532925199433]],
+		           ORDER[1]],
+		        AXIS["Northing (N)",north,
+		            MERIDIAN[0,ANGLEUNIT["degree",0.0174532925199433]],
+		            ORDER[2]],
+		        LENGTHUNIT["metre",1.0]
+		    ID["EPSG","5042"]]	
 		</definition>
 		<description>Military mapping by NATO south of 60° S</description> 
 	</Row> 
@@ -122,12 +152,11 @@
 		<organization>EPSG</organization>
 		<organization_coordsys_id>3855</organization_coordsys_id>
 		<definition>
-			VERTCRS["EGM2008 height",
-			   VDATUM["EGM2008 geoid"],
-			   CS[vertical,1],
-			      AXIS["gravity-related height (H)",up],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",3855]]
+			VERTCRS["EGM2008 geoid height",
+			  VDATUM["EGM2008 geoid",ANCHOR["WGS 84 ellipsoid"]],
+			  CS[vertical,1],
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			  ID["EPSG","3855"]]
 		</definition>
 		<description>Good approximation of Orthometric height above the EGM2008 model of the geoid. Replaces EGM96 geoid (CRS code 5773).</description>
 	</Row>
@@ -138,11 +167,11 @@
 		<organization_coordsys_id>8056</organization_coordsys_id>
 		<definition>
 			VERTCRS["EGM2008 geoid depth",
-			   VDATUM["EGM2008 geoid",ANCHOR["WGS 84 ellipsoid"]],
-			   CS[vertical,1],
-			      AXIS["gravity-related depth (D)",down],
-			      LENGTHUNIT["metre",1.0],
-			   ID["NSG","8056"]]
+			  VDATUM["EGM2008 geoid",ANCHOR["WGS 84 ellipsoid"]],
+			  CS[vertical,1],
+			    AXIS["Gravity-related depth (D)",down],
+			        LENGTHUNIT["metre",1.0]
+			  ID["NSG","8056"]]
 		</definition>
 		<description>Good approximation of Orthometric distance below the EGM2008 model of the geoid.</description>
 	</Row>
@@ -152,12 +181,11 @@
 		<organization>EPSG</organization>
 		<organization_coordsys_id>5773</organization_coordsys_id>
 		<definition>
-			VERTCRS["EGM96 height",
-			   VDATUM["EGM96 geoid"],
-			   CS[vertical,1],
-			      AXIS["gravity-related height (H)",up],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",5773]]
+			VERTCRS["EGM96 geoid height",
+			  VDATUM["EGM96 geoid",ANCHOR["WGS 84 ellipsoid"]],
+			  CS[vertical,1],
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			  ID["EPSG","5773"]]
 		</definition>
 		<description>Height surface resulting from the application of the EGM96 geoid model to the WGS 84 ellipsoid. Replaces EGM84 geoid height (CRS code 5798). Replaced by EGM2008 geoid height (CRS code 3855).</description>
 	</Row> 
@@ -168,11 +196,11 @@
 		<organization_coordsys_id>8047</organization_coordsys_id>
 		<definition>
 			VERTCRS["EGM96 geoid depth",
-			   VDATUM["EGM96 geoid",ANCHOR["WGS 84 ellipsoid"]],
-			   CS[vertical,1],
-			      AXIS["gravity-related depth (D)",down],
-			      LENGTHUNIT["metre",1.0],
-			   ID["NSG","8047"]]
+			  VDATUM["EGM96 geoid",ANCHOR["WGS 84 ellipsoid"]],
+			  CS[vertical,1],
+			    AXIS["Gravity-related depth (D)",down],
+			        LENGTHUNIT["metre",1.0]
+			  ID["NSG","8047"]]
 		</definition>
 		<description>The distance below the geopotential surface defined by the Earth Gravity Model 1996 (EGM96) that is closely associated with the mean ocean surface.</description>
 	</Row> 
@@ -183,11 +211,10 @@
 		<organization_coordsys_id>5714</organization_coordsys_id>
 		<definition>
 			VERTCRS["MSL height",
-			   VDATUM["Mean Sea Level"],
-			   CS[vertical,1],
-			      AXIS["gravity-related height (H)",up],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",5714]]
+			  VDATUM["Mean Sea Level",ANCHOR["The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level."]],
+			  CS[vertical,1],
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			  ID["EPSG","5714"]]
 		</definition>
 		<description>Height related to the average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level, usually by survey techniques.</description>
 	</Row> 
@@ -198,11 +225,10 @@
 		<organization_coordsys_id>5715</organization_coordsys_id>
 		<definition>
 			VERTCRS["MSL depth",
-			   VDATUM["Mean Sea Level"],
-			   CS[vertical,1],
-			      AXIS["depth (D)",down],
-			      LENGTHUNIT["metre",1.0],
-			   ID["EPSG",5715]]
+			  VDATUM["Mean Sea Level",ANCHOR["The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level."]],
+			  CS[vertical,1],
+			    AXIS["Depth (D)",down],LENGTHUNIT["metre",1.0]
+			  ID["EPSG","5715"]]
 		</definition>
 		<description>Depth related to the average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level, usually by survey techniques.</description>
 	</Row>
