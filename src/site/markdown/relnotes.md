@@ -1,5 +1,9 @@
 # Release Notes NSG GeoPackage 2.1
 
+## 0.6 (2020-10-21)
+
+* [#49](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/49): Update dependency of geomatics-geotk to version 1.15
+
 ## 0.5 (2018-08-28)
 
 * [#21](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/21): Test NSG_filenameExtension is a duplicate of the test filenameExtension
