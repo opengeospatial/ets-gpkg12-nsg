@@ -3,6 +3,7 @@
 ## 0.6 (2020-10-21)
 
 * [#49](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/49): Update dependency of geomatics-geotk to version 1.15
+* [#45](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/45): Corrections to dependencies and CRS test corrections
 
 ## 0.5 (2018-08-28)
 
