@@ -46,7 +46,7 @@
   <properties>
     <ets-code>gpkg12-nsg</ets-code>
     <spec-version>2.1</spec-version>
-    <docker.teamengine.version>5.3</docker.teamengine.version>
+    <docker.teamengine.version>5.4.1</docker.teamengine.version>
   </properties>
 
   <dependencies>
