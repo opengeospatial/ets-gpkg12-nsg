@@ -53,16 +53,17 @@
     <dependency>
       <groupId>org.opengis.cite.teamengine</groupId>
       <artifactId>teamengine-spi</artifactId>
+      <version>5.5</version>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>ets-gpkg12</artifactId>
-      <version>0.7</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>geomatics-geotk</artifactId>
-      <version>1.15</version>
+      <version>1.16</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
