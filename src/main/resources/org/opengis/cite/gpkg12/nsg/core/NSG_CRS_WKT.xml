@@ -69,7 +69,7 @@
 		    CS[Cartesian,2],
 		        AXIS["Easting (E)",east,ORDER[1]],
 		        AXIS["Northing (N)",north,ORDER[2]],
-		        LENGTHUNIT["metre",1.0]
+		        LENGTHUNIT["metre",1.0],
 		    ID["EPSG","3395"]]
 		</definition>
 		<description>Euro-centric view of world excluding polar areas for very small scale mapping.</description>
@@ -84,7 +84,7 @@
 		    BASEGEODCRS["WGS 84",
 		        DATUM["World Geodetic System 1984",
 		            ELLIPSOID["WGS 84",6378137,298.257223563,   
-		                  LENGTHUNIT["metre",1.0]]],
+		                  LENGTHUNIT["metre",1.0]]]],
 		    CONVERSION["Universal Polar Stereographic North",
 		        METHOD["Polar Stereographic (variant A)",ID["EPSG","9810"]],
 		        PARAMETER["Latitude of natural origin",90,
@@ -105,7 +105,7 @@
 		        AXIS["Northing (N)",south,
 		            MERIDIAN[180,ANGLEUNIT["degree",0.0174532925199433]],
 		            ORDER[2]],
-		        LENGTHUNIT["metre",1.0]
+		        LENGTHUNIT["metre",1.0],
 		    ID["EPSG","5041"]]
 		</definition>
 		<description>Military mapping by NATO north of 60° N</description>
@@ -120,7 +120,7 @@
 		    BASEGEODCRS["WGS 84",
 		        DATUM["World Geodetic System 1984",
 		            ELLIPSOID["WGS 84",6378137,298.257223563,   
-		                  LENGTHUNIT["metre",1.0]]],
+		                  LENGTHUNIT["metre",1.0]]]],
 		    CONVERSION["Universal Polar Stereographic North",
 		        METHOD["Polar Stereographic (variant A)",ID["EPSG","9810"]],
 		        PARAMETER["Latitude of natural origin",-90,
@@ -141,8 +141,8 @@
 		        AXIS["Northing (N)",north,
 		            MERIDIAN[0,ANGLEUNIT["degree",0.0174532925199433]],
 		            ORDER[2]],
-		        LENGTHUNIT["metre",1.0]
-		    ID["EPSG","5042"]]	
+		        LENGTHUNIT["metre",1.0],
+		    ID["EPSG","5042"]]
 		</definition>
 		<description>Military mapping by NATO south of 60° S</description> 
 	</Row> 
@@ -155,7 +155,7 @@
 			VERTCRS["EGM2008 geoid height",
 			  VDATUM["EGM2008 geoid",ANCHOR["WGS 84 ellipsoid"]],
 			  CS[vertical,1],
-			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0],
 			  ID["EPSG","3855"]]
 		</definition>
 		<description>Good approximation of Orthometric height above the EGM2008 model of the geoid. Replaces EGM96 geoid (CRS code 5773).</description>
@@ -170,7 +170,7 @@
 			  VDATUM["EGM2008 geoid",ANCHOR["WGS 84 ellipsoid"]],
 			  CS[vertical,1],
 			    AXIS["Gravity-related depth (D)",down],
-			        LENGTHUNIT["metre",1.0]
+			        LENGTHUNIT["metre",1.0],
 			  ID["NSG","8056"]]
 		</definition>
 		<description>Good approximation of Orthometric distance below the EGM2008 model of the geoid.</description>
@@ -184,7 +184,7 @@
 			VERTCRS["EGM96 geoid height",
 			  VDATUM["EGM96 geoid",ANCHOR["WGS 84 ellipsoid"]],
 			  CS[vertical,1],
-			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0],
 			  ID["EPSG","5773"]]
 		</definition>
 		<description>Height surface resulting from the application of the EGM96 geoid model to the WGS 84 ellipsoid. Replaces EGM84 geoid height (CRS code 5798). Replaced by EGM2008 geoid height (CRS code 3855).</description>
@@ -199,7 +199,7 @@
 			  VDATUM["EGM96 geoid",ANCHOR["WGS 84 ellipsoid"]],
 			  CS[vertical,1],
 			    AXIS["Gravity-related depth (D)",down],
-			        LENGTHUNIT["metre",1.0]
+			        LENGTHUNIT["metre",1.0],
 			  ID["NSG","8047"]]
 		</definition>
 		<description>The distance below the geopotential surface defined by the Earth Gravity Model 1996 (EGM96) that is closely associated with the mean ocean surface.</description>
@@ -213,7 +213,7 @@
 			VERTCRS["MSL height",
 			  VDATUM["Mean Sea Level",ANCHOR["The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level."]],
 			  CS[vertical,1],
-			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0]
+			    AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1.0],
 			  ID["EPSG","5714"]]
 		</definition>
 		<description>Height related to the average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level, usually by survey techniques.</description>
@@ -227,7 +227,7 @@
 			VERTCRS["MSL depth",
 			  VDATUM["Mean Sea Level",ANCHOR["The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level."]],
 			  CS[vertical,1],
-			    AXIS["Depth (D)",down],LENGTHUNIT["metre",1.0]
+			    AXIS["Depth (D)",down],LENGTHUNIT["metre",1.0],
 			  ID["EPSG","5715"]]
 		</definition>
 		<description>Depth related to the average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level, usually by survey techniques.</description>

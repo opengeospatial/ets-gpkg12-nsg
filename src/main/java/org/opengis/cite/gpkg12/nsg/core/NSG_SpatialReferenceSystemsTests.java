@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -219,62 +218,37 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
                 final String defin = resultSet.getString( "definition" );
                 final String specin = crsListing.getDefinitionBySrsId( srsID );
 
-                boolean crsEquivalent = false;
-                boolean parseFailure = false;
-                /*
-                CoordinateReferenceSystem testCRS = null;
-                CoordinateReferenceSystem specCRS = null;
+            	String specWKT = specin;
+            	String defWKT = defin;
+            	
+        		try {
+        			// Parse WKT - this one is from the specification file
+        			CoordinateReferenceSystem specCRS = crsFactory.createFromWKT(specin);
+        			specWKT = specCRS.toWKT();
+        			
+        			// Parse WKT - this one is from the geopackage
+        			CoordinateReferenceSystem testCRS = crsFactory.createFromWKT(defin);
+        			defWKT =  testCRS.toWKT();
+        			
+        		} catch (FactoryException e) {
+        			// Normalization failed
+        		}
 
-                // Parse WKT - this one is from the specification file
-                try {
-                    specCRS = crsFactory.createFromWKT( specin );
-                } catch ( FactoryException e ) {
-                    parseFailure = true;
-                    final String issueRpt = String.format( " Specification CRS WKT parse failure. WKT: %s : Failure Message : %s",
-                                                           specin, e.getMessage() );
-                    invalidSrsDefs.add( issueRpt );
-                    LOG.log( Level.WARNING, issueRpt,
-                             invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
-                }
-                // Parse the WKT - this one is from the geopackage
-                try {
-                    testCRS = crsFactory.createFromWKT( defin );
-                } catch ( FactoryException e ) {
-                    parseFailure = true;
-                    final String issueRpt = String.format( " GeoPackage CRS WKT parse failure. WKT: %s : Failure Message : %s",
-                                                           defin, e.getMessage() );
-                    invalidSrsDefs.add( issueRpt );
-                    LOG.log( Level.WARNING, issueRpt,
-                             invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
-                }
-                 */
+        		// The WKTs may be normalized now. However, there still may be spaces
+        		// in there that could cause a difference. Hence, we'll compare using a function that
+        		// strips spaces and moves all content to lower case.
+        		// This is still an extremely incomplete test and the CRSs may still be the same. In part,
+        		// this is due to different variations of WKT content.
+        		// We have found no WKT comparison utilities that will work.
+        			
+        		boolean crsEquivalent = compareDefintion( defWKT, specWKT );
+        		
+        		// At this point we know the names from testCRS.getName() may still be different,
+        		// and the identifiers from testCRS.getIdentifiers() may be different, but these
+        		// may still be "the same" CRS. There is not much we can do about it given the available
+        		// utilities.
+        			
                 
-                
-                
-                // If they were actually both set, put them back out to WKT and now compare them
-                // They should be mostly normalized now - However, there still may be spaces
-                // in there that could cause a difference. Hence, we'll compare using a function that
-                // strips spaces and moves all content to lower case.
-                // This is still an extremely incomplete test and the CRSs may still be the same. In part,
-                // this is due to different variations of WKT content.
-                // We have found no WKT comparison utilities that will work.
-                if ( defin != null && specin != null ) {
-                    crsEquivalent = compareDefintion( defin, specin );
-                    // At this point we know the names from testCRS.getName() may still be different,
-                    // and the identifiers from testCRS.getIdentifiers() may be different, but these
-                    // may still be "the same" CRS. There is not much we can do about it given the available
-                    // utilities.
-                }
-
-                // First type of failure is the failure to even parse the CRS WKT
-                if ( parseFailure ) {
-                    final String issueRpt = String.format( "srs_id: %s : GeoPackage WKT: %s : Specification WKT: %s ",
-                                                           srsID, defin, specin );
-                    invalidSrsDefs.add( issueRpt );
-                    Assert.fail( MessageFormat.format( "The CRS for srs_id is not equivalent to the specification due to failure in parsing the WKT.  {0}",
-                                                       invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) ) );
-                }
-                // Next type of failure is if the test to see if the parsed WKTs are equivalent or not
                 if ( !crsEquivalent ) {
                     final String issueRpt = String.format( "srs_id: %s : GeoPackage WKT (normalized): %s : Specification WKT (normalized): %s ",
                                                            srsID, defin, specin );
