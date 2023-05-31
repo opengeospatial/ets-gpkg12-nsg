@@ -46,14 +46,14 @@
   <properties>
     <ets-code>gpkg12-nsg</ets-code>
     <spec-version>2.1</spec-version>
-    <docker.teamengine.version>5.4.1</docker.teamengine.version>
+    <docker.teamengine.version>5.6.1</docker.teamengine.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.opengis.cite.teamengine</groupId>
       <artifactId>teamengine-spi</artifactId>
-      <version>5.5</version>
+      <version>5.6.1</version>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
