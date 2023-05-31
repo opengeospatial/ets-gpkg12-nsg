@@ -1,5 +1,15 @@
 # Release Notes NSG GeoPackage 2.1
 
+## 0.7 (2023-05-31)
+
+* [#60](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/60): Update TEAM Engine dependencies to v5.6.1
+* [#58](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/58): Unit tests are failing
+* [#46](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/46): Improve and fix CRSDefintion Tests
+* [#56](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/56): Set teamengine-spi to v5.5, ets-gpkg12 to v1.1 and geomatics-geotk to v1.16
+* [#50](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/50): Cleanup dependencies
+* [#52](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/52): Add template to get an XML/JSON response via rest endpoint
+* [#55](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/55): Set commons-io to v2.7
+
 ## 0.6 (2020-10-21)
 
 * [#49](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/49): Update dependency of geomatics-geotk to version 1.15
