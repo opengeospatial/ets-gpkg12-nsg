@@ -66,18 +66,18 @@ import org.xml.sax.SAXException;
     @Test(description = &quot;Validate against NMIS schema&quot;)
     public void metadataSchemaValidation()
                             throws SQLException {
-<span class="nc bnc" id="L69" title="All 2 branches missed.">        if ( this.schema == null )</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if ( this.schema == null )</span>
 <span class="nc" id="L70">            throw new SkipException( &quot;Schema required for validation could not be loaded.&quot; );</span>
         
-<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_metadata&quot;)) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_metadata&quot;)) {</span>
 
-<span class="nc" id="L74">          try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="nc" id="L75">                                  final ResultSet resultSet = statement.executeQuery( &quot;SELECT metadata FROM gpkg_metadata;&quot; )) {</span>
-<span class="nc" id="L76">              List&lt;String&gt; xmlEntries = findXmlEntries( resultSet );</span>
+<span class="fc" id="L74">          try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L75">                                  final ResultSet resultSet = statement.executeQuery( &quot;SELECT metadata FROM gpkg_metadata;&quot; )) {</span>
+<span class="fc" id="L76">              List&lt;String&gt; xmlEntries = findXmlEntries( resultSet );</span>
 <span class="nc" id="L77">              validateXmlEntries( xmlEntries );</span>
-<span class="nc bnc" id="L78" title="All 16 branches missed.">	        }</span>
+<span class="pc bpc" id="L78" title="12 of 16 branches missed.">	        }</span>
         } else {
-<span class="nc" id="L80">        	throw new SkipException( &quot;Table gpkg_metadata required to evaluate metadata.&quot; );</span>
+<span class="fc" id="L80">        	throw new SkipException( &quot;Table gpkg_metadata required to evaluate metadata.&quot; );</span>
         }
 <span class="nc" id="L82">    }</span>
 
@@ -96,9 +96,9 @@ import org.xml.sax.SAXException;
     private void validateXmlEntry( String xmlEntry ) {
         try {
 <span class="fc" id="L98">            ValidationErrorHandler validationResult = validate( xmlEntry );</span>
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if ( validationResult.errorsDetected() ) {</span>
-<span class="nc" id="L100">                String errors = validationResult.getErrors().stream().map( Object::toString ).collect( Collectors.joining( &quot;,&quot; ) );</span>
-<span class="nc" id="L101">                throw new AssertionError(</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if ( validationResult.errorsDetected() ) {</span>
+<span class="fc" id="L100">                String errors = validationResult.getErrors().stream().map( Object::toString ).collect( Collectors.joining( &quot;,&quot; ) );</span>
+<span class="fc" id="L101">                throw new AssertionError(</span>
                                           &quot;GeoPackage does not contain a valid NMIS v2.2 metadata as XML. Results of the schema validation: &quot;
                                                                   + errors );
             }

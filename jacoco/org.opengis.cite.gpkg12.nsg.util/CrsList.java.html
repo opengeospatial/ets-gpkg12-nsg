@@ -32,11 +32,11 @@ import java.util.List;
      * @return the organization_coordsys_id of the entry with the passed srs_id, &lt;code&gt;null&lt;/code&gt; if not available
      */
     public String getOrganizationCoordsysIdBySrsId( String srsID ) {
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        for ( CrsListing crsListing : crsListingList ) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for ( CrsListing crsListing : crsListingList ) {</span>
 <span class="fc bfc" id="L36" title="All 2 branches covered.">            if ( srsID.equals( crsListing.id ) )</span>
 <span class="fc" id="L37">                return crsListing.organization_coordsys_id;</span>
 <span class="fc" id="L38">        }</span>
-<span class="nc" id="L39">        return null;</span>
+<span class="fc" id="L39">        return null;</span>
     }
 
     /**
@@ -45,11 +45,11 @@ import java.util.List;
      * @return the definition of the entry with the passed srs_id, &lt;code&gt;null&lt;/code&gt; if not available
      */
     public String getDefinitionBySrsId( String srsID ) {
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        for ( CrsListing crsListing : crsListingList ) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for ( CrsListing crsListing : crsListingList ) {</span>
 <span class="fc bfc" id="L49" title="All 2 branches covered.">            if ( srsID.equals( crsListing.id ) )</span>
 <span class="fc" id="L50">                return crsListing.definition;</span>
 <span class="fc" id="L51">        }</span>
-<span class="nc" id="L52">        return null;</span>
+<span class="fc" id="L52">        return null;</span>
     }
 
     /**
@@ -58,11 +58,11 @@ import java.util.List;
      * @return the description of the entry with the passed srs_id, &lt;code&gt;null&lt;/code&gt; if not available
      */
     public String getDescriptionBySrsId( String srsID ) {
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        for ( CrsListing crsListing : crsListingList ) {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for ( CrsListing crsListing : crsListingList ) {</span>
 <span class="fc bfc" id="L62" title="All 2 branches covered.">            if ( srsID.equals( crsListing.id ) )</span>
 <span class="fc" id="L63">                return crsListing.description;</span>
 <span class="fc" id="L64">        }</span>
-<span class="nc" id="L65">        return null;</span>
+<span class="fc" id="L65">        return null;</span>
     }
 
     private class CrsListing {

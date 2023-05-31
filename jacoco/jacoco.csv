@@ -1,8 +1,8 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.core,NSG_SpatialReferenceSystemsTests,1401,12,174,0,206,3,101,2,14,2
+NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.core,NSG_SpatialReferenceSystemsTests,378,927,82,86,26,162,66,34,0,16
 NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg,TestNGController,146,148,13,11,24,28,15,5,4,4
-NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.metadata,MetadataTests,217,146,34,10,30,36,23,10,3,8
-NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.tiles,NSG_TileTests,2211,3,291,0,257,1,159,1,12,1
-NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.util,CrsList,6,81,3,9,3,16,3,8,0,5
+NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.metadata,MetadataTests,136,227,26,18,21,45,20,13,2,9
+NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.tiles,NSG_TileTests,855,1359,165,126,24,234,123,37,0,13
+NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.util,CrsList,0,87,0,12,0,19,0,11,0,5
 NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.util,CrsList.CrsListing,0,18,0,0,0,6,0,1,0,1
 NSG GeoPackage 1.1 Conformance Test Suite,org.opengis.cite.gpkg12.nsg.util,CrsListingUtils,9,87,4,6,6,23,5,4,1,3
