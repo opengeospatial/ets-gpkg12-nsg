@@ -47,7 +47,7 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
      * Factory to create coordinate reference systems we are calling it out specifically here due to conflicts with
      * other packages.
      */
-    private CRSFactory crsFactory = org.geotoolkit.factory.FactoryFinder.getCRSFactory( null );
+    private CRSFactory crsFactory = new org.apache.sis.referencing.factory.GeodeticObjectFactory();
 
     @BeforeClass
     public void parseCrsListing() {
@@ -176,10 +176,10 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
 
     /*
      * TODO: Implement Test for Requirement 6
-     * 
+     *
      * --- NSG Req 6: The WGS 84 Geographic 2D CRS SHALL be used for 2D vector features. WGS 84 Geographic 2D
      * GeoPackages SHALL follow the technical guidance provided in Annex E: Implementation Guide for EPSG::4326 Tiles.
-     * 
+     *
      * @Test(groups = { "NSG" }, description = "NSG Req 6 (match Annex table)")
      */
 
@@ -220,16 +220,16 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
 
             	String specWKT = specin;
             	String defWKT = defin;
-            	
+
         		try {
         			// Parse WKT - this one is from the specification file
         			CoordinateReferenceSystem specCRS = crsFactory.createFromWKT(specin);
         			specWKT = specCRS.toWKT();
-        			
+
         			// Parse WKT - this one is from the geopackage
         			CoordinateReferenceSystem testCRS = crsFactory.createFromWKT(defin);
         			defWKT =  testCRS.toWKT();
-        			
+
         		} catch (FactoryException e) {
         			// Normalization failed
         		}
@@ -240,15 +240,15 @@ public class NSG_SpatialReferenceSystemsTests extends CommonFixture {
         		// This is still an extremely incomplete test and the CRSs may still be the same. In part,
         		// this is due to different variations of WKT content.
         		// We have found no WKT comparison utilities that will work.
-        			
+
         		boolean crsEquivalent = compareDefintion( defWKT, specWKT );
-        		
+
         		// At this point we know the names from testCRS.getName() may still be different,
         		// and the identifiers from testCRS.getIdentifiers() may be different, but these
         		// may still be "the same" CRS. There is not much we can do about it given the available
         		// utilities.
-        			
-                
+
+
                 if ( !crsEquivalent ) {
                     final String issueRpt = String.format( "srs_id: %s : GeoPackage WKT (normalized): %s : Specification WKT (normalized): %s ",
                                                            srsID, defin, specin );
