@@ -46,24 +46,52 @@
   <properties>
     <ets-code>gpkg12-nsg</ets-code>
     <spec-version>2.1</spec-version>
-    <docker.teamengine.version>5.6.1</docker.teamengine.version>
+    <docker.teamengine.version>5.7</docker.teamengine.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.opengis.cite.teamengine</groupId>
       <artifactId>teamengine-spi</artifactId>
-      <version>5.6.1</version>
+      <version>5.7</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xercesImpl</artifactId>
+          <groupId>xerces</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcommander</artifactId>
+          <groupId>com.beust</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>ets-gpkg12</artifactId>
       <version>1.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xercesImpl</artifactId>
+          <groupId>xerces</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>teamengine-spi</artifactId>
+          <groupId>org.opengis.cite.teamengine</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>commons-io</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcommander</artifactId>
+          <groupId>com.beust</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>geomatics-geotk</artifactId>
-      <version>1.16</version>
+      <version>1.17</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -99,7 +127,12 @@
     <dependency>
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
-      <version>1.48</version>
+      <version>1.82</version>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.2</version>
     </dependency>
   </dependencies>
 
@@ -215,7 +248,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.26.0</version>
+            <version>0.28.0</version>
             <configuration>
               <images>
                 <image>
