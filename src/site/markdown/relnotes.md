@@ -1,5 +1,9 @@
 # Release Notes NSG GeoPackage 2.1
 
+## 0.8 (2024-05-28)
+
+* [#63](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/63): Upgrade multiple dependencies
+
 ## 0.7 (2023-05-31)
 
 * [#60](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/60): Update TEAM Engine dependencies to v5.6.1
