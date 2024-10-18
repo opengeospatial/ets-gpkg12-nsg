@@ -126,7 +126,7 @@
                             <gmd:phone>
                                 <gmd:CI_Telephone>
                                     <gmd:voice>
-                                        <!-- An “internationalized” telephone number as specified in ITU-T Recommendation E.123 Clause 2. -->
+                                        <!-- An "internationalized" telephone number as specified in ITU-T Recommendation E.123 Clause 2. -->
                                         <nas:TelephoneNumber>+1 703 555 1212</nas:TelephoneNumber>
                                     </gmd:voice>
                                 </gmd:CI_Telephone>
