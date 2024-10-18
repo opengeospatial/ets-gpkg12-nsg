@@ -25,89 +25,81 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class MetadataTestsTest {
 
-    private MetadataTests metadataTests;
+	private MetadataTests metadataTests;
 
-    @Before
-    public void initMetadataTests()
-            throws SAXException, ParserConfigurationException {
-        this.metadataTests = new MetadataTests();
-        metadataTests.initSchema();
-        metadataTests.initDocumentBuilder();
-    }
+	@Before
+	public void initMetadataTests() throws SAXException, ParserConfigurationException {
+		this.metadataTests = new MetadataTests();
+		metadataTests.initSchema();
+		metadataTests.initDocumentBuilder();
+	}
 
-    @Test(expected = AssertionError.class)
-    public void testWithOneInvalidEntry()
-                            throws Exception {
-        ResultSet resultSet = mockResultSetWithOneStringEntry();
-        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
-        assertThat( xmlEntries.size(), is( 0 ) );
+	@Test(expected = AssertionError.class)
+	public void testWithOneInvalidEntry() throws Exception {
+		ResultSet resultSet = mockResultSetWithOneStringEntry();
+		List<String> xmlEntries = metadataTests.findXmlEntries(resultSet);
+		assertThat(xmlEntries.size(), is(0));
 
-        metadataTests.validateXmlEntries( xmlEntries );
-    }
+		metadataTests.validateXmlEntries(xmlEntries);
+	}
 
-    @Test
-    public void testWithOneValidEntry()
-                            throws Exception {
-        ResultSet resultSet = mockResultSetWithOneValidEntry();
-        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
-        assertThat( xmlEntries.size(), is( 1 ) );
+	@Test
+	public void testWithOneValidEntry() throws Exception {
+		ResultSet resultSet = mockResultSetWithOneValidEntry();
+		List<String> xmlEntries = metadataTests.findXmlEntries(resultSet);
+		assertThat(xmlEntries.size(), is(1));
 
-        metadataTests.validateXmlEntries( xmlEntries );
-    }
+		metadataTests.validateXmlEntries(xmlEntries);
+	}
 
-    @Test
-    public void testWithOneInvalidAndOneValidEntry()
-                            throws Exception {
-        ResultSet resultSet = mockResultSetWithOneInvalidAndOneValidEntry();
-        List<String> xmlEntries = metadataTests.findXmlEntries( resultSet );
-        assertThat( xmlEntries.size(), is( 1 ) );
+	@Test
+	public void testWithOneInvalidAndOneValidEntry() throws Exception {
+		ResultSet resultSet = mockResultSetWithOneInvalidAndOneValidEntry();
+		List<String> xmlEntries = metadataTests.findXmlEntries(resultSet);
+		assertThat(xmlEntries.size(), is(1));
 
-        metadataTests.validateXmlEntries( xmlEntries );
-    }
+		metadataTests.validateXmlEntries(xmlEntries);
+	}
 
-    private ResultSet mockResultSetWithOneStringEntry()
-                            throws SQLException {
-        ResultSet mock = mock( ResultSet.class );
-        when( mock.next() ).thenReturn( true, false );
-        when( mock.getString( "metadata" ) ).thenReturn( simpleStringMetadata() );
-        return mock;
-    }
+	private ResultSet mockResultSetWithOneStringEntry() throws SQLException {
+		ResultSet mock = mock(ResultSet.class);
+		when(mock.next()).thenReturn(true, false);
+		when(mock.getString("metadata")).thenReturn(simpleStringMetadata());
+		return mock;
+	}
 
-    private ResultSet mockResultSetWithOneValidEntry()
-                            throws SQLException, IOException {
-        ResultSet mock = mock( ResultSet.class );
-        when( mock.next() ).thenReturn( true, false );
-        when( mock.getString( "metadata" ) ).thenReturn( validMetadata() );
-        return mock;
-    }
+	private ResultSet mockResultSetWithOneValidEntry() throws SQLException, IOException {
+		ResultSet mock = mock(ResultSet.class);
+		when(mock.next()).thenReturn(true, false);
+		when(mock.getString("metadata")).thenReturn(validMetadata());
+		return mock;
+	}
 
-    private ResultSet mockResultSetWithOneInvalidAndOneValidEntry()
-                            throws SQLException, IOException {
-        ResultSet mock = mock( ResultSet.class );
-        when( mock.next() ).thenReturn( true, true, false );
-        when( mock.getString( "metadata" ) ).thenReturn( emptyMetadata(), validMetadata() );
-        return mock;
-    }
+	private ResultSet mockResultSetWithOneInvalidAndOneValidEntry() throws SQLException, IOException {
+		ResultSet mock = mock(ResultSet.class);
+		when(mock.next()).thenReturn(true, true, false);
+		when(mock.getString("metadata")).thenReturn(emptyMetadata(), validMetadata());
+		return mock;
+	}
 
-    private String validMetadata()
-                            throws IOException {
-        InputStream metadata = getClass().getResourceAsStream( "nmisExampleInstanceShort_ISM6.xml" );
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        byte[] data = new byte[1024];
-        while ( ( nRead = metadata.read( data, 0, data.length ) ) != -1 ) {
-            buffer.write( data, 0, nRead );
-        }
-        buffer.flush();
-        return new String( buffer.toByteArray(), StandardCharsets.UTF_8 );
-    }
+	private String validMetadata() throws IOException {
+		InputStream metadata = getClass().getResourceAsStream("nmisExampleInstanceShort_ISM6.xml");
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+		byte[] data = new byte[1024];
+		while ((nRead = metadata.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, nRead);
+		}
+		buffer.flush();
+		return new String(buffer.toByteArray(), StandardCharsets.UTF_8);
+	}
 
-    private String simpleStringMetadata() {
-        return "invalid";
-    }
+	private String simpleStringMetadata() {
+		return "invalid";
+	}
 
-    private String emptyMetadata() {
-        return "";
-    }
+	private String emptyMetadata() {
+		return "";
+	}
 
 }
