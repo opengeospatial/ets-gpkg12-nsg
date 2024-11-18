@@ -1,5 +1,12 @@
 # Release Notes NSG GeoPackage 2.1
 
+## 0.9 (2024-11-18)
+
+Attention: Java 17 and Tomcat 10.1 are required.
+
+* [#62](https://github.com/opengeospatial/ets-gpkg12-nsg/issues/62): Migrate test suite to TEAM Engine 6 (Java 17)
+* [#61](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/61): Upgrade geotk dependency.
+
 ## 0.8 (2024-05-28)
 
 * [#63](https://github.com/opengeospatial/ets-gpkg12-nsg/pull/63): Upgrade multiple dependencies
