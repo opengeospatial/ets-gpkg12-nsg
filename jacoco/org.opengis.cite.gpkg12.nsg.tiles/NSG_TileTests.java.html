@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_TileTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.tiles</a> &gt; <span class="el_source">NSG_TileTests.java</span></div><h1>NSG_TileTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.tiles;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NSG_TileTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.tiles</a> &gt; <span class="el_source">NSG_TileTests.java</span></div><h1>NSG_TileTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.tiles;
 
 import static org.testng.Assert.assertTrue;
 
@@ -42,493 +42,488 @@ import org.xml.sax.SAXException;
 
 <span class="fc" id="L43">public class NSG_TileTests extends CommonFixture {</span>
 
-    private static final int MIN_ZOOM = 0;
+	private static final int MIN_ZOOM = 0;
 
-    private static final int MAX_ZOOM = 24;
+	private static final int MAX_ZOOM = 24;
 
-    private static final double TOLERANCE = 1.0e-10;
-    
+	private static final double TOLERANCE = 1.0e-10;
 
-    /**
-     * Validate a string value to ensure it contains no illegal characters or content
-     * 
-     * @param inputString The string to validate
-     * @return validated string
-     * @throws IllegalArgumentException if the input is found to be invalid
-     */
-    public static String ValidateStringInput( String inputString ) throws IllegalArgumentException {
+	/**
+	 * Validate a string value to ensure it contains no illegal characters or content
+	 * @param inputString The string to validate
+	 * @return validated string
+	 * @throws IllegalArgumentException if the input is found to be invalid
+	 */
+	public static String ValidateStringInput(String inputString) throws IllegalArgumentException {
 
-<span class="fc" id="L61">    	StringBuilder sb = new StringBuilder(50);  // initial size is 50. This is expected to be sufficient for most table and field names. This is NOT a limit.</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">    	for (int ii = 0; ii &lt; inputString.length(); ++ii) {</span>
-<span class="fc" id="L63">    		final char cleanedchar = cleanChar(inputString.charAt(ii));</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">    		if (cleanedchar == '^') {   // This is an illegal character indicator</span>
-<span class="nc" id="L65">    			throw new IllegalArgumentException(String.format(&quot;Illegal parameter provided within SQL statement. Error in %s at character %c&quot;,inputString,  inputString.charAt(ii)));</span>
-    		}
-    		else {
-<span class="fc" id="L68">    			sb.append(cleanedchar);</span>
-    		}
-    	}
-<span class="fc" id="L71">    	return sb.toString();</span>
-    }
-    
-    /**
-     * Validate and clean a character of a string.
-     * 
-     * @param inputChar  A character of a string, for which we will check validity, replacing any illegal characters with %
-     * @return a validated character
-     */
-    private static char cleanChar(char inputChar) {
-        // 0 - 9
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (int i = 48; i &lt; 58; ++i) {</span>
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (inputChar == i) return (char) i;</span>
-        }
-
-        // 'A' - 'Z'
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (int i = 65; i &lt; 91; ++i) {</span>
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (inputChar == i) return (char) i;</span>
-        }
-
-        // 'a' - 'z'
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (int i = 97; i &lt; 123; ++i) {</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (inputChar == i) return (char) i;</span>
-        }
-
-        // other valid characters
-<span class="pc bpc" id="L97" title="4 of 5 branches missed.">        switch (inputChar) {</span>
-            case '.':
-<span class="nc" id="L99">                return '.';</span>
-            case '-':
-<span class="nc" id="L101">                return '-';</span>
-            case '_':
-<span class="fc" id="L103">                return '_';</span>
-            case ' ':
-<span class="nc" id="L105">                return ' ';</span>
-        }
-<span class="nc" id="L107">        return '^';</span>
-    }
-
-    
-    /**
-     * NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using a
-     * test suite. Data validity MAY be enforced by SQL triggers.
-     *
-     * 19-D: Addresses Table 26 Rows 12-17 (regarding table &quot;gpkg_tile_matrix&quot;)
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-D (Data Validity: gpkg_tile_matrix)&quot;)
-    public void dataValidity_gpkg_tile_matrix()
-                            throws SQLException {
-        // test for: Table 26; Row 17
-<span class="fc" id="L124">        String queryStr = &quot;SELECT table_name FROM gpkg_contents WHERE data_type=\'tiles\';&quot;;</span>
-
-<span class="pc" id="L126">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L127">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L129">                String tableName = ValidateStringInput(resultSet.getString( &quot;table_name&quot; ).trim());</span>
-<span class="fc" id="L130">                int firstZoom = 999;</span>
-<span class="fc" id="L131">                int lastZoom = -1;</span>
-
-                // test for: Table 26; Row 12 &amp; 17
-<span class="pc" id="L134">                try (final Statement tileStatement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L135">                                        final ResultSet tileResultSet = tileStatement.executeQuery( &quot;SELECT DISTINCT zoom_level FROM &quot; + tableName + &quot; ORDER BY zoom_level;&quot; )) {</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">                    while ( tileResultSet.next() ) {</span>
-<span class="fc" id="L137">                        int zoom = tileResultSet.getInt( &quot;zoom_level&quot; );</span>
-<span class="fc" id="L138">                        firstZoom = Math.min( firstZoom, zoom );</span>
-<span class="fc" id="L139">                        lastZoom = Math.max( lastZoom, zoom );</span>
-<span class="fc" id="L140">                    }</span>
-<span class="pc bpc" id="L141" title="12 of 16 branches missed.">                }</span>
-
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                assertTrue( ( firstZoom &gt;= MIN_ZOOM ),</span>
-<span class="fc" id="L144">                            MessageFormat.format( &quot;The &quot;</span>
-                                                                          + tableName
-                                                                          + &quot; table contains an invalid minimum zoom_level: {0}, should be: {1}&quot;,
-<span class="fc" id="L147">                                                  Integer.toString( firstZoom ), Integer.toString( this.MIN_ZOOM ) ) );</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                assertTrue( ( lastZoom &lt;= MAX_ZOOM ),</span>
-<span class="fc" id="L149">                            MessageFormat.format( &quot;The &quot;</span>
-                                                                          + tableName
-                                                                          + &quot; table contains an invalid maximum zoom_level: {0}, should be: {1}&quot;,
-<span class="fc" id="L152">                                                  Integer.toString( firstZoom ), Integer.toString( this.MAX_ZOOM ) ) );</span>
-
-
-<span class="pc" id="L155">                try (final Statement tileStatement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L156">                                        final ResultSet tileResultSet = tileStatement.executeQuery( &quot;SELECT zoom_level, tile_width, tile_height, pixel_x_size, pixel_y_size FROM gpkg_tile_matrix WHERE table_name=\'&quot;</span>
-                                                + tableName + &quot;\' ORDER BY zoom_level;&quot; )) {
-<span class="fc" id="L158">                    boolean firstFound = false;</span>
-<span class="fc" id="L159">                    boolean lastFound = false;</span>
-<span class="fc" id="L160">                    double pixelSzX = 0.0D;</span>
-<span class="fc" id="L161">                    double pixelSzY = 0.0D;</span>
-
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                    while ( tileResultSet.next() ) {</span>
-<span class="fc" id="L164">                        int zoom = tileResultSet.getInt( &quot;zoom_level&quot; );</span>
-<span class="pc bpc" id="L165" title="2 of 4 branches missed.">                        if ( zoom &gt;= firstZoom &amp;&amp; zoom &lt;= lastZoom ) {</span>
-<span class="fc" id="L166">                            int tileWidth = tileResultSet.getInt( &quot;tile_width&quot; );</span>
-<span class="fc" id="L167">                            int tileHeight = tileResultSet.getInt( &quot;tile_height&quot; );</span>
-
-<span class="fc" id="L169">                            double lastPixelSzX = pixelSzX;</span>
-<span class="fc" id="L170">                            double lastPixelSzY = pixelSzY;</span>
-<span class="fc" id="L171">                            pixelSzX = tileResultSet.getDouble( &quot;pixel_x_size&quot; );</span>
-<span class="fc" id="L172">                            pixelSzY = tileResultSet.getDouble( &quot;pixel_y_size&quot; );</span>
-
-                            // test for: Table 26; Row 12 (again)
-<span class="pc bpc" id="L175" title="2 of 4 branches missed.">                            assertTrue( ( 0 &lt;= zoom &amp;&amp; zoom &lt;= lastZoom ),</span>
-<span class="fc" id="L176">                                        MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid zoom_level: {0} for {1}, should be between {2} and {3}&quot;,</span>
-<span class="fc" id="L177">                                                              Integer.toString( zoom ), tableName,</span>
-<span class="fc" id="L178">                                                              Integer.toString( firstZoom ),</span>
-<span class="fc" id="L179">                                                              Integer.toString( lastZoom ) ) );</span>
-
-<span class="fc bfc" id="L181" title="All 2 branches covered.">                            if ( !firstFound ) {</span>
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                                firstFound = ( zoom == firstZoom );</span>
-                            }
-
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                            if ( !lastFound ) {</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                                lastFound = ( zoom == lastZoom );</span>
-                            }
-
-                         // test for: Table 26; Row 13
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">                            assertTrue( ( tileWidth == 256 ),</span>
-<span class="fc" id="L191">                                        MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid tile_width: {0} for {1}, should be 256&quot;,</span>
-<span class="fc" id="L192">                                                              Integer.toString( tileWidth ), tableName ) );</span>
-
-                            // test for: Table 26; Row 14
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">                            assertTrue( ( tileHeight == 256 ),</span>
-<span class="fc" id="L196">                                        MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid tile_height: {0} for {1}, should be 256&quot;,</span>
-<span class="fc" id="L197">                                                              Integer.toString( tileHeight ), tableName ) );</span>
-
-                            // test for: Table 26; Row 15
-<span class="fc" id="L200">                            double deltaX = Math.abs( ( pixelSzX * 2.0D ) - lastPixelSzX );</span>
-<span class="pc bpc" id="L201" title="1 of 4 branches missed.">                            assertTrue( ( ( zoom == firstZoom ) || ( deltaX &lt; TOLERANCE ) ),</span>
-<span class="fc" id="L202">                                        MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}&quot;,</span>
-<span class="fc" id="L203">                                                              String.format( &quot;%.10f&quot;, pixelSzX ), tableName ) );</span>
-
-                            // test for: Table 26; Row 16
-<span class="fc" id="L206">                            double deltaY = Math.abs( ( pixelSzY * 2.0D ) - lastPixelSzY );</span>
-<span class="pc bpc" id="L207" title="1 of 4 branches missed.">                            assertTrue( ( ( zoom == firstZoom ) || ( deltaY &lt; TOLERANCE ) ),</span>
-<span class="fc" id="L208">                                        MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}&quot;,</span>
-<span class="fc" id="L209">                                                              String.format( &quot;%.10f&quot;, pixelSzY ), tableName ) );</span>
-                        }
-<span class="fc" id="L211">                    }</span>
-
-                    // test for: Table 26; Row 12 &amp; 17 (again)
-<span class="fc" id="L214">                    assertTrue( firstFound,</span>
-<span class="fc" id="L215">                                MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid zoom_level: no zoom level 0 for {0}&quot;,</span>
-                                                      tableName ) );
-<span class="fc" id="L217">                    assertTrue( lastFound,</span>
-<span class="fc" id="L218">                                MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid zoom_level: no max zoom level for {0}&quot;,</span>
-                                                      tableName ) );
-<span class="pc bpc" id="L220" title="12 of 16 branches missed.">                }</span>
-<span class="fc" id="L221">            }</span>
-<span class="pc bpc" id="L222" title="12 of 16 branches missed.">        }</span>
-<span class="fc" id="L223">    }</span>
-
-    /**
-     * NSG Req 20: The gpkg_tile_matrix table SHALL contain tile_width and tile_height column values of 256 for every
-     * table_name tile pyramid data table.
-     *
-     * NSG Req 21: Every tile_data tile in every table_name tile pyramid data table shall have a width and height of 256
-     * pixels.
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     * @throws IOException
-     *             if tile data coul not be read
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 20 &amp; 21 (Tile widths and heights)&quot;)
-    public void tileSizeTests()
-                            throws SQLException, IOException {
-        
-<span class="fc bfc" id="L241" title="All 2 branches covered.">    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix&quot;)) {</span>
-    		
-	    	// test Req 20
-<span class="fc" id="L244">	        Collection&lt;String&gt; tableNameAndExtents = collectTableNameAndExtents();</span>
-<span class="fc" id="L245">	        assertTrue( tableNameAndExtents.isEmpty(),</span>
-<span class="fc" id="L246">	                    MessageFormat.format( &quot;The gpkg_tile_matrix table contains invalid tile width/height values for tables: {0}&quot;,</span>
-<span class="fc" id="L247">	                                          tableNameAndExtents.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-	
-	        // test Req 21
-<span class="fc" id="L250">	        String tableNameQuery = &quot;SELECT DISTINCT table_name FROM gpkg_tile_matrix;&quot;;</span>
-	
-<span class="pc" id="L252">	        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L253">	                                final ResultSet resultSet = statement.executeQuery( tableNameQuery )) {</span>
-<span class="fc bfc" id="L254" title="All 2 branches covered.">	            while ( resultSet.next() ) {</span>
-<span class="fc" id="L255">	                String tableName = ValidateStringInput(resultSet.getString( &quot;table_name&quot; ).trim());</span>
-	
-<span class="pc" id="L257">	                try (final Statement subStatement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L258">	                                        final ResultSet subResultSet = subStatement.executeQuery( &quot;SELECT zoom_level, tile_column, tile_row, tile_data FROM &quot; + tableName )) {</span>
-<span class="fc bfc" id="L259" title="All 2 branches covered.">	                    while ( subResultSet.next() ) {</span>
-<span class="fc" id="L260">	                        byte[] image = subResultSet.getBytes( &quot;tile_data&quot; );</span>
-<span class="fc" id="L261">	                        ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream( image ) );</span>
-<span class="fc" id="L262">	                        Iterator readers = ImageIO.getImageReaders( iis );</span>
-	
-<span class="fc bfc" id="L264" title="All 2 branches covered.">	                        while ( readers.hasNext() ) {</span>
-<span class="fc" id="L265">	                            ImageReader read = (ImageReader) readers.next();</span>
-<span class="fc" id="L266">	                            read.setInput( iis, true );</span>
-<span class="fc" id="L267">	                            int width = read.getWidth( 0 );</span>
-<span class="fc" id="L268">	                            int height = read.getHeight( 0 );</span>
-	
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">	                            assertTrue( ( width == 256 ),</span>
-<span class="fc" id="L271">	                                        MessageFormat.format( &quot;The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_width: {4}&quot;,</span>
-	                                                              tableName,
-<span class="fc" id="L273">	                                                              Integer.toString( subResultSet.getInt( &quot;zoom_level&quot; ) ),</span>
-<span class="fc" id="L274">	                                                              Integer.toString( subResultSet.getInt( &quot;tile_column&quot; ) ),</span>
-<span class="fc" id="L275">	                                                              Integer.toString( subResultSet.getInt( &quot;tile_row&quot; ) ),</span>
-<span class="fc" id="L276">	                                                              Integer.toString( width ) ) );</span>
-<span class="pc bpc" id="L277" title="1 of 2 branches missed.">	                            assertTrue( ( height == 256 ),</span>
-<span class="fc" id="L278">	                                        MessageFormat.format( &quot;The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_height: {4}&quot;,</span>
-	                                                              tableName,
-<span class="fc" id="L280">	                                                              Integer.toString( subResultSet.getInt( &quot;zoom_level&quot; ) ),</span>
-<span class="fc" id="L281">	                                                              Integer.toString( subResultSet.getInt( &quot;tile_column&quot; ) ),</span>
-<span class="fc" id="L282">	                                                              Integer.toString( subResultSet.getInt( &quot;tile_row&quot; ) ),</span>
-<span class="fc" id="L283">	                                                              Integer.toString( height ) ) );</span>
-<span class="fc" id="L284">	                        }</span>
-<span class="fc" id="L285">	                    }</span>
-<span class="pc bpc" id="L286" title="12 of 16 branches missed.">	                }</span>
-<span class="fc" id="L287">	            }</span>
-<span class="pc bpc" id="L288" title="12 of 16 branches missed.">	        }</span>
-<span class="fc" id="L289">	    } else {</span>
-<span class="fc" id="L290">	    	throw new SkipException( &quot;Table gpkg_tile_matrix required to perform this test.&quot; );</span>
-	    }
-<span class="fc" id="L292">    }</span>
-
-    /**
-     * NSG Req 22: The gpkg_tile_matrix table SHALL contain pixel_x_size and pixel_y_size column values that differ by a
-     * factor of 2 between all adjacent zoom levels for each tile pyramid data table per OGC GeoPackage Clause 2.2.3. It
-     * SHALL NOT contain pixel sizes that vary by irregular intervals or by regular intervals other than a factor of 2
-     * between adjacent zoom levels per OGC GeoPackage Clause 3.2.1.
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 22 (pixels sizes factor of 2)&quot;)
-    public void pixelsSizeTests()
-                            throws SQLException {
-<span class="fc" id="L306">        String queryStr = &quot;SELECT table_name FROM gpkg_contents WHERE data_type=\'tiles\';&quot;;</span>
-
-<span class="pc" id="L308">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L309">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc bfc" id="L310" title="All 2 branches covered.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L311">                String tableName = ValidateStringInput(resultSet.getString( &quot;table_name&quot; ).trim());</span>
-
-<span class="fc" id="L313">                String subQueryStr = &quot;SELECT pixel_x_size, pixel_y_size FROM gpkg_tile_matrix &quot; + &quot;WHERE table_name=\'&quot;</span>
-                                     + tableName + &quot;\' ORDER BY zoom_level;&quot;;
-
-<span class="pc" id="L316">                try (final Statement subStatement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L317">                                        final ResultSet subResultSet = subStatement.executeQuery( subQueryStr )) {</span>
-<span class="fc" id="L318">                    double pixelSzX = -1.0D;</span>
-<span class="fc" id="L319">                    double pixelSzY = -1.0D;</span>
-
-<span class="fc bfc" id="L321" title="All 2 branches covered.">                    while ( subResultSet.next() ) {</span>
-<span class="fc" id="L322">                        double lastPixelSzX = pixelSzX;</span>
-<span class="fc" id="L323">                        double lastPixelSzY = pixelSzY;</span>
-<span class="fc" id="L324">                        pixelSzX = subResultSet.getDouble( &quot;pixel_x_size&quot; );</span>
-<span class="fc" id="L325">                        pixelSzY = subResultSet.getDouble( &quot;pixel_y_size&quot; );</span>
-
-<span class="fc bfc" id="L327" title="All 2 branches covered.">                        if ( lastPixelSzX &lt; 0.0D ) {</span>
-<span class="fc" id="L328">                            lastPixelSzX = pixelSzX * 2.0D;</span>
-<span class="fc" id="L329">                            lastPixelSzY = pixelSzY * 2.0D;</span>
-                        }
-
-<span class="fc" id="L332">                        double deltaX = Math.abs( ( pixelSzX * 2.0D ) - lastPixelSzX );</span>
-<span class="pc bpc" id="L333" title="1 of 2 branches missed.">                        assertTrue( ( deltaX &lt; this.TOLERANCE ),</span>
-<span class="fc" id="L334">                                    MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}&quot;,</span>
-<span class="fc" id="L335">                                                          String.format( &quot;%.10f&quot;, pixelSzX ), tableName ) );</span>
-<span class="fc" id="L336">                        double deltaY = Math.abs( ( pixelSzY * 2.0D ) - lastPixelSzY );</span>
-<span class="pc bpc" id="L337" title="1 of 2 branches missed.">                        assertTrue( ( deltaY &lt; this.TOLERANCE ),</span>
-<span class="fc" id="L338">                                    MessageFormat.format( &quot;The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}&quot;,</span>
-<span class="fc" id="L339">                                                          String.format( &quot;%.10f&quot;, pixelSzY ), tableName ) );</span>
-<span class="fc" id="L340">                    }</span>
-<span class="pc bpc" id="L341" title="12 of 16 branches missed.">                }</span>
-<span class="fc" id="L342">            }</span>
-<span class="pc bpc" id="L343" title="12 of 16 branches missed.">        }</span>
-<span class="fc" id="L344">    }</span>
-
-    /**
-     * NSG Req 23: The (min_x, min_y, max_x, max_y) values in the gpkg_tile_matrix_set table SHALL be the maximum bounds
-     * of the CRS specified for the tile pyramid data table and SHALL be used to determine the geographic position of
-     * each tile in the tile pyramid data table.
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 23 (bounding box in gpkg_tile_matrix_set)&quot;)
-    public void boundingBoxTests()
-                            throws SQLException {
-    	
-<span class="fc bfc" id="L358" title="All 2 branches covered.">    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix_set&quot;)) {</span>
-    		
-<span class="fc" id="L360">	        String queryStr = &quot;SELECT table_name, srs_id, min_x, min_y, max_x, max_y FROM gpkg_tile_matrix_set;&quot;;</span>
-	
-<span class="fc" id="L362">	        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L363">	                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc bfc" id="L364" title="All 2 branches covered.">	            while ( resultSet.next() ) {</span>
-<span class="fc" id="L365">	                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="fc" id="L366">	                String tableName = resultSet.getString( &quot;table_name&quot; ).trim();</span>
-<span class="fc" id="L367">	                double[] mbr = findMbrBySrsId( srsID );</span>
-	
-<span class="fc bfc" id="L369" title="All 2 branches covered.">	                assertTrue( ( mbr != null ),</span>
-<span class="fc" id="L370">	                            MessageFormat.format( &quot;The gpkg_tile_matrix_set contains an invalid CRS definition: {0} for table {1}&quot;,</span>
-	                                                  srsID, tableName ) );
-	
-<span class="fc" id="L373">	                double minX = resultSet.getDouble( &quot;min_x&quot; );</span>
-<span class="pc bpc" id="L374" title="1 of 2 branches missed.">	                assertTrue( ( minX == mbr[0] ),</span>
-<span class="fc" id="L375">	                            MessageFormat.format( &quot;The gpkg_tile_matrix_set contains an invalid min_x value: {0} for table {1} (should be {2})&quot;,</span>
-<span class="fc" id="L376">	                                                  Double.valueOf( minX ), tableName, Double.valueOf( mbr[0] ) ) );</span>
-	
-<span class="fc" id="L378">	                double minY = resultSet.getDouble( &quot;min_y&quot; );</span>
-<span class="pc bpc" id="L379" title="1 of 2 branches missed.">	                assertTrue( ( minY == mbr[1] ),</span>
-<span class="fc" id="L380">	                            MessageFormat.format( &quot;The gpkg_tile_matrix_set contains an invalid min_y value: {0} for table {1} (should be {2})&quot;,</span>
-<span class="fc" id="L381">	                                                  Double.valueOf( minY ), tableName, Double.valueOf( mbr[1] ) ) );</span>
-	
-<span class="nc" id="L383">	                double maxX = resultSet.getDouble( &quot;max_x&quot; );</span>
-<span class="nc bnc" id="L384" title="All 2 branches missed.">	                assertTrue( ( maxX == mbr[2] ),</span>
-<span class="nc" id="L385">	                            MessageFormat.format( &quot;The gpkg_tile_matrix_set contains an invalid max_x value: {0} for table {1} (should be {2})&quot;,</span>
-<span class="nc" id="L386">	                                                  Double.valueOf( maxX ), tableName, Double.valueOf( mbr[2] ) ) );</span>
-	
-<span class="nc" id="L388">	                double maxY = resultSet.getDouble( &quot;max_y&quot; );</span>
-<span class="nc bnc" id="L389" title="All 2 branches missed.">	                assertTrue( ( maxY == mbr[3] ),</span>
-<span class="nc" id="L390">	                            MessageFormat.format( &quot;The gpkg_tile_matrix_set contains an invalid max_y value: {0} for table {1} (should be {2})&quot;,</span>
-<span class="nc" id="L391">	                                                  Double.valueOf( maxY ), tableName, Double.valueOf( mbr[3] ) ) );</span>
-<span class="nc" id="L392">	            }</span>
-<span class="pc bpc" id="L393" title="8 of 16 branches missed.">	        }</span>
-<span class="fc" id="L394">	    } else {</span>
-<span class="fc" id="L395">	    	throw new SkipException( &quot;Table gpkg_tile_matrix_set required to perform this test.&quot; );</span>
-	    }
-<span class="fc" id="L397">    }</span>
-
-    private Collection&lt;String&gt; collectTableNameAndExtents()
-                            throws SQLException {
-    	
-<span class="fc" id="L402">    	final Collection&lt;String&gt; tableNamesAndExtents = new LinkedList&lt;&gt;();</span>
-<span class="pc bpc" id="L403" title="1 of 2 branches missed.">    	if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix_set&quot;)) {</span>
-    		
-<span class="fc" id="L405">	        String tableNameAndExtentsQuery = &quot;SELECT table_name, zoom_level, tile_width, tile_height FROM gpkg_tile_matrix &quot;</span>
-	                                          + &quot;WHERE NOT ((tile_width=256) AND (tile_height=256));&quot;;
-	
-<span class="pc" id="L408">	        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L409">	                                final ResultSet resultSet = statement.executeQuery( tableNameAndExtentsQuery )) {</span>
-	            
-	
-<span class="pc bpc" id="L412" title="1 of 2 branches missed.">	            while ( resultSet.next() ) {</span>
-<span class="nc" id="L413">	                String tableName = resultSet.getString( &quot;table_name&quot; );</span>
-<span class="nc" id="L414">	                int tileWidth = resultSet.getInt( &quot;tile_width&quot; );</span>
-<span class="nc" id="L415">	                int tileHeight = resultSet.getInt( &quot;tile_height&quot; );</span>
-<span class="nc" id="L416">	                tableNamesAndExtents.add( tableName + &quot;: (tile_width)&quot; + tileWidth + &quot;, (tile_height)&quot; + tileHeight );</span>
-<span class="nc" id="L417">	            }</span>
-	            
-<span class="pc bpc" id="L419" title="12 of 16 branches missed.">	        }</span>
-<span class="fc" id="L420">	    } else {</span>
-<span class="nc" id="L421">	    	throw new SkipException( &quot;Table gpkg_tile_matrix_set required to perform this test.&quot; );</span>
-	    }
-<span class="fc" id="L423">    	return tableNamesAndExtents;</span>
-    }
-
-    private double[] findMbrBySrsId( String srsID ) {
-<span class="pc bpc" id="L427" title="1 of 2 branches missed.">        if ( srsID.equals( &quot;3395&quot; ) ) {</span>
-<span class="nc" id="L428">            return new double[] { -20037508.342789244D, -20037508.342789244D, 20037508.342789244D, 20037508.342789244D };</span>
-<span class="pc bpc" id="L429" title="1 of 2 branches missed.">        } else if ( srsID.equals( &quot;5041&quot; ) ) {</span>
-<span class="nc" id="L430">            return new double[] { -14440759.350252D, -14440759.350252D, 18440759.350252D, 18440759.350252D };</span>
-<span class="fc bfc" id="L431" title="All 2 branches covered.">        } else if ( srsID.equals( &quot;4326&quot; ) ) {</span>
-<span class="fc" id="L432">            return new double[] { -180.0D, -90.0D, 180.0D, 90.0D };</span>
-        }
-<span class="fc" id="L434">        return null;</span>
-    }
-
-    
-    /**
-     * --- NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using
-     * a test suite. Data validity MAY be enforced by SQL triggers.
-     *
-     * --- 19-B: Addresses Table 26 Rows 3-7 (regarding table &quot;gpkg_contents&quot;)
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-B (Data Validity: gpkg_contents, tiles)&quot;)
-    public void dataValidity_gpkg_contents()
-                            throws SQLException {
-<span class="fc" id="L450">        String queryStr = &quot;SELECT srs_id,table_name,min_x,min_y,max_x,max_y FROM \'gpkg_contents\' WHERE (data_type=\'tiles\');&quot;;</span>
-
-<span class="pc" id="L452">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L453">            final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-
-<span class="fc" id="L455">            final Collection&lt;String&gt; invalidMinX = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L456">            final Collection&lt;String&gt; invalidMinY = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L457">            final Collection&lt;String&gt; invalidMaxX = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L458">            final Collection&lt;String&gt; invalidMaxY = new LinkedList&lt;&gt;();</span>
-
-<span class="fc bfc" id="L460" title="All 2 branches covered.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L461">                final String srsTabNam = resultSet.getString(&quot;table_name&quot;);</span>
-                // test for: Table 26; Row 4
-<span class="fc" id="L463">                collectInvalidMinValues( resultSet, invalidMinX, srsTabNam,  &quot;min_x&quot; );</span>
-                // test for: Table 26; Row 5
-<span class="fc" id="L465">                collectInvalidMinValues( resultSet, invalidMinY, srsTabNam,  &quot;min_y&quot; );</span>
-                // test for: Table 26; Row 6
-<span class="fc" id="L467">                collectInvalidMaxValues( resultSet, invalidMaxX, srsTabNam,  &quot;max_x&quot; );</span>
-                // test for: Table 26; Row 7
-<span class="fc" id="L469">                collectInvalidMaxValues( resultSet, invalidMaxY, srsTabNam,  &quot;max_y&quot; );</span>
-<span class="fc" id="L470">            }</span>
-
-<span class="fc" id="L472">            assertTrue( invalidMinX.isEmpty(),</span>
-<span class="fc" id="L473">                        MessageFormat.format( &quot;The gpkg_contents table contains invalid minimum X bounds values for tables: {0}&quot;,</span>
-<span class="fc" id="L474">                                              invalidMinX.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="fc" id="L475">            assertTrue( invalidMinY.isEmpty(),</span>
-<span class="fc" id="L476">                        MessageFormat.format( &quot;The gpkg_contents table contains invalid minimum Y bounds values for tables: {0}&quot;,</span>
-<span class="fc" id="L477">                                              invalidMinY.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="fc" id="L478">            assertTrue( invalidMaxX.isEmpty(),</span>
-<span class="fc" id="L479">                        MessageFormat.format( &quot;The gpkg_contents table contains invalid maximum X bounds values for tables: {0}&quot;,</span>
-<span class="fc" id="L480">                                              invalidMaxX.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="fc" id="L481">            assertTrue( invalidMaxY.isEmpty(),</span>
-<span class="fc" id="L482">                        MessageFormat.format( &quot;The gpkg_contents table contains invalid maximum Y bounds values for tables: {0}&quot;,</span>
-<span class="fc" id="L483">                                              invalidMaxY.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="pc bpc" id="L484" title="12 of 16 branches missed.">        }</span>
-
-<span class="fc" id="L486">    }</span>
-
-    private void collectInvalidMaxValues( ResultSet resultSet, Collection&lt;String&gt; invalidValue, String srsTabNam,
-                                          String testBoundsColumn ) throws SQLException {
-<span class="pc bpc" id="L490" title="1 of 2 branches missed.">        if ( resultSet.getString( testBoundsColumn ) != null ) {</span>
-<span class="fc" id="L491">            double val = resultSet.getDouble( testBoundsColumn );</span>
-
-<span class="fc" id="L493">            double bnd = this.checkTileBounds( ValidateStringInput(srsTabNam), testBoundsColumn );</span>
-<span class="pc bpc" id="L494" title="1 of 2 branches missed.">            if ( val &gt; bnd ) {</span>
-<span class="nc" id="L495">                invalidValue.add( srsTabNam + &quot;:&quot; + val + &quot;, should be: &quot; + bnd );</span>
-            }
-         }
-<span class="fc" id="L498">    }</span>
-
-    private void collectInvalidMinValues( ResultSet resultSet, Collection&lt;String&gt; invalidValue, String srsTabNam,
-                                          String testBoundsColumn )
-                            throws SQLException {
-<span class="pc bpc" id="L503" title="1 of 2 branches missed.">        if ( resultSet.getString( testBoundsColumn ) != null ) {</span>
-<span class="fc" id="L504">            double val = resultSet.getDouble( testBoundsColumn );</span>
-
-<span class="fc" id="L506">            double bnd = this.checkTileBounds( ValidateStringInput(srsTabNam), testBoundsColumn );</span>
-<span class="pc bpc" id="L507" title="1 of 2 branches missed.">            if ( val &lt; bnd ) {</span>
-<span class="nc" id="L508">                invalidValue.add( srsTabNam + &quot;:&quot; + val + &quot;, should be: &quot; + bnd );</span>
-            }
-        }
-<span class="fc" id="L511">    }</span>
-
-
-
-    /*
-     * convenience routine to consistently return specific bounds column as double
-     */
-    private double checkTileBounds( String tableName, String boundsColumn )
-                            throws SQLException {
-
-<span class="pc" id="L521">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L522">                                final ResultSet resultSet = statement.executeQuery( &quot;SELECT &quot; + boundsColumn + &quot; FROM gpkg_tile_matrix_set WHERE table_name = \'&quot; + tableName + &quot;\';&quot; )) {</span>
-<span class="fc" id="L523">            assertTrue( resultSet.next(), ErrorMessage.format( ErrorMessageKeys.BAD_TILE_MATRIX_SET_TABLE_DEFINITION ) );</span>
-
-<span class="fc" id="L525">            return resultSet.getDouble( boundsColumn );</span>
-<span class="pc bpc" id="L526" title="12 of 16 branches missed.">        }</span>
+<span class="fc" id="L59">		StringBuilder sb = new StringBuilder(50); // initial size is 50. This is expected</span>
+													// to be sufficient for most table and
+													// field names. This is NOT a limit.
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		for (int ii = 0; ii &lt; inputString.length(); ++ii) {</span>
+<span class="fc" id="L63">			final char cleanedchar = cleanChar(inputString.charAt(ii));</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">			if (cleanedchar == '^') { // This is an illegal character indicator</span>
+<span class="nc" id="L65">				throw new IllegalArgumentException(</span>
+<span class="nc" id="L66">						String.format(&quot;Illegal parameter provided within SQL statement. Error in %s at character %c&quot;,</span>
+<span class="nc" id="L67">								inputString, inputString.charAt(ii)));</span>
+			}
+			else {
+<span class="fc" id="L70">				sb.append(cleanedchar);</span>
+			}
+		}
+<span class="fc" id="L73">		return sb.toString();</span>
 	}
 
+	/**
+	 * Validate and clean a character of a string.
+	 * @param inputChar A character of a string, for which we will check validity,
+	 * replacing any illegal characters with %
+	 * @return a validated character
+	 */
+	private static char cleanChar(char inputChar) {
+		// 0 - 9
+<span class="fc bfc" id="L84" title="All 2 branches covered.">		for (int i = 48; i &lt; 58; ++i) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">			if (inputChar == i)</span>
+<span class="nc" id="L86">				return (char) i;</span>
+		}
 
-    
+		// 'A' - 'Z'
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		for (int i = 65; i &lt; 91; ++i) {</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">			if (inputChar == i)</span>
+<span class="nc" id="L92">				return (char) i;</span>
+		}
 
+		// 'a' - 'z'
+<span class="fc bfc" id="L96" title="All 2 branches covered.">		for (int i = 97; i &lt; 123; ++i) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">			if (inputChar == i)</span>
+<span class="fc" id="L98">				return (char) i;</span>
+		}
+
+		// other valid characters
+<span class="pc bpc" id="L102" title="4 of 5 branches missed.">		switch (inputChar) {</span>
+			case '.':
+<span class="nc" id="L104">				return '.';</span>
+			case '-':
+<span class="nc" id="L106">				return '-';</span>
+			case '_':
+<span class="fc" id="L108">				return '_';</span>
+			case ' ':
+<span class="nc" id="L110">				return ' ';</span>
+		}
+<span class="nc" id="L112">		return '^';</span>
+	}
+
+	/**
+	 * NSG Req 19: Data validity SHALL be assessed against data value constraints
+	 * specified in Table 26 below using a test suite. Data validity MAY be enforced by
+	 * SQL triggers.
+	 *
+	 * 19-D: Addresses Table 26 Rows 12-17 (regarding table &quot;gpkg_tile_matrix&quot;)
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-D (Data Validity: gpkg_tile_matrix)&quot;)
+	public void dataValidity_gpkg_tile_matrix() throws SQLException {
+		// test for: Table 26; Row 17
+<span class="fc" id="L126">		String queryStr = &quot;SELECT table_name FROM gpkg_contents WHERE data_type=\'tiles\';&quot;;</span>
+
+<span class="fc" id="L128">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L129">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">			while (resultSet.next()) {</span>
+<span class="fc" id="L131">				String tableName = ValidateStringInput(resultSet.getString(&quot;table_name&quot;).trim());</span>
+<span class="fc" id="L132">				int firstZoom = 999;</span>
+<span class="fc" id="L133">				int lastZoom = -1;</span>
+
+				// test for: Table 26; Row 12 &amp; 17
+<span class="fc" id="L136">				try (final Statement tileStatement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L137">						final ResultSet tileResultSet = tileStatement</span>
+<span class="fc" id="L138">							.executeQuery(&quot;SELECT DISTINCT zoom_level FROM &quot; + tableName + &quot; ORDER BY zoom_level;&quot;)) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">					while (tileResultSet.next()) {</span>
+<span class="fc" id="L140">						int zoom = tileResultSet.getInt(&quot;zoom_level&quot;);</span>
+<span class="fc" id="L141">						firstZoom = Math.min(firstZoom, zoom);</span>
+<span class="fc" id="L142">						lastZoom = Math.max(lastZoom, zoom);</span>
+<span class="fc" id="L143">					}</span>
+				}
+
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">				assertTrue((firstZoom &gt;= MIN_ZOOM),</span>
+<span class="fc" id="L147">						MessageFormat.format(</span>
+								&quot;The &quot; + tableName
+										+ &quot; table contains an invalid minimum zoom_level: {0}, should be: {1}&quot;,
+<span class="fc" id="L150">								Integer.toString(firstZoom), Integer.toString(this.MIN_ZOOM)));</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">				assertTrue((lastZoom &lt;= MAX_ZOOM),</span>
+<span class="fc" id="L152">						MessageFormat.format(</span>
+								&quot;The &quot; + tableName
+										+ &quot; table contains an invalid maximum zoom_level: {0}, should be: {1}&quot;,
+<span class="fc" id="L155">								Integer.toString(firstZoom), Integer.toString(this.MAX_ZOOM)));</span>
+
+<span class="fc" id="L157">				try (final Statement tileStatement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L158">						final ResultSet tileResultSet = tileStatement.executeQuery(</span>
+								&quot;SELECT zoom_level, tile_width, tile_height, pixel_x_size, pixel_y_size FROM gpkg_tile_matrix WHERE table_name=\'&quot;
+										+ tableName + &quot;\' ORDER BY zoom_level;&quot;)) {
+<span class="fc" id="L161">					boolean firstFound = false;</span>
+<span class="fc" id="L162">					boolean lastFound = false;</span>
+<span class="fc" id="L163">					double pixelSzX = 0.0D;</span>
+<span class="fc" id="L164">					double pixelSzY = 0.0D;</span>
+
+<span class="fc bfc" id="L166" title="All 2 branches covered.">					while (tileResultSet.next()) {</span>
+<span class="fc" id="L167">						int zoom = tileResultSet.getInt(&quot;zoom_level&quot;);</span>
+<span class="pc bpc" id="L168" title="2 of 4 branches missed.">						if (zoom &gt;= firstZoom &amp;&amp; zoom &lt;= lastZoom) {</span>
+<span class="fc" id="L169">							int tileWidth = tileResultSet.getInt(&quot;tile_width&quot;);</span>
+<span class="fc" id="L170">							int tileHeight = tileResultSet.getInt(&quot;tile_height&quot;);</span>
+
+<span class="fc" id="L172">							double lastPixelSzX = pixelSzX;</span>
+<span class="fc" id="L173">							double lastPixelSzY = pixelSzY;</span>
+<span class="fc" id="L174">							pixelSzX = tileResultSet.getDouble(&quot;pixel_x_size&quot;);</span>
+<span class="fc" id="L175">							pixelSzY = tileResultSet.getDouble(&quot;pixel_y_size&quot;);</span>
+
+							// test for: Table 26; Row 12 (again)
+<span class="pc bpc" id="L178" title="2 of 4 branches missed.">							assertTrue((0 &lt;= zoom &amp;&amp; zoom &lt;= lastZoom), MessageFormat.format(</span>
+									&quot;The gpkg_tile_matrix contains an invalid zoom_level: {0} for {1}, should be between {2} and {3}&quot;,
+<span class="fc" id="L180">									Integer.toString(zoom), tableName, Integer.toString(firstZoom),</span>
+<span class="fc" id="L181">									Integer.toString(lastZoom)));</span>
+
+<span class="fc bfc" id="L183" title="All 2 branches covered.">							if (!firstFound) {</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">								firstFound = (zoom == firstZoom);</span>
+							}
+
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">							if (!lastFound) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">								lastFound = (zoom == lastZoom);</span>
+							}
+
+							// test for: Table 26; Row 13
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">							assertTrue((tileWidth == 256), MessageFormat.format(</span>
+									&quot;The gpkg_tile_matrix contains an invalid tile_width: {0} for {1}, should be 256&quot;,
+<span class="fc" id="L194">									Integer.toString(tileWidth), tableName));</span>
+
+							// test for: Table 26; Row 14
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">							assertTrue((tileHeight == 256), MessageFormat.format(</span>
+									&quot;The gpkg_tile_matrix contains an invalid tile_height: {0} for {1}, should be 256&quot;,
+<span class="fc" id="L199">									Integer.toString(tileHeight), tableName));</span>
+
+							// test for: Table 26; Row 15
+<span class="fc" id="L202">							double deltaX = Math.abs((pixelSzX * 2.0D) - lastPixelSzX);</span>
+<span class="pc bpc" id="L203" title="1 of 4 branches missed.">							assertTrue(((zoom == firstZoom) || (deltaX &lt; TOLERANCE)),</span>
+<span class="fc" id="L204">									MessageFormat.format(</span>
+											&quot;The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}&quot;,
+<span class="fc" id="L206">											String.format(&quot;%.10f&quot;, pixelSzX), tableName));</span>
+
+							// test for: Table 26; Row 16
+<span class="fc" id="L209">							double deltaY = Math.abs((pixelSzY * 2.0D) - lastPixelSzY);</span>
+<span class="pc bpc" id="L210" title="1 of 4 branches missed.">							assertTrue(((zoom == firstZoom) || (deltaY &lt; TOLERANCE)),</span>
+<span class="fc" id="L211">									MessageFormat.format(</span>
+											&quot;The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}&quot;,
+<span class="fc" id="L213">											String.format(&quot;%.10f&quot;, pixelSzY), tableName));</span>
+						}
+<span class="fc" id="L215">					}</span>
+
+					// test for: Table 26; Row 12 &amp; 17 (again)
+<span class="fc" id="L218">					assertTrue(firstFound, MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix contains an invalid zoom_level: no zoom level 0 for {0}&quot;, tableName));
+<span class="fc" id="L220">					assertTrue(lastFound,</span>
+<span class="fc" id="L221">							MessageFormat.format(</span>
+									&quot;The gpkg_tile_matrix contains an invalid zoom_level: no max zoom level for {0}&quot;,
+									tableName));
+				}
+<span class="fc" id="L225">			}</span>
+		}
+<span class="fc" id="L227">	}</span>
+
+	/**
+	 * NSG Req 20: The gpkg_tile_matrix table SHALL contain tile_width and tile_height
+	 * column values of 256 for every table_name tile pyramid data table.
+	 *
+	 * NSG Req 21: Every tile_data tile in every table_name tile pyramid data table shall
+	 * have a width and height of 256 pixels.
+	 * @throws SQLException if access to gpkg failed
+	 * @throws IOException if tile data coul not be read
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 20 &amp; 21 (Tile widths and heights)&quot;)
+	public void tileSizeTests() throws SQLException, IOException {
+
+<span class="fc bfc" id="L241" title="All 2 branches covered.">		if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix&quot;)) {</span>
+
+			// test Req 20
+<span class="fc" id="L244">			Collection&lt;String&gt; tableNameAndExtents = collectTableNameAndExtents();</span>
+<span class="fc" id="L245">			assertTrue(tableNameAndExtents.isEmpty(),</span>
+<span class="fc" id="L246">					MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix table contains invalid tile width/height values for tables: {0}&quot;,
+<span class="fc" id="L248">							tableNameAndExtents.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+
+			// test Req 21
+<span class="fc" id="L251">			String tableNameQuery = &quot;SELECT DISTINCT table_name FROM gpkg_tile_matrix;&quot;;</span>
+
+<span class="fc" id="L253">			try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L254">					final ResultSet resultSet = statement.executeQuery(tableNameQuery)) {</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">				while (resultSet.next()) {</span>
+<span class="fc" id="L256">					String tableName = ValidateStringInput(resultSet.getString(&quot;table_name&quot;).trim());</span>
+
+<span class="fc" id="L258">					try (final Statement subStatement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L259">							final ResultSet subResultSet = subStatement.executeQuery(</span>
+									&quot;SELECT zoom_level, tile_column, tile_row, tile_data FROM &quot; + tableName)) {
+<span class="fc bfc" id="L261" title="All 2 branches covered.">						while (subResultSet.next()) {</span>
+<span class="fc" id="L262">							byte[] image = subResultSet.getBytes(&quot;tile_data&quot;);</span>
+<span class="fc" id="L263">							ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(image));</span>
+<span class="fc" id="L264">							Iterator readers = ImageIO.getImageReaders(iis);</span>
+
+<span class="fc bfc" id="L266" title="All 2 branches covered.">							while (readers.hasNext()) {</span>
+<span class="fc" id="L267">								ImageReader read = (ImageReader) readers.next();</span>
+<span class="fc" id="L268">								read.setInput(iis, true);</span>
+<span class="fc" id="L269">								int width = read.getWidth(0);</span>
+<span class="fc" id="L270">								int height = read.getHeight(0);</span>
+
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">								assertTrue((width == 256), MessageFormat.format(</span>
+										&quot;The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_width: {4}&quot;,
+<span class="fc" id="L274">										tableName, Integer.toString(subResultSet.getInt(&quot;zoom_level&quot;)),</span>
+<span class="fc" id="L275">										Integer.toString(subResultSet.getInt(&quot;tile_column&quot;)),</span>
+<span class="fc" id="L276">										Integer.toString(subResultSet.getInt(&quot;tile_row&quot;)), Integer.toString(width)));</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">								assertTrue((height == 256), MessageFormat.format(</span>
+										&quot;The pyramid data table (for {0}) contains a tile image (at zoom_level:  {1}, (col,row): {2},{3}) with an invalid tile_height: {4}&quot;,
+<span class="fc" id="L279">										tableName, Integer.toString(subResultSet.getInt(&quot;zoom_level&quot;)),</span>
+<span class="fc" id="L280">										Integer.toString(subResultSet.getInt(&quot;tile_column&quot;)),</span>
+<span class="fc" id="L281">										Integer.toString(subResultSet.getInt(&quot;tile_row&quot;)), Integer.toString(height)));</span>
+<span class="fc" id="L282">							}</span>
+<span class="fc" id="L283">						}</span>
+					}
+<span class="fc" id="L285">				}</span>
+			}
+<span class="fc" id="L287">		}</span>
+		else {
+<span class="fc" id="L289">			throw new SkipException(&quot;Table gpkg_tile_matrix required to perform this test.&quot;);</span>
+		}
+<span class="fc" id="L291">	}</span>
+
+	/**
+	 * NSG Req 22: The gpkg_tile_matrix table SHALL contain pixel_x_size and pixel_y_size
+	 * column values that differ by a factor of 2 between all adjacent zoom levels for
+	 * each tile pyramid data table per OGC GeoPackage Clause 2.2.3. It SHALL NOT contain
+	 * pixel sizes that vary by irregular intervals or by regular intervals other than a
+	 * factor of 2 between adjacent zoom levels per OGC GeoPackage Clause 3.2.1.
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 22 (pixels sizes factor of 2)&quot;)
+	public void pixelsSizeTests() throws SQLException {
+<span class="fc" id="L303">		String queryStr = &quot;SELECT table_name FROM gpkg_contents WHERE data_type=\'tiles\';&quot;;</span>
+
+<span class="fc" id="L305">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L306">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">			while (resultSet.next()) {</span>
+<span class="fc" id="L308">				String tableName = ValidateStringInput(resultSet.getString(&quot;table_name&quot;).trim());</span>
+
+<span class="fc" id="L310">				String subQueryStr = &quot;SELECT pixel_x_size, pixel_y_size FROM gpkg_tile_matrix &quot; + &quot;WHERE table_name=\'&quot;</span>
+						+ tableName + &quot;\' ORDER BY zoom_level;&quot;;
+
+<span class="fc" id="L313">				try (final Statement subStatement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L314">						final ResultSet subResultSet = subStatement.executeQuery(subQueryStr)) {</span>
+<span class="fc" id="L315">					double pixelSzX = -1.0D;</span>
+<span class="fc" id="L316">					double pixelSzY = -1.0D;</span>
+
+<span class="fc bfc" id="L318" title="All 2 branches covered.">					while (subResultSet.next()) {</span>
+<span class="fc" id="L319">						double lastPixelSzX = pixelSzX;</span>
+<span class="fc" id="L320">						double lastPixelSzY = pixelSzY;</span>
+<span class="fc" id="L321">						pixelSzX = subResultSet.getDouble(&quot;pixel_x_size&quot;);</span>
+<span class="fc" id="L322">						pixelSzY = subResultSet.getDouble(&quot;pixel_y_size&quot;);</span>
+
+<span class="fc bfc" id="L324" title="All 2 branches covered.">						if (lastPixelSzX &lt; 0.0D) {</span>
+<span class="fc" id="L325">							lastPixelSzX = pixelSzX * 2.0D;</span>
+<span class="fc" id="L326">							lastPixelSzY = pixelSzY * 2.0D;</span>
+						}
+
+<span class="fc" id="L329">						double deltaX = Math.abs((pixelSzX * 2.0D) - lastPixelSzX);</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">						assertTrue((deltaX &lt; this.TOLERANCE),</span>
+<span class="fc" id="L331">								MessageFormat.format(</span>
+										&quot;The gpkg_tile_matrix contains an invalid pixel_x_size: {0} for {1}&quot;,
+<span class="fc" id="L333">										String.format(&quot;%.10f&quot;, pixelSzX), tableName));</span>
+<span class="fc" id="L334">						double deltaY = Math.abs((pixelSzY * 2.0D) - lastPixelSzY);</span>
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">						assertTrue((deltaY &lt; this.TOLERANCE),</span>
+<span class="fc" id="L336">								MessageFormat.format(</span>
+										&quot;The gpkg_tile_matrix contains an invalid pixel_y_size: {0} for {1}&quot;,
+<span class="fc" id="L338">										String.format(&quot;%.10f&quot;, pixelSzY), tableName));</span>
+<span class="fc" id="L339">					}</span>
+				}
+<span class="fc" id="L341">			}</span>
+		}
+<span class="fc" id="L343">	}</span>
+
+	/**
+	 * NSG Req 23: The (min_x, min_y, max_x, max_y) values in the gpkg_tile_matrix_set
+	 * table SHALL be the maximum bounds of the CRS specified for the tile pyramid data
+	 * table and SHALL be used to determine the geographic position of each tile in the
+	 * tile pyramid data table.
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 23 (bounding box in gpkg_tile_matrix_set)&quot;)
+	public void boundingBoxTests() throws SQLException {
+
+<span class="fc bfc" id="L355" title="All 2 branches covered.">		if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix_set&quot;)) {</span>
+
+<span class="fc" id="L357">			String queryStr = &quot;SELECT table_name, srs_id, min_x, min_y, max_x, max_y FROM gpkg_tile_matrix_set;&quot;;</span>
+
+<span class="fc" id="L359">			try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L360">					final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">				while (resultSet.next()) {</span>
+<span class="fc" id="L362">					String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
+<span class="fc" id="L363">					String tableName = resultSet.getString(&quot;table_name&quot;).trim();</span>
+<span class="fc" id="L364">					double[] mbr = findMbrBySrsId(srsID);</span>
+
+<span class="fc bfc" id="L366" title="All 2 branches covered.">					assertTrue((mbr != null),</span>
+<span class="fc" id="L367">							MessageFormat.format(</span>
+									&quot;The gpkg_tile_matrix_set contains an invalid CRS definition: {0} for table {1}&quot;,
+									srsID, tableName));
+
+<span class="fc" id="L371">					double minX = resultSet.getDouble(&quot;min_x&quot;);</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">					assertTrue((minX == mbr[0]), MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix_set contains an invalid min_x value: {0} for table {1} (should be {2})&quot;,
+<span class="fc" id="L374">							Double.valueOf(minX), tableName, Double.valueOf(mbr[0])));</span>
+
+<span class="fc" id="L376">					double minY = resultSet.getDouble(&quot;min_y&quot;);</span>
+<span class="pc bpc" id="L377" title="1 of 2 branches missed.">					assertTrue((minY == mbr[1]), MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix_set contains an invalid min_y value: {0} for table {1} (should be {2})&quot;,
+<span class="fc" id="L379">							Double.valueOf(minY), tableName, Double.valueOf(mbr[1])));</span>
+
+<span class="nc" id="L381">					double maxX = resultSet.getDouble(&quot;max_x&quot;);</span>
+<span class="nc bnc" id="L382" title="All 2 branches missed.">					assertTrue((maxX == mbr[2]), MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix_set contains an invalid max_x value: {0} for table {1} (should be {2})&quot;,
+<span class="nc" id="L384">							Double.valueOf(maxX), tableName, Double.valueOf(mbr[2])));</span>
+
+<span class="nc" id="L386">					double maxY = resultSet.getDouble(&quot;max_y&quot;);</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">					assertTrue((maxY == mbr[3]), MessageFormat.format(</span>
+							&quot;The gpkg_tile_matrix_set contains an invalid max_y value: {0} for table {1} (should be {2})&quot;,
+<span class="nc" id="L389">							Double.valueOf(maxY), tableName, Double.valueOf(mbr[3])));</span>
+<span class="nc" id="L390">				}</span>
+			}
+<span class="fc" id="L392">		}</span>
+		else {
+<span class="fc" id="L394">			throw new SkipException(&quot;Table gpkg_tile_matrix_set required to perform this test.&quot;);</span>
+		}
+<span class="fc" id="L396">	}</span>
+
+	private Collection&lt;String&gt; collectTableNameAndExtents() throws SQLException {
+
+<span class="fc" id="L400">		final Collection&lt;String&gt; tableNamesAndExtents = new LinkedList&lt;&gt;();</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">		if (DatabaseUtility.doesTableOrViewExist(this.databaseConnection, &quot;gpkg_tile_matrix_set&quot;)) {</span>
+
+<span class="fc" id="L403">			String tableNameAndExtentsQuery = &quot;SELECT table_name, zoom_level, tile_width, tile_height FROM gpkg_tile_matrix &quot;</span>
+					+ &quot;WHERE NOT ((tile_width=256) AND (tile_height=256));&quot;;
+
+<span class="fc" id="L406">			try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L407">					final ResultSet resultSet = statement.executeQuery(tableNameAndExtentsQuery)) {</span>
+
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">				while (resultSet.next()) {</span>
+<span class="nc" id="L410">					String tableName = resultSet.getString(&quot;table_name&quot;);</span>
+<span class="nc" id="L411">					int tileWidth = resultSet.getInt(&quot;tile_width&quot;);</span>
+<span class="nc" id="L412">					int tileHeight = resultSet.getInt(&quot;tile_height&quot;);</span>
+<span class="nc" id="L413">					tableNamesAndExtents.add(tableName + &quot;: (tile_width)&quot; + tileWidth + &quot;, (tile_height)&quot; + tileHeight);</span>
+<span class="nc" id="L414">				}</span>
+
+			}
+<span class="fc" id="L417">		}</span>
+		else {
+<span class="nc" id="L419">			throw new SkipException(&quot;Table gpkg_tile_matrix_set required to perform this test.&quot;);</span>
+		}
+<span class="fc" id="L421">		return tableNamesAndExtents;</span>
+	}
+
+	private double[] findMbrBySrsId(String srsID) {
+<span class="pc bpc" id="L425" title="1 of 2 branches missed.">		if (srsID.equals(&quot;3395&quot;)) {</span>
+<span class="nc" id="L426">			return new double[] { -20037508.342789244D, -20037508.342789244D, 20037508.342789244D,</span>
+					20037508.342789244D };
+		}
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">		else if (srsID.equals(&quot;5041&quot;)) {</span>
+<span class="nc" id="L430">			return new double[] { -14440759.350252D, -14440759.350252D, 18440759.350252D, 18440759.350252D };</span>
+		}
+<span class="fc bfc" id="L432" title="All 2 branches covered.">		else if (srsID.equals(&quot;4326&quot;)) {</span>
+<span class="fc" id="L433">			return new double[] { -180.0D, -90.0D, 180.0D, 90.0D };</span>
+		}
+<span class="fc" id="L435">		return null;</span>
+	}
+
+	/**
+	 * --- NSG Req 19: Data validity SHALL be assessed against data value constraints
+	 * specified in Table 26 below using a test suite. Data validity MAY be enforced by
+	 * SQL triggers.
+	 *
+	 * --- 19-B: Addresses Table 26 Rows 3-7 (regarding table &quot;gpkg_contents&quot;)
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-B (Data Validity: gpkg_contents, tiles)&quot;)
+	public void dataValidity_gpkg_contents() throws SQLException {
+<span class="fc" id="L448">		String queryStr = &quot;SELECT srs_id,table_name,min_x,min_y,max_x,max_y FROM \'gpkg_contents\' WHERE (data_type=\'tiles\');&quot;;</span>
+
+<span class="fc" id="L450">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L451">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+
+<span class="fc" id="L453">			final Collection&lt;String&gt; invalidMinX = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L454">			final Collection&lt;String&gt; invalidMinY = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L455">			final Collection&lt;String&gt; invalidMaxX = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L456">			final Collection&lt;String&gt; invalidMaxY = new LinkedList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L458" title="All 2 branches covered.">			while (resultSet.next()) {</span>
+<span class="fc" id="L459">				final String srsTabNam = resultSet.getString(&quot;table_name&quot;);</span>
+				// test for: Table 26; Row 4
+<span class="fc" id="L461">				collectInvalidMinValues(resultSet, invalidMinX, srsTabNam, &quot;min_x&quot;);</span>
+				// test for: Table 26; Row 5
+<span class="fc" id="L463">				collectInvalidMinValues(resultSet, invalidMinY, srsTabNam, &quot;min_y&quot;);</span>
+				// test for: Table 26; Row 6
+<span class="fc" id="L465">				collectInvalidMaxValues(resultSet, invalidMaxX, srsTabNam, &quot;max_x&quot;);</span>
+				// test for: Table 26; Row 7
+<span class="fc" id="L467">				collectInvalidMaxValues(resultSet, invalidMaxY, srsTabNam, &quot;max_y&quot;);</span>
+<span class="fc" id="L468">			}</span>
+
+<span class="fc" id="L470">			assertTrue(invalidMinX.isEmpty(),</span>
+<span class="fc" id="L471">					MessageFormat.format(</span>
+							&quot;The gpkg_contents table contains invalid minimum X bounds values for tables: {0}&quot;,
+<span class="fc" id="L473">							invalidMinX.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+<span class="fc" id="L474">			assertTrue(invalidMinY.isEmpty(),</span>
+<span class="fc" id="L475">					MessageFormat.format(</span>
+							&quot;The gpkg_contents table contains invalid minimum Y bounds values for tables: {0}&quot;,
+<span class="fc" id="L477">							invalidMinY.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+<span class="fc" id="L478">			assertTrue(invalidMaxX.isEmpty(),</span>
+<span class="fc" id="L479">					MessageFormat.format(</span>
+							&quot;The gpkg_contents table contains invalid maximum X bounds values for tables: {0}&quot;,
+<span class="fc" id="L481">							invalidMaxX.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+<span class="fc" id="L482">			assertTrue(invalidMaxY.isEmpty(),</span>
+<span class="fc" id="L483">					MessageFormat.format(</span>
+							&quot;The gpkg_contents table contains invalid maximum Y bounds values for tables: {0}&quot;,
+<span class="fc" id="L485">							invalidMaxY.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+		}
+
+<span class="fc" id="L488">	}</span>
+
+	private void collectInvalidMaxValues(ResultSet resultSet, Collection&lt;String&gt; invalidValue, String srsTabNam,
+			String testBoundsColumn) throws SQLException {
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">		if (resultSet.getString(testBoundsColumn) != null) {</span>
+<span class="fc" id="L493">			double val = resultSet.getDouble(testBoundsColumn);</span>
+
+<span class="fc" id="L495">			double bnd = this.checkTileBounds(ValidateStringInput(srsTabNam), testBoundsColumn);</span>
+<span class="pc bpc" id="L496" title="1 of 2 branches missed.">			if (val &gt; bnd) {</span>
+<span class="nc" id="L497">				invalidValue.add(srsTabNam + &quot;:&quot; + val + &quot;, should be: &quot; + bnd);</span>
+			}
+		}
+<span class="fc" id="L500">	}</span>
+
+	private void collectInvalidMinValues(ResultSet resultSet, Collection&lt;String&gt; invalidValue, String srsTabNam,
+			String testBoundsColumn) throws SQLException {
+<span class="pc bpc" id="L504" title="1 of 2 branches missed.">		if (resultSet.getString(testBoundsColumn) != null) {</span>
+<span class="fc" id="L505">			double val = resultSet.getDouble(testBoundsColumn);</span>
+
+<span class="fc" id="L507">			double bnd = this.checkTileBounds(ValidateStringInput(srsTabNam), testBoundsColumn);</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">			if (val &lt; bnd) {</span>
+<span class="nc" id="L509">				invalidValue.add(srsTabNam + &quot;:&quot; + val + &quot;, should be: &quot; + bnd);</span>
+			}
+		}
+<span class="fc" id="L512">	}</span>
+
+	/*
+	 * convenience routine to consistently return specific bounds column as double
+	 */
+	private double checkTileBounds(String tableName, String boundsColumn) throws SQLException {
+
+<span class="fc" id="L519">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L520">				final ResultSet resultSet = statement.executeQuery(&quot;SELECT &quot; + boundsColumn</span>
+						+ &quot; FROM gpkg_tile_matrix_set WHERE table_name = \'&quot; + tableName + &quot;\';&quot;)) {
+<span class="fc" id="L522">			assertTrue(resultSet.next(), ErrorMessage.format(ErrorMessageKeys.BAD_TILE_MATRIX_SET_TABLE_DEFINITION));</span>
+
+<span class="fc" id="L524">			return resultSet.getDouble(boundsColumn);</span>
+		}
+	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

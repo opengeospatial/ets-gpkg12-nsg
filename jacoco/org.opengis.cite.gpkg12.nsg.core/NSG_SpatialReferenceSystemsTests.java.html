@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NSG_SpatialReferenceSystemsTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.core</a> &gt; <span class="el_source">NSG_SpatialReferenceSystemsTests.java</span></div><h1>NSG_SpatialReferenceSystemsTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.core;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NSG_SpatialReferenceSystemsTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.core</a> &gt; <span class="el_source">NSG_SpatialReferenceSystemsTests.java</span></div><h1>NSG_SpatialReferenceSystemsTests.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.core;
 
 import static org.testng.Assert.assertTrue;
 
@@ -33,378 +33,386 @@ import org.testng.annotations.Test;
 
 <span class="fc" id="L34">public class NSG_SpatialReferenceSystemsTests extends CommonFixture {</span>
 
-<span class="fc" id="L36">    private final static Logger LOG = Logger.getLogger( NSG_SpatialReferenceSystemsTests.class.getName() );</span>
+<span class="fc" id="L36">	private final static Logger LOG = Logger.getLogger(NSG_SpatialReferenceSystemsTests.class.getName());</span>
 
-    private static final String ANNEX_C_3395_TABLE = &quot;Annex_C_3395_Table.txt&quot;;
+	private static final String ANNEX_C_3395_TABLE = &quot;Annex_C_3395_Table.txt&quot;;
 
-    private static final String ANNEX_E_4326_TABLE = &quot;Annex_E_4326_Table.txt&quot;;
+	private static final String ANNEX_E_4326_TABLE = &quot;Annex_E_4326_Table.txt&quot;;
 
-    private static final double TOLERANCE = 1.0e-10;
+	private static final double TOLERANCE = 1.0e-10;
 
-    private CrsList crsListing;
+	private CrsList crsListing;
 
-    /**
-     * Factory to create coordinate reference systems we are calling it out specifically here due to conflicts with
-     * other packages.
-     */
-<span class="fc" id="L50">    private CRSFactory crsFactory = org.geotoolkit.factory.FactoryFinder.getCRSFactory( null );</span>
+	/**
+	 * Factory to create coordinate reference systems we are calling it out specifically
+	 * here due to conflicts with other packages.
+	 */
+<span class="fc" id="L50">	private CRSFactory crsFactory = new org.apache.sis.referencing.factory.GeodeticObjectFactory();</span>
 
-    @BeforeClass
-    public void parseCrsListing() {
-<span class="fc" id="L54">        crsListing = CrsListingUtils.parseCrsListing();</span>
-<span class="fc" id="L55">    }</span>
+	@BeforeClass
+	public void parseCrsListing() {
+<span class="fc" id="L54">		crsListing = CrsListingUtils.parseCrsListing();</span>
+<span class="fc" id="L55">	}</span>
 
-    /**
-     * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs used by raster tile pyramid
-     * and vector feature data tables in a GeoPackage.
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 3 (identified CRSs)&quot;)
-    public void crsTest()
-                            throws SQLException {
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if ( crsListing == null )</span>
-<span class="nc" id="L68">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
+	/**
+	 * NSG Req 3: The CRSs listed in Table 4, Table 5, and Table 6 SHALL be the only CRSs
+	 * used by raster tile pyramid and vector feature data tables in a GeoPackage.
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 3 (identified CRSs)&quot;)
+	public void crsTest() throws SQLException {
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">		if (crsListing == null)</span>
+<span class="nc" id="L65">			throw new SkipException(&quot;No designated CRS Lookup Table available&quot;);</span>
 
-<span class="fc" id="L70">        String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
+<span class="fc" id="L67">		String queryStr = &quot;SELECT srs_id, organization_coordsys_id FROM gpkg_spatial_ref_sys&quot;;</span>
 
-<span class="fc" id="L72">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L73">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc" id="L74">            final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L75">            final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L69">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L70">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc" id="L71">			final Collection&lt;String&gt; invalidSrsIds = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L72">			final Collection&lt;String&gt; invalidOrgIds = new LinkedList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L77" title="All 2 branches covered.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L78">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="fc" id="L79">                String orgID = resultSet.getString( &quot;organization_coordsys_id&quot; ).trim();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">			while (resultSet.next()) {</span>
+<span class="fc" id="L75">				String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
+<span class="fc" id="L76">				String orgID = resultSet.getString(&quot;organization_coordsys_id&quot;).trim();</span>
 
-<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                if ( srsID.equals( &quot;0&quot; ) || orgID.equals( &quot;0&quot; ) ) {</span>
-<span class="nc" id="L82">                    continue;</span>
-                }
-<span class="pc bpc" id="L84" title="1 of 4 branches missed.">                if ( srsID.equals( &quot;-1&quot; ) || orgID.equals( &quot;-1&quot; ) ) {</span>
-<span class="nc" id="L85">                    continue;</span>
-                }
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">				if (srsID.equals(&quot;0&quot;) || orgID.equals(&quot;0&quot;)) {</span>
+<span class="nc" id="L79">					continue;</span>
+				}
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">				if (srsID.equals(&quot;-1&quot;) || orgID.equals(&quot;-1&quot;)) {</span>
+<span class="nc" id="L82">					continue;</span>
+				}
 
-<span class="fc" id="L88">                String crsOrgID = crsListing.getOrganizationCoordsysIdBySrsId( srsID );</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">                if ( crsOrgID == null ) {</span>
-<span class="fc" id="L90">                    invalidSrsIds.add( srsID );</span>
-                } else {
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                    if ( !crsOrgID.equals( orgID ) ) {</span>
-<span class="nc" id="L93">                        invalidOrgIds.add( orgID );</span>
-                    }
-                }
-<span class="fc" id="L96">            }</span>
-<span class="fc" id="L97">            resultSet.close();</span>
-<span class="fc" id="L98">            statement.close();</span>
+<span class="fc" id="L85">				String crsOrgID = crsListing.getOrganizationCoordsysIdBySrsId(srsID);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">				if (crsOrgID == null) {</span>
+<span class="fc" id="L87">					invalidSrsIds.add(srsID);</span>
+				}
+				else {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">					if (!crsOrgID.equals(orgID)) {</span>
+<span class="nc" id="L91">						invalidOrgIds.add(orgID);</span>
+					}
+				}
+<span class="fc" id="L94">			}</span>
+<span class="fc" id="L95">			resultSet.close();</span>
+<span class="fc" id="L96">			statement.close();</span>
 
-<span class="fc" id="L100">            assertTrue( invalidSrsIds.isEmpty(),</span>
-<span class="fc" id="L101">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
-<span class="fc" id="L102">                                              invalidSrsIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="fc" id="L103">            assertTrue( invalidOrgIds.isEmpty(),</span>
-<span class="fc" id="L104">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,</span>
-<span class="fc" id="L105">                                              invalidOrgIds.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="pc bpc" id="L106" title="8 of 16 branches missed.">        }</span>
-<span class="fc" id="L107">    }</span>
+<span class="fc" id="L98">			assertTrue(invalidSrsIds.isEmpty(),</span>
+<span class="fc" id="L99">					MessageFormat.format(&quot;The gpkg_spatial_ref_sys table contains invalid srs_id values {0}&quot;,</span>
+<span class="fc" id="L100">							invalidSrsIds.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+<span class="fc" id="L101">			assertTrue(invalidOrgIds.isEmpty(),</span>
+<span class="fc" id="L102">					MessageFormat.format(</span>
+							&quot;The gpkg_spatial_ref_sys table contains invalid organization_coordsys_id values {0}&quot;,
+<span class="fc" id="L104">							invalidOrgIds.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+		}
+<span class="fc" id="L106">	}</span>
 
-    /**
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 4 &amp; 5 (match Annex table)&quot;)
-    public void matchAnnexTableTest()
-                            throws SQLException {
-        // --- original intent was to implement here; but may make more sense to
-        // implement in NSG_TileTests
-<span class="fc" id="L118">        final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
+	/**
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 4 &amp; 5 (match Annex table)&quot;)
+	public void matchAnnexTableTest() throws SQLException {
+		// --- original intent was to implement here; but may make more sense to
+		// implement in NSG_TileTests
+<span class="fc" id="L115">		final Collection&lt;String&gt; invalidMatrixEntries = new LinkedList&lt;&gt;();</span>
 
-        // In the case there is no gpkg_tile_matrix ... say this geopackage has no tiles, skip this test
-<span class="fc" id="L121">        final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist( this.databaseConnection,</span>
-                                                                                 &quot;gpkg_tile_matrix&quot; );
+		// In the case there is no gpkg_tile_matrix ... say this geopackage has no tiles,
+		// skip this test
+<span class="fc" id="L119">		final boolean hasTileMatrixTable = DatabaseUtility.doesTableOrViewExist(this.databaseConnection,</span>
+				&quot;gpkg_tile_matrix&quot;);
 
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        if ( hasTileMatrixTable ) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (hasTileMatrixTable) {</span>
 
-<span class="fc" id="L126">            String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
-                              + &quot;FROM gpkg_tile_matrix tm &quot;
-                              + &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
-                              + &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
+<span class="fc" id="L124">			String queryStr = &quot;SELECT tm.table_name AS tabName, sel.data_type AS dataTyp, sel.crs_id AS crsID, tm.zoom_level AS zoomLvl, tm.matrix_width AS matrixW, tm.matrix_height AS matrixH, tm.tile_width AS tileW, tm.tile_height AS tileH, tm.pixel_x_size AS pixelSzX, tm.pixel_y_size AS pixelSzY &quot;</span>
+					+ &quot;FROM gpkg_tile_matrix tm &quot;
+					+ &quot;INNER JOIN (SELECT gc.table_name, gc.data_type, gs.organization_coordsys_id as crs_id  from gpkg_contents gc inner join gpkg_spatial_ref_sys gs where gc.srs_id=gs.srs_id) AS sel &quot;
+					+ &quot;ON tm.table_name=sel.table_name &quot; + &quot;WHERE crsID IN (3395, 4326) ORDER BY zoomLvl;&quot;;
 
-<span class="fc" id="L131">            try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L132">                                    final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc" id="L133">                List&lt;Object[]&gt; annexC_3395 = populateAnnex( ANNEX_C_3395_TABLE, &quot;Annex C (EPSG:3395)&quot; );</span>
-<span class="fc" id="L134">                List&lt;Object[]&gt; annexE_4326 = populateAnnex( ANNEX_E_4326_TABLE, &quot;Annex E (EPSG:4326)&quot; );</span>
+<span class="fc" id="L129">			try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L130">					final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc" id="L131">				List&lt;Object[]&gt; annexC_3395 = populateAnnex(ANNEX_C_3395_TABLE, &quot;Annex C (EPSG:3395)&quot;);</span>
+<span class="fc" id="L132">				List&lt;Object[]&gt; annexE_4326 = populateAnnex(ANNEX_E_4326_TABLE, &quot;Annex E (EPSG:4326)&quot;);</span>
 
-<span class="fc bfc" id="L136" title="All 2 branches covered.">                while ( resultSet.next() ) {</span>
-<span class="fc" id="L137">                    String tabNam = resultSet.getString( &quot;tabName&quot; ).trim();</span>
-<span class="fc" id="L138">                    String srsID = resultSet.getString( &quot;crsID&quot; ).trim();</span>
-<span class="fc" id="L139">                    int zoomLvl = resultSet.getInt( &quot;zoomLvl&quot; );</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">				while (resultSet.next()) {</span>
+<span class="fc" id="L135">					String tabNam = resultSet.getString(&quot;tabName&quot;).trim();</span>
+<span class="fc" id="L136">					String srsID = resultSet.getString(&quot;crsID&quot;).trim();</span>
+<span class="fc" id="L137">					int zoomLvl = resultSet.getInt(&quot;zoomLvl&quot;);</span>
 
-<span class="fc" id="L141">                    long matrixW = resultSet.getLong( &quot;matrixW&quot; );</span>
-<span class="fc" id="L142">                    long matrixH = resultSet.getLong( &quot;matrixH&quot; );</span>
-<span class="fc" id="L143">                    double pixelSzX = resultSet.getDouble( &quot;pixelSzX&quot; );</span>
-<span class="fc" id="L144">                    double pixelSzY = resultSet.getDouble( &quot;pixelSzY&quot; );</span>
+<span class="fc" id="L139">					long matrixW = resultSet.getLong(&quot;matrixW&quot;);</span>
+<span class="fc" id="L140">					long matrixH = resultSet.getLong(&quot;matrixH&quot;);</span>
+<span class="fc" id="L141">					double pixelSzX = resultSet.getDouble(&quot;pixelSzX&quot;);</span>
+<span class="fc" id="L142">					double pixelSzY = resultSet.getDouble(&quot;pixelSzY&quot;);</span>
 
-<span class="fc" id="L146">                    List&lt;Object[]&gt; annexTable = selectAnnexBySrsId( srsID, annexC_3395, annexE_4326 );</span>
-<span class="fc bfc" id="L147" title="All 2 branches covered.">                    for ( Object[] obj : annexTable ) {</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">                        if ( zoomLvl == (int) obj[0] ) {</span>
-<span class="fc" id="L149">                            long imW = (long) obj[3];</span>
-<span class="fc" id="L150">                            long imH = (long) obj[4];</span>
-<span class="fc" id="L151">                            double pX = (double) obj[2];</span>
-<span class="fc" id="L152">                            double pY = (double) obj[2];</span>
+<span class="fc" id="L144">					List&lt;Object[]&gt; annexTable = selectAnnexBySrsId(srsID, annexC_3395, annexE_4326);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">					for (Object[] obj : annexTable) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">						if (zoomLvl == (int) obj[0]) {</span>
+<span class="fc" id="L147">							long imW = (long) obj[3];</span>
+<span class="fc" id="L148">							long imH = (long) obj[4];</span>
+<span class="fc" id="L149">							double pX = (double) obj[2];</span>
+<span class="fc" id="L150">							double pY = (double) obj[2];</span>
 
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                            if ( Math.abs( pX - pixelSzX ) &gt; TOLERANCE ) {</span>
-<span class="fc" id="L155">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-                                                          + &quot;Pixel Size X: &quot; + pixelSzX + &quot;; but expected &quot; + pX );
-<span class="nc bnc" id="L157" title="All 2 branches missed.">                            } else if ( Math.abs( pY - pixelSzY ) &gt; TOLERANCE ) {</span>
-<span class="nc" id="L158">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-                                                          + &quot;Pixel Size Y: &quot; + pixelSzY + &quot;; but expected &quot; + pY );
-<span class="nc bnc" id="L160" title="All 2 branches missed.">                            } else if ( imW != matrixW ) {</span>
-<span class="nc" id="L161">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-                                                          + &quot;Matrix Width: &quot; + matrixW + &quot;; but expected &quot; + imW );
-<span class="nc bnc" id="L163" title="All 2 branches missed.">                            } else if ( imH != matrixH ) {</span>
-<span class="nc" id="L164">                                invalidMatrixEntries.add( tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
-                                                          + &quot;Matrix Height: &quot; + matrixH + &quot;; but expected &quot; + imH );
-                            }
-                        }
-<span class="fc" id="L168">                    }</span>
-<span class="fc" id="L169">                }</span>
-<span class="fc" id="L170">                assertTrue( invalidMatrixEntries.isEmpty(),</span>
-<span class="fc" id="L171">                            MessageFormat.format( &quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,</span>
-<span class="fc" id="L172">                                                  invalidMatrixEntries.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="pc bpc" id="L173" title="8 of 16 branches missed.">            }</span>
-        }
-<span class="fc" id="L175">    }</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">							if (Math.abs(pX - pixelSzX) &gt; TOLERANCE) {</span>
+<span class="fc" id="L153">								invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+										+ &quot;Pixel Size X: &quot; + pixelSzX + &quot;; but expected &quot; + pX);
+							}
+<span class="nc bnc" id="L156" title="All 2 branches missed.">							else if (Math.abs(pY - pixelSzY) &gt; TOLERANCE) {</span>
+<span class="nc" id="L157">								invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+										+ &quot;Pixel Size Y: &quot; + pixelSzY + &quot;; but expected &quot; + pY);
+							}
+<span class="nc bnc" id="L160" title="All 2 branches missed.">							else if (imW != matrixW) {</span>
+<span class="nc" id="L161">								invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+										+ &quot;Matrix Width: &quot; + matrixW + &quot;; but expected &quot; + imW);
+							}
+<span class="nc bnc" id="L164" title="All 2 branches missed.">							else if (imH != matrixH) {</span>
+<span class="nc" id="L165">								invalidMatrixEntries.add(tabNam + &quot; (&quot; + srsID + &quot;, Zoom Level: &quot; + zoomLvl + &quot;): &quot;</span>
+										+ &quot;Matrix Height: &quot; + matrixH + &quot;; but expected &quot; + imH);
+							}
+						}
+<span class="fc" id="L169">					}</span>
+<span class="fc" id="L170">				}</span>
+<span class="fc" id="L171">				assertTrue(invalidMatrixEntries.isEmpty(), MessageFormat.format(</span>
+						&quot;The gpkg_tile_matrix table contains invalid Pixels Size or Matrix Size values for tables: {0}&quot;,
+<span class="fc" id="L173">						invalidMatrixEntries.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+			}
+		}
+<span class="fc" id="L176">	}</span>
 
-    /*
-     * TODO: Implement Test for Requirement 6
-     * 
-     * --- NSG Req 6: The WGS 84 Geographic 2D CRS SHALL be used for 2D vector features. WGS 84 Geographic 2D
-     * GeoPackages SHALL follow the technical guidance provided in Annex E: Implementation Guide for EPSG::4326 Tiles.
-     * 
-     * @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 6 (match Annex table)&quot;)
-     */
+	/*
+	 * TODO: Implement Test for Requirement 6
+	 *
+	 * --- NSG Req 6: The WGS 84 Geographic 2D CRS SHALL be used for 2D vector features.
+	 * WGS 84 Geographic 2D GeoPackages SHALL follow the technical guidance provided in
+	 * Annex E: Implementation Guide for EPSG::4326 Tiles.
+	 *
+	 * @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 6 (match Annex table)&quot;)
+	 */
 
-    /**
-     * NSG Req 8: The CRS definitions in Table 7 through Table 19 below SHALL be used to specify the CRS used for tiles
-     * and vector feature user data tables containing NSG data in a GeoPackage.
-     *
-     * NSG Req 9: Other CRS definitions SHALL NOT be specified for GeoPackage SQL tables containing NSG data.
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 8 &amp; 9 (CRS definitions)&quot;)
-    public void crsDefinitionsTest()
-                            throws SQLException {
-<span class="pc bpc" id="L198" title="1 of 2 branches missed.">        if ( crsListing == null )</span>
-<span class="nc" id="L199">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
+	/**
+	 * NSG Req 8: The CRS definitions in Table 7 through Table 19 below SHALL be used to
+	 * specify the CRS used for tiles and vector feature user data tables containing NSG
+	 * data in a GeoPackage.
+	 *
+	 * NSG Req 9: Other CRS definitions SHALL NOT be specified for GeoPackage SQL tables
+	 * containing NSG data.
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 8 &amp; 9 (CRS definitions)&quot;)
+	public void crsDefinitionsTest() throws SQLException {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">		if (crsListing == null)</span>
+<span class="nc" id="L200">			throw new SkipException(&quot;No designated CRS Lookup Table available&quot;);</span>
 
-<span class="fc" id="L201">        String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
+<span class="fc" id="L202">		String queryStr = &quot;SELECT srs_id,definition FROM gpkg_spatial_ref_sys&quot;;</span>
 
-<span class="fc" id="L203">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L204">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc" id="L205">            final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L204">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L205">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc" id="L206">			final Collection&lt;String&gt; invalidSrsDefs = new LinkedList&lt;&gt;();</span>
 
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L208">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">                if ( srsID.equals( &quot;0&quot; ) ) {</span>
-<span class="fc" id="L210">                    continue;</span>
-                }
-<span class="fc bfc" id="L212" title="All 2 branches covered.">                if ( srsID.equals( &quot;-1&quot; ) ) {</span>
-<span class="fc" id="L213">                    continue;</span>
-                }
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">			while (resultSet.next()) {</span>
+<span class="fc" id="L209">				String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">				if (srsID.equals(&quot;0&quot;)) {</span>
+<span class="fc" id="L211">					continue;</span>
+				}
+<span class="fc bfc" id="L213" title="All 2 branches covered.">				if (srsID.equals(&quot;-1&quot;)) {</span>
+<span class="fc" id="L214">					continue;</span>
+				}
 
-                // Get the current CRS definition and get from our saved specification,
-                // the CRS definition that we expect. Both of these are WKT.
-<span class="fc" id="L218">                final String defin = resultSet.getString( &quot;definition&quot; );</span>
-<span class="fc" id="L219">                final String specin = crsListing.getDefinitionBySrsId( srsID );</span>
+				// Get the current CRS definition and get from our saved specification,
+				// the CRS definition that we expect. Both of these are WKT.
+<span class="fc" id="L219">				final String defin = resultSet.getString(&quot;definition&quot;);</span>
+<span class="fc" id="L220">				final String specin = crsListing.getDefinitionBySrsId(srsID);</span>
 
-<span class="fc" id="L221">            	String specWKT = specin;</span>
-<span class="fc" id="L222">            	String defWKT = defin;</span>
-            	
-        		try {
-        			// Parse WKT - this one is from the specification file
-<span class="fc" id="L226">        			CoordinateReferenceSystem specCRS = crsFactory.createFromWKT(specin);</span>
-<span class="fc" id="L227">        			specWKT = specCRS.toWKT();</span>
-        			
-        			// Parse WKT - this one is from the geopackage
-<span class="fc" id="L230">        			CoordinateReferenceSystem testCRS = crsFactory.createFromWKT(defin);</span>
-<span class="fc" id="L231">        			defWKT =  testCRS.toWKT();</span>
-        			
-<span class="nc" id="L233">        		} catch (FactoryException e) {</span>
-        			// Normalization failed
-<span class="fc" id="L235">        		}</span>
+<span class="fc" id="L222">				String specWKT = specin;</span>
+<span class="fc" id="L223">				String defWKT = defin;</span>
 
-        		// The WKTs may be normalized now. However, there still may be spaces
-        		// in there that could cause a difference. Hence, we'll compare using a function that
-        		// strips spaces and moves all content to lower case.
-        		// This is still an extremely incomplete test and the CRSs may still be the same. In part,
-        		// this is due to different variations of WKT content.
-        		// We have found no WKT comparison utilities that will work.
-        			
-<span class="fc" id="L244">        		boolean crsEquivalent = compareDefintion( defWKT, specWKT );</span>
-        		
-        		// At this point we know the names from testCRS.getName() may still be different,
-        		// and the identifiers from testCRS.getIdentifiers() may be different, but these
-        		// may still be &quot;the same&quot; CRS. There is not much we can do about it given the available
-        		// utilities.
-        			
-                
-<span class="pc bpc" id="L252" title="1 of 2 branches missed.">                if ( !crsEquivalent ) {</span>
-<span class="fc" id="L253">                    final String issueRpt = String.format( &quot;srs_id: %s : GeoPackage WKT (normalized): %s : Specification WKT (normalized): %s &quot;,</span>
-                                                           srsID, defin, specin );
-<span class="fc" id="L255">                    invalidSrsDefs.add( issueRpt );</span>
-<span class="pc" id="L256">                    Assert.fail( MessageFormat.format( &quot;The CRS for this srs_id is not exactly equivalent to the specification.  {0}&quot;,</span>
-<span class="fc" id="L257">                                                       invalidSrsDefs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-                }
+				try {
+					// Parse WKT - this one is from the specification file
+<span class="fc" id="L227">					CoordinateReferenceSystem specCRS = crsFactory.createFromWKT(specin);</span>
+<span class="fc" id="L228">					specWKT = specCRS.toWKT();</span>
 
-<span class="nc" id="L260">            }</span>
-<span class="pc bpc" id="L261" title="12 of 16 branches missed.">        }</span>
-<span class="nc" id="L262">    }</span>
+					// Parse WKT - this one is from the geopackage
+<span class="fc" id="L231">					CoordinateReferenceSystem testCRS = crsFactory.createFromWKT(defin);</span>
+<span class="fc" id="L232">					defWKT = testCRS.toWKT();</span>
 
-    /**
-     * NSG Req 19: Data validity SHALL be assessed against data value constraints specified in Table 26 below using a
-     * test suite. Data validity MAY be enforced by SQL triggers.
-     *
-     * 19-A: Addresses Table 26 Rows 1-2 (regarding table &quot;gpkg_spatial_ref_sys&quot;)
-     *
-     * @throws SQLException
-     *             if access to gpkg failed
-     */
-    @Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)&quot;)
-    public void dataValidity_gpkg_spatial_ref_sys()
-                            throws SQLException {
-<span class="pc bpc" id="L276" title="1 of 2 branches missed.">        if ( crsListing == null )</span>
-<span class="nc" id="L277">            throw new SkipException( &quot;No designated CRS Lookup Table available&quot; );</span>
+				}
+<span class="nc" id="L235">				catch (FactoryException e) {</span>
+					// Normalization failed
+<span class="fc" id="L237">				}</span>
 
-<span class="fc" id="L279">        String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
+				// The WKTs may be normalized now. However, there still may be spaces
+				// in there that could cause a difference. Hence, we'll compare using a
+				// function that
+				// strips spaces and moves all content to lower case.
+				// This is still an extremely incomplete test and the CRSs may still be
+				// the same. In part,
+				// this is due to different variations of WKT content.
+				// We have found no WKT comparison utilities that will work.
 
-<span class="fc" id="L281">        try (final Statement statement = this.databaseConnection.createStatement();</span>
-<span class="fc" id="L282">                                final ResultSet resultSet = statement.executeQuery( queryStr )) {</span>
-<span class="fc" id="L283">            final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L284">            final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L248">				boolean crsEquivalent = compareDefintion(defWKT, specWKT);</span>
 
-<span class="fc bfc" id="L286" title="All 2 branches covered.">            while ( resultSet.next() ) {</span>
-<span class="fc" id="L287">                String srsID = resultSet.getString( &quot;srs_id&quot; ).trim();</span>
-<span class="fc bfc" id="L288" title="All 4 branches covered.">                if ( &quot;0&quot;.equals( srsID ) || &quot;-1&quot;.equals( srsID ) ) {</span>
-<span class="fc" id="L289">                    continue;</span>
-                }
+				// At this point we know the names from testCRS.getName() may still be
+				// different,
+				// and the identifiers from testCRS.getIdentifiers() may be different, but
+				// these
+				// may still be &quot;the same&quot; CRS. There is not much we can do about it given
+				// the available
+				// utilities.
 
-                // --- test for: Table 26; Row 1
-<span class="fc" id="L293">                String srsOrg = resultSet.getString( &quot;organization&quot; );</span>
-<span class="fc" id="L294">                validateCrsOrganistion( srsID, srsOrg, invalidOrgs );</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">				if (!crsEquivalent) {</span>
+<span class="fc" id="L259">					final String issueRpt = String.format(</span>
+							&quot;srs_id: %s : GeoPackage WKT (normalized): %s : Specification WKT (normalized): %s &quot;, srsID,
+							defin, specin);
+<span class="fc" id="L262">					invalidSrsDefs.add(issueRpt);</span>
+<span class="pc" id="L263">					Assert.fail(MessageFormat.format(</span>
+							&quot;The CRS for this srs_id is not exactly equivalent to the specification.  {0}&quot;,
+<span class="fc" id="L265">							invalidSrsDefs.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+				}
 
-                // --- test for: Table 26; Row 2
-<span class="fc" id="L297">                String description = resultSet.getString( &quot;description&quot; );</span>
-<span class="fc" id="L298">                validateCrsDescription( srsID, description, invalidDesc );</span>
-<span class="fc" id="L299">            }</span>
+<span class="nc" id="L268">			}</span>
+		}
+<span class="nc" id="L270">	}</span>
 
-<span class="fc" id="L301">            assertTrue( invalidOrgs.isEmpty(),</span>
-<span class="fc" id="L302">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,</span>
-<span class="fc" id="L303">                                              invalidOrgs.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="pc" id="L304">            assertTrue( invalidDesc.isEmpty(),</span>
-<span class="fc" id="L305">                        MessageFormat.format( &quot;The gpkg_spatial_ref_sys table contains invalid descriptions for IDs: {0}&quot;,</span>
-<span class="fc" id="L306">                                              invalidDesc.stream().map( Object::toString ).collect( Collectors.joining( &quot;, &quot; ) ) ) );</span>
-<span class="pc bpc" id="L307" title="12 of 16 branches missed.">        }</span>
-<span class="nc" id="L308">    }</span>
+	/**
+	 * NSG Req 19: Data validity SHALL be assessed against data value constraints
+	 * specified in Table 26 below using a test suite. Data validity MAY be enforced by
+	 * SQL triggers.
+	 *
+	 * 19-A: Addresses Table 26 Rows 1-2 (regarding table &quot;gpkg_spatial_ref_sys&quot;)
+	 * @throws SQLException if access to gpkg failed
+	 */
+	@Test(groups = { &quot;NSG&quot; }, description = &quot;NSG Req 19-A (Data Validity: gpkg_spatial_ref_sys)&quot;)
+	public void dataValidity_gpkg_spatial_ref_sys() throws SQLException {
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">		if (crsListing == null)</span>
+<span class="nc" id="L283">			throw new SkipException(&quot;No designated CRS Lookup Table available&quot;);</span>
 
-    private void validateCrsOrganistion( String srsID, String srsOrg, Collection&lt;String&gt; invalidOrgs ) {
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        if ( srsOrg == null ) {</span>
-<span class="nc" id="L312">            invalidOrgs.add( srsID + &quot;: null (expected 'EPSG' or 'NGA')&quot; );</span>
-        } else {
-<span class="fc" id="L314">            srsOrg = srsOrg.trim();</span>
-<span class="pc bpc" id="L315" title="3 of 4 branches missed.">            if ( !&quot;EPSG&quot;.equalsIgnoreCase( srsOrg ) &amp;&amp; !&quot;NGA&quot;.equalsIgnoreCase( srsOrg ) ) {</span>
-<span class="nc" id="L316">                invalidOrgs.add( srsID + &quot;: &quot; + srsOrg + &quot; (expected 'EPSG' or 'NGA')&quot; );</span>
-            }
-        }
-<span class="fc" id="L319">    }</span>
+<span class="fc" id="L285">		String queryStr = &quot;SELECT srs_id,organization,description FROM gpkg_spatial_ref_sys;&quot;;</span>
 
-    private void validateCrsDescription( String srsID, String description, Collection&lt;String&gt; invalidDesc ) {
-<span class="fc bfc" id="L322" title="All 2 branches covered.">        if ( description == null ) {</span>
-<span class="fc" id="L323">            invalidDesc.add( srsID + &quot; (expected not to be null)&quot; );</span>
-<span class="fc" id="L324">            return;</span>
-        }
-<span class="fc bfc" id="L326" title="All 2 branches covered.">        if ( !isCrsDescriptionValid( description ) ) {</span>
-<span class="fc" id="L327">            invalidDesc.add( srsID</span>
-                             + &quot;: '&quot;
-                             + description
-                             + &quot;' (expected not to be an empty string, not all whitespace, not “unknown” (any case), not “tbd” (any case))&quot; );
-<span class="fc" id="L331">            return;</span>
-        }
-<span class="fc" id="L333">        String expectedDescription = crsListing.getDescriptionBySrsId( srsID );</span>
-<span class="pc bpc" id="L334" title="1 of 4 branches missed.">        if ( expectedDescription != null &amp;&amp; !isDescriptionAsExpected( description, expectedDescription ) ) {</span>
-<span class="fc" id="L335">            invalidDesc.add( srsID + &quot; : '&quot; + description + &quot;' (expected: '&quot; + expectedDescription + &quot;')&quot; );</span>
-        }
-<span class="fc" id="L337">    }</span>
+<span class="fc" id="L287">		try (final Statement statement = this.databaseConnection.createStatement();</span>
+<span class="fc" id="L288">				final ResultSet resultSet = statement.executeQuery(queryStr)) {</span>
+<span class="fc" id="L289">			final Collection&lt;String&gt; invalidOrgs = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L290">			final Collection&lt;String&gt; invalidDesc = new LinkedList&lt;&gt;();</span>
 
-    private boolean isDescriptionAsExpected( String descriptionToTest, String expectedDescription ) {
-<span class="fc" id="L340">        descriptionToTest = removeWhitespaces( descriptionToTest );</span>
-<span class="fc" id="L341">        expectedDescription = removeWhitespaces( expectedDescription );</span>
-<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        if ( descriptionToTest.endsWith( &quot;.&quot; ) )</span>
-<span class="nc" id="L343">            descriptionToTest = descriptionToTest.substring( 0, descriptionToTest.length() - 1 );</span>
-<span class="pc bpc" id="L344" title="1 of 2 branches missed.">        if ( expectedDescription.endsWith( &quot;.&quot; ) )</span>
-<span class="fc" id="L345">            expectedDescription = expectedDescription.substring( 0, expectedDescription.length() - 1 );</span>
-<span class="fc" id="L346">        return descriptionToTest.equalsIgnoreCase( expectedDescription );</span>
-    }
+<span class="fc bfc" id="L292" title="All 2 branches covered.">			while (resultSet.next()) {</span>
+<span class="fc" id="L293">				String srsID = resultSet.getString(&quot;srs_id&quot;).trim();</span>
+<span class="fc bfc" id="L294" title="All 4 branches covered.">				if (&quot;0&quot;.equals(srsID) || &quot;-1&quot;.equals(srsID)) {</span>
+<span class="fc" id="L295">					continue;</span>
+				}
 
-    private boolean compareDefintion( String definitionToTest, String expectedDefinition ) {
-<span class="fc" id="L350">        definitionToTest = removeWhitespaces( definitionToTest );</span>
-<span class="fc" id="L351">        expectedDefinition = removeWhitespaces( expectedDefinition );</span>
-<span class="fc" id="L352">        return definitionToTest.equalsIgnoreCase( expectedDefinition );</span>
-    }
+				// --- test for: Table 26; Row 1
+<span class="fc" id="L299">				String srsOrg = resultSet.getString(&quot;organization&quot;);</span>
+<span class="fc" id="L300">				validateCrsOrganistion(srsID, srsOrg, invalidOrgs);</span>
 
-    private List&lt;Object[]&gt; selectAnnexBySrsId( String srsID, List&lt;Object[]&gt; annexC_3395, List&lt;Object[]&gt; annexE_4326 ) {
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">        if ( srsID.equals( &quot;3395&quot; ) ) {</span>
-<span class="nc" id="L357">            return annexC_3395;</span>
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        } else if ( srsID.equals( &quot;4326&quot; ) ) {</span>
-<span class="fc" id="L359">            return annexE_4326;</span>
-<span class="nc bnc" id="L360" title="All 4 branches missed.">        } else if ( ( srsID.equals( &quot;5041&quot; ) ) || ( srsID.equals( &quot;5042&quot; ) ) ) {</span>
-<span class="nc" id="L361">            return Collections.emptyList();</span>
-        }
-<span class="nc" id="L363">        return Collections.emptyList();</span>
-    }
+				// --- test for: Table 26; Row 2
+<span class="fc" id="L303">				String description = resultSet.getString(&quot;description&quot;);</span>
+<span class="fc" id="L304">				validateCrsDescription(srsID, description, invalidDesc);</span>
+<span class="fc" id="L305">			}</span>
 
-    private List&lt;Object[]&gt; populateAnnex( String annexTableName, String annexName ) {
-<span class="fc" id="L367">        InputStream resourceToRead = this.getClass().getResourceAsStream( annexTableName );</span>
-<span class="pc" id="L368">        try (BufferedReader br = new BufferedReader( new InputStreamReader( resourceToRead, &quot;UTF-8&quot; ) )) {</span>
-<span class="fc" id="L369">            List&lt;Object[]&gt; annexEntries = new ArrayList&lt;&gt;();</span>
-            String line;
-<span class="fc bfc" id="L371" title="All 2 branches covered.">            while ( ( line = br.readLine() ) != null ) {</span>
-<span class="fc" id="L372">                List&lt;String&gt; items = Arrays.asList( line.split( &quot;\\s*,\\s*&quot; ) );</span>
-<span class="pc bpc" id="L373" title="2 of 4 branches missed.">                if ( !items.isEmpty() &amp;&amp; ( items.size() == 5 ) ) {</span>
-<span class="fc" id="L374">                    addNewEntry( annexEntries, items.get( 0 ), items.get( 1 ), items.get( 2 ), items.get( 3 ),</span>
-<span class="fc" id="L375">                                 items.get( 4 ) );</span>
-                } else {
-<span class="nc" id="L377">                    throw new SkipException( annexName + &quot; Table is corrupt &quot; );</span>
-                }
-<span class="fc" id="L379">            }</span>
-<span class="fc" id="L380">            return annexEntries;</span>
-<span class="pc bpc" id="L381" title="6 of 8 branches missed.">        } catch ( IOException e ) {</span>
-<span class="nc" id="L382">            throw new SkipException( annexName + &quot; Table not available&quot; );</span>
-        }
-    }
+<span class="fc" id="L307">			assertTrue(invalidOrgs.isEmpty(), MessageFormat.format(</span>
+					&quot;The gpkg_spatial_ref_sys table contains invalid organization values for IDs: {0}, should be \'EPSG\' or \'NGA\'&quot;,
+<span class="fc" id="L309">					invalidOrgs.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+<span class="pc" id="L310">			assertTrue(invalidDesc.isEmpty(),</span>
+<span class="fc" id="L311">					MessageFormat.format(&quot;The gpkg_spatial_ref_sys table contains invalid descriptions for IDs: {0}&quot;,</span>
+<span class="fc" id="L312">							invalidDesc.stream().map(Object::toString).collect(Collectors.joining(&quot;, &quot;))));</span>
+		}
+<span class="nc" id="L314">	}</span>
 
-    private void addNewEntry( List&lt;Object[]&gt; table, String zoom, String scale, String pixelSz, String matrixWidth,
-                              String matrixHeight ) {
-<span class="fc" id="L388">        int zoomAsInt = Integer.parseInt( zoom );</span>
-<span class="fc" id="L389">        double scaleAsDouble = Double.parseDouble( scale );</span>
-<span class="fc" id="L390">        double pixelSizeAsDouble = Double.parseDouble( pixelSz );</span>
-<span class="fc" id="L391">        long matrixWidthAsLong = Long.parseLong( matrixWidth );</span>
-<span class="fc" id="L392">        long matrixHeightAsLong = Long.parseLong( matrixHeight );</span>
-<span class="fc" id="L393">        Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };</span>
-<span class="fc" id="L394">        table.add( row );</span>
-<span class="fc" id="L395">    }</span>
+	private void validateCrsOrganistion(String srsID, String srsOrg, Collection&lt;String&gt; invalidOrgs) {
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">		if (srsOrg == null) {</span>
+<span class="nc" id="L318">			invalidOrgs.add(srsID + &quot;: null (expected 'EPSG' or 'NGA')&quot;);</span>
+		}
+		else {
+<span class="fc" id="L321">			srsOrg = srsOrg.trim();</span>
+<span class="pc bpc" id="L322" title="3 of 4 branches missed.">			if (!&quot;EPSG&quot;.equalsIgnoreCase(srsOrg) &amp;&amp; !&quot;NGA&quot;.equalsIgnoreCase(srsOrg)) {</span>
+<span class="nc" id="L323">				invalidOrgs.add(srsID + &quot;: &quot; + srsOrg + &quot; (expected 'EPSG' or 'NGA')&quot;);</span>
+			}
+		}
+<span class="fc" id="L326">	}</span>
 
-    private String removeWhitespaces( String description ) {
-<span class="pc bpc" id="L398" title="1 of 2 branches missed.">        if ( description != null )</span>
-<span class="fc" id="L399">            return description.trim().replaceAll( &quot;\\s+&quot;, &quot;&quot; );</span>
-<span class="nc" id="L400">        return description;</span>
-    }
+	private void validateCrsDescription(String srsID, String description, Collection&lt;String&gt; invalidDesc) {
+<span class="fc bfc" id="L329" title="All 2 branches covered.">		if (description == null) {</span>
+<span class="fc" id="L330">			invalidDesc.add(srsID + &quot; (expected not to be null)&quot;);</span>
+<span class="fc" id="L331">			return;</span>
+		}
+<span class="fc bfc" id="L333" title="All 2 branches covered.">		if (!isCrsDescriptionValid(description)) {</span>
+<span class="fc" id="L334">			invalidDesc.add(srsID + &quot;: '&quot; + description</span>
+					+ &quot;' (expected not to be an empty string, not all whitespace, not “unknown” (any case), not “tbd” (any case))&quot;);
+<span class="fc" id="L336">			return;</span>
+		}
+<span class="fc" id="L338">		String expectedDescription = crsListing.getDescriptionBySrsId(srsID);</span>
+<span class="pc bpc" id="L339" title="1 of 4 branches missed.">		if (expectedDescription != null &amp;&amp; !isDescriptionAsExpected(description, expectedDescription)) {</span>
+<span class="fc" id="L340">			invalidDesc.add(srsID + &quot; : '&quot; + description + &quot;' (expected: '&quot; + expectedDescription + &quot;')&quot;);</span>
+		}
+<span class="fc" id="L342">	}</span>
 
-    private boolean isCrsDescriptionValid( String srsDesc ) {
-<span class="pc bpc" id="L404" title="2 of 6 branches missed.">        return srsDesc.length() &gt; 0 &amp;&amp; srsDesc.trim().length() &gt; 0 &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;NULL&quot; ) )</span>
-<span class="pc bpc" id="L405" title="2 of 4 branches missed.">               &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;UNK&quot; ) ) &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;UNKNOWN&quot; ) )</span>
-<span class="pc bpc" id="L406" title="1 of 2 branches missed.">               &amp;&amp; ( !srsDesc.equalsIgnoreCase( &quot;TBD&quot; ) );</span>
-    }
+	private boolean isDescriptionAsExpected(String descriptionToTest, String expectedDescription) {
+<span class="fc" id="L345">		descriptionToTest = removeWhitespaces(descriptionToTest);</span>
+<span class="fc" id="L346">		expectedDescription = removeWhitespaces(expectedDescription);</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">		if (descriptionToTest.endsWith(&quot;.&quot;))</span>
+<span class="nc" id="L348">			descriptionToTest = descriptionToTest.substring(0, descriptionToTest.length() - 1);</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">		if (expectedDescription.endsWith(&quot;.&quot;))</span>
+<span class="fc" id="L350">			expectedDescription = expectedDescription.substring(0, expectedDescription.length() - 1);</span>
+<span class="fc" id="L351">		return descriptionToTest.equalsIgnoreCase(expectedDescription);</span>
+	}
+
+	private boolean compareDefintion(String definitionToTest, String expectedDefinition) {
+<span class="fc" id="L355">		definitionToTest = removeWhitespaces(definitionToTest);</span>
+<span class="fc" id="L356">		expectedDefinition = removeWhitespaces(expectedDefinition);</span>
+<span class="fc" id="L357">		return definitionToTest.equalsIgnoreCase(expectedDefinition);</span>
+	}
+
+	private List&lt;Object[]&gt; selectAnnexBySrsId(String srsID, List&lt;Object[]&gt; annexC_3395, List&lt;Object[]&gt; annexE_4326) {
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">		if (srsID.equals(&quot;3395&quot;)) {</span>
+<span class="nc" id="L362">			return annexC_3395;</span>
+		}
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">		else if (srsID.equals(&quot;4326&quot;)) {</span>
+<span class="fc" id="L365">			return annexE_4326;</span>
+		}
+<span class="nc bnc" id="L367" title="All 4 branches missed.">		else if ((srsID.equals(&quot;5041&quot;)) || (srsID.equals(&quot;5042&quot;))) {</span>
+<span class="nc" id="L368">			return Collections.emptyList();</span>
+		}
+<span class="nc" id="L370">		return Collections.emptyList();</span>
+	}
+
+	private List&lt;Object[]&gt; populateAnnex(String annexTableName, String annexName) {
+<span class="fc" id="L374">		InputStream resourceToRead = this.getClass().getResourceAsStream(annexTableName);</span>
+<span class="fc" id="L375">		try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceToRead, &quot;UTF-8&quot;))) {</span>
+<span class="fc" id="L376">			List&lt;Object[]&gt; annexEntries = new ArrayList&lt;&gt;();</span>
+			String line;
+<span class="fc bfc" id="L378" title="All 2 branches covered.">			while ((line = br.readLine()) != null) {</span>
+<span class="fc" id="L379">				List&lt;String&gt; items = Arrays.asList(line.split(&quot;\\s*,\\s*&quot;));</span>
+<span class="pc bpc" id="L380" title="2 of 4 branches missed.">				if (!items.isEmpty() &amp;&amp; (items.size() == 5)) {</span>
+<span class="fc" id="L381">					addNewEntry(annexEntries, items.get(0), items.get(1), items.get(2), items.get(3), items.get(4));</span>
+				}
+				else {
+<span class="nc" id="L384">					throw new SkipException(annexName + &quot; Table is corrupt &quot;);</span>
+				}
+<span class="fc" id="L386">			}</span>
+<span class="fc" id="L387">			return annexEntries;</span>
+		}
+<span class="nc" id="L389">		catch (IOException e) {</span>
+<span class="nc" id="L390">			throw new SkipException(annexName + &quot; Table not available&quot;);</span>
+		}
+	}
+
+	private void addNewEntry(List&lt;Object[]&gt; table, String zoom, String scale, String pixelSz, String matrixWidth,
+			String matrixHeight) {
+<span class="fc" id="L396">		int zoomAsInt = Integer.parseInt(zoom);</span>
+<span class="fc" id="L397">		double scaleAsDouble = Double.parseDouble(scale);</span>
+<span class="fc" id="L398">		double pixelSizeAsDouble = Double.parseDouble(pixelSz);</span>
+<span class="fc" id="L399">		long matrixWidthAsLong = Long.parseLong(matrixWidth);</span>
+<span class="fc" id="L400">		long matrixHeightAsLong = Long.parseLong(matrixHeight);</span>
+<span class="fc" id="L401">		Object[] row = { zoomAsInt, scaleAsDouble, pixelSizeAsDouble, matrixWidthAsLong, matrixHeightAsLong };</span>
+<span class="fc" id="L402">		table.add(row);</span>
+<span class="fc" id="L403">	}</span>
+
+	private String removeWhitespaces(String description) {
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">		if (description != null)</span>
+<span class="fc" id="L407">			return description.trim().replaceAll(&quot;\\s+&quot;, &quot;&quot;);</span>
+<span class="nc" id="L408">		return description;</span>
+	}
+
+	private boolean isCrsDescriptionValid(String srsDesc) {
+<span class="pc bpc" id="L412" title="2 of 6 branches missed.">		return srsDesc.length() &gt; 0 &amp;&amp; srsDesc.trim().length() &gt; 0 &amp;&amp; (!srsDesc.equalsIgnoreCase(&quot;NULL&quot;))</span>
+<span class="pc bpc" id="L413" title="2 of 4 branches missed.">				&amp;&amp; (!srsDesc.equalsIgnoreCase(&quot;UNK&quot;)) &amp;&amp; (!srsDesc.equalsIgnoreCase(&quot;UNKNOWN&quot;))</span>
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">				&amp;&amp; (!srsDesc.equalsIgnoreCase(&quot;TBD&quot;));</span>
+	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

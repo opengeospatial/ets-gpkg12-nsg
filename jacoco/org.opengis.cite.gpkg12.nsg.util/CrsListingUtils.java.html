@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CrsListingUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.util</a> &gt; <span class="el_source">CrsListingUtils.java</span></div><h1>CrsListingUtils.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.util;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CrsListingUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">NSG GeoPackage 1.1 Conformance Test Suite</a> &gt; <a href="index.source.html" class="el_package">org.opengis.cite.gpkg12.nsg.util</a> &gt; <span class="el_source">CrsListingUtils.java</span></div><h1>CrsListingUtils.java</h1><pre class="source lang-java linenums">package org.opengis.cite.gpkg12.nsg.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,62 +17,63 @@ import org.xml.sax.SAXException;
  */
 public class CrsListingUtils {
 
-    private static final String NSG_CRS_LISTING = &quot;/org/opengis/cite/gpkg12/nsg/core/NSG_CRS_WKT.xml&quot;;
+	private static final String NSG_CRS_LISTING = &quot;/org/opengis/cite/gpkg12/nsg/core/NSG_CRS_WKT.xml&quot;;
 
-<span class="nc" id="L22">    private CrsListingUtils() {</span>
-<span class="nc" id="L23">    }</span>
+	private CrsListingUtils() {
+	}
 
-    /**
-     * Parses the CRS list.
-     * 
-     * @return the CrsList with all available rows, may be empty but never &lt;code&gt;null&lt;/code&gt;.
-     */
-    public static CrsList parseCrsListing() {
-<span class="fc" id="L31">        CrsList crsList = new CrsList();</span>
-<span class="fc" id="L32">        NodeList rows = openCrsListing();</span>
+	/**
+	 * Parses the CRS list.
+	 * @return the CrsList with all available rows, may be empty but never
+	 * &lt;code&gt;null&lt;/code&gt;.
+	 */
+	public static CrsList parseCrsListing() {
+<span class="fc" id="L31">		CrsList crsList = new CrsList();</span>
+<span class="fc" id="L32">		NodeList rows = openCrsListing();</span>
 
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        for ( int rowIndex = 0; rowIndex &lt; rows.getLength(); rowIndex++ ) {</span>
-<span class="fc" id="L35">            Element row = (Element) rows.item( rowIndex );</span>
-<span class="fc" id="L36">            String id = getXMLElementTextValue( row, &quot;srs_id&quot; );</span>
-<span class="fc" id="L37">            String definition = getXMLElementTextValue( row, &quot;definition&quot; );</span>
-<span class="fc" id="L38">            String organization_coordsys_id = getXMLElementTextValue( row, &quot;organization_coordsys_id&quot; );</span>
-<span class="fc" id="L39">            String description = getXMLElementTextValue( row, &quot;description&quot; );</span>
-<span class="fc" id="L40">            crsList.addListing( id, definition, organization_coordsys_id, description );</span>
-        }
-<span class="fc" id="L42">        return crsList;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		for (int rowIndex = 0; rowIndex &lt; rows.getLength(); rowIndex++) {</span>
+<span class="fc" id="L35">			Element row = (Element) rows.item(rowIndex);</span>
+<span class="fc" id="L36">			String id = getXMLElementTextValue(row, &quot;srs_id&quot;);</span>
+<span class="fc" id="L37">			String definition = getXMLElementTextValue(row, &quot;definition&quot;);</span>
+<span class="fc" id="L38">			String organization_coordsys_id = getXMLElementTextValue(row, &quot;organization_coordsys_id&quot;);</span>
+<span class="fc" id="L39">			String description = getXMLElementTextValue(row, &quot;description&quot;);</span>
+<span class="fc" id="L40">			crsList.addListing(id, definition, organization_coordsys_id, description);</span>
+		}
+<span class="fc" id="L42">		return crsList;</span>
 
-    }
+	}
 
-    private static NodeList openCrsListing() {
-<span class="fc" id="L47">        InputStream crsListing = CrsListingUtils.class.getResourceAsStream( NSG_CRS_LISTING );</span>
-<span class="fc" id="L48">        String rootName = &quot;Row&quot;;</span>
-<span class="fc" id="L49">        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
+	private static NodeList openCrsListing() {
+<span class="fc" id="L47">		InputStream crsListing = CrsListingUtils.class.getResourceAsStream(NSG_CRS_LISTING);</span>
+<span class="fc" id="L48">		String rootName = &quot;Row&quot;;</span>
+<span class="fc" id="L49">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</span>
 
-        try {
-<span class="fc" id="L52">            DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
-<span class="fc" id="L53">            Document dom = ioe.parse( crsListing );</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            if ( dom != null ) {</span>
-<span class="fc" id="L55">                Element docElems = dom.getDocumentElement();</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                if ( docElems != null ) {</span>
-<span class="fc" id="L57">                    return docElems.getElementsByTagName( rootName );</span>
-                }
-            }
-<span class="nc" id="L60">        } catch ( ParserConfigurationException | SAXException | IOException e ) {</span>
-            // TODO
-            // LOG.log( Level.SEVERE, &quot;Could not open CRS listing.&quot;, e );
-<span class="nc" id="L63">        }</span>
+		try {
+<span class="fc" id="L52">			DocumentBuilder ioe = dbf.newDocumentBuilder();</span>
+<span class="fc" id="L53">			Document dom = ioe.parse(crsListing);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">			if (dom != null) {</span>
+<span class="fc" id="L55">				Element docElems = dom.getDocumentElement();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">				if (docElems != null) {</span>
+<span class="fc" id="L57">					return docElems.getElementsByTagName(rootName);</span>
+				}
+			}
+		}
+<span class="nc" id="L61">		catch (ParserConfigurationException | SAXException | IOException e) {</span>
+			// TODO
+			// LOG.log( Level.SEVERE, &quot;Could not open CRS listing.&quot;, e );
+<span class="nc" id="L64">		}</span>
 
-<span class="nc" id="L65">        return null;</span>
-    }
+<span class="nc" id="L66">		return null;</span>
+	}
 
-    private static String getXMLElementTextValue( Element element, String tagName ) {
-<span class="fc" id="L69">        NodeList nl = element.getElementsByTagName( tagName );</span>
-<span class="pc bpc" id="L70" title="2 of 4 branches missed.">        if ( nl != null &amp;&amp; nl.getLength() &gt; 0 ) {</span>
-<span class="fc" id="L71">            Element el = (Element) nl.item( 0 );</span>
-<span class="fc" id="L72">            return el.getFirstChild().getNodeValue();</span>
-        }
-<span class="nc" id="L74">        return null;</span>
-    }
+	private static String getXMLElementTextValue(Element element, String tagName) {
+<span class="fc" id="L70">		NodeList nl = element.getElementsByTagName(tagName);</span>
+<span class="pc bpc" id="L71" title="2 of 4 branches missed.">		if (nl != null &amp;&amp; nl.getLength() &gt; 0) {</span>
+<span class="fc" id="L72">			Element el = (Element) nl.item(0);</span>
+<span class="fc" id="L73">			return el.getFirstChild().getNodeValue();</span>
+		}
+<span class="nc" id="L75">		return null;</span>
+	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
